@@ -12,7 +12,7 @@ Authors@R: c(
 Description: provide a function that behave nearly as base::source() but provide a caching mechanism on disk. 
     Allows to source() R scripts that gather data but can fail or consume to much time to respond even if nothing new is expected.
     Comes with a bunch of tools to execute periodically, when cache is invalid of force refresh of the cache.
-License: CC BY 4.0
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
