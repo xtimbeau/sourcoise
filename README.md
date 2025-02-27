@@ -14,7 +14,7 @@ La structure est donc :
 
 -   des scripts `R`, dans le même dossier ou ailleurs, qui produisent les données à partir de calculs, d'interrogation de bases externes ou d'API. Des objets plus complexes peuvent être renvoyés, comme par exemple des listes d'objets, des graphiques, des tableaux, des fonctions fabriquant des tableaux ou des graphiques, etc...
 
--   lorsqu'un cache est disponible et valide (voir plus bas) il est utilisé et la fonciton répond très rapidement (0.01 secondes) suivant la taille des données.
+-   lorsqu'un cache est disponible et valide (voir plus bas) il est utilisé et la fonction répond très rapidement suivant la taille des données (0.006 secondes pour des données de 2Mb).
 
 -   tout cela est conçu pour fonctionner avec *github* et donc partager le cache entre utilisateurs d'un même dépot. On peut donc mettre à jour les données sur une machine et les utiliser sur une autre.
 
@@ -57,11 +57,13 @@ Le stockage des données a une faible empreinte disque (elles ne servent qu'à c
 Par rapport à `memoise::memoise()`, `sourcoise()` utilise systématiquement un cache, localisé dans le projet R ou quarto et destiné à être synchronisé par github. Il s'applique à un script et non à une fonction et utilise des règles d'invalidation du cache légèrement différentes :
 
 -   le cache est conçu principalement pour être passé entre session. Il est utilisé lors du rendu d'un `.qmd` et il est transportable avec les fichiers associés.
--   le cache est invalidé si le script est modifié (similaire à l'invalidation par le corps de la fonction dans `memoise::memoise()`)
+-   le cache est invalidé si le script est modifié (similaire à l'invalidation par le corps de la fonction dans `memoise::memoise()`).
 -   le cache est invalidé en fonction du delai entre deux exécutions. Il est possible de ré-exécuter le code si il n'a pas été exécuté depuis une heure, une journée, une semaine, etc...
 -   le cache est invalidé si un ou plusieurs fichiers (définis au préalable) ont été modifiés. Cela sert en particulier à invalider le cache si un fichier de données (`.csv` ou `.xls`) a été modifié.
--   le cache est invalidé si les arguments passés à `sourcoise()` pour le script ont été modifiés (comme dans `memoise::memoise()`)
+-   le cache est invalidé si les arguments passés à `sourcoise()` pour le script ont été modifiés (comme dans `memoise::memoise()`).
 -   on peut également forcer l'invalidation du cache par un paramètre passé à la fonction, éventuellement un paramètre global ou en utilisant la fonction `sourcoise_refresh()`. Ce dernier point est une différence important par rapport à `memoise::memoise()` et permet une exécution régulière du rafraichissement du cache.
+-   on peut *logger* les accès à `sourcoise()` ce qui permet de comprendre pourquoi le cache n'est pas invalidé et quels sont fichiers qui ont déclenché `sourcoise()`. Un dossier `.logs` est ajouté au dossier du projet.
+-   on peut limiter la taille du cache, par le paramètre `grow_cache` et par `limit_mb` qui empêche de mettre en cache des données au delà d'une taille limite ; par défaut 50mb, pour ne pas fâcher *github*.
 
 ## autres fonctionalités
 
@@ -69,16 +71,12 @@ Par rapport à `memoise::memoise()`, `sourcoise()` utilise systématiquement un 
 
 `sourcoise()` conserve l'histoirique des données téléchargées et permet donc théoriquement d'y acceder.
 
-`sourcoise()` utilise une heuristique pour trouver la racine du projet, et localiser le script R qui est appelé. cela permet la transportabilité des scripts à l'intérieur d'un projet. Par exemple, si on utilise
+`sourcoise()` utilise une heuristique pour trouver la racine du projet, et localiser le script R qui est appelé. cela permet la transportabilité des scripts à l'intérieur d'un projet.
 
 ## à venir
 
 Seront bientôt implémentés :
 
--   un log optionel qui enregistre les mises à jour des données et les accès aux fichiers de données.
-
--   la possibiité de stocker les données cachées hors de *github* et d'utiliser `{pins}` pour les partager.
-
--   la possibilité de limiter la taille du cache et l'historique des données.
+-   la possibiité de stocker les données cachées hors de *github* et d'utiliser `{pins}` pour les partager (mais au prix d'un accès plus lent).
 
 -   et éventuellement une interface *shiny* de mise à jour (*gui* pour `sourcoise_refresh()`)

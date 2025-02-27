@@ -11,7 +11,8 @@
     sourcoise.wd = "file",
     sourcoise.unfreeze = FALSE,
     sourcoise.log = "OFF",
-    sourcoise.grow_cache = 3
+    sourcoise.grow_cache = 3,
+    sourcoise.limit_mb = 50
     )
 
   toset <- !(names(op.sourcoise) %in% names(op))

@@ -62,6 +62,7 @@
 #' @param cache_rep (character) défaut .data sauf usage particulier
 #' @param log ("OFF" par défaut) niveau de cache (voir `logger::log_treshold()`)
 #' @param grow_cache ("Inf" par défaut) stratégie de cache
+#' @param limit_mb (50 par défaut) limite le fichier de données à x mb (pour github). Si au dessus de la limite, **pas de cache**.
 #'
 #' @family sourcoise
 #' @return data (list ou ce que le code retourne)
@@ -85,7 +86,8 @@ sourcoise <- function(
     quiet = TRUE,
     nocache = FALSE,
     log = getOption("sourcoise.log"),
-    grow_cache = getOption("sourcoise.grow_cache")) {
+    grow_cache = getOption("sourcoise.grow_cache"),
+    limit_mb = getOption("sourcoise.limit_mb")) {
 
   ctxt <- setup_context(
     path = path,
@@ -98,6 +100,8 @@ sourcoise <- function(
     args = args,
     lapse = lapse,
     nocache = nocache,
+    grow_cache = grow_cache,
+    limit_mb = limit_mb,
     quiet = quiet)
 
   startup_log(log, ctxt)
@@ -108,7 +112,7 @@ sourcoise <- function(
     our_data <- exec_source(ctxt)
     if(our_data$ok=="exec") {
       our_data <- cache_data(our_data, ctxt)
-      prune_cache(ctxt, grow_cache)
+      prune_cache(ctxt)
       logger::log_success("force exec réussi ({scales::label_bytes()(our_data$size)})")
       if(metadata) {
         return(our_data)
@@ -132,7 +136,7 @@ sourcoise <- function(
     our_data <- exec_source(ctxt)
     if(our_data$ok=="exec") {
       our_data <- cache_data(our_data, ctxt)
-      prune_cache(ctxt, grow_cache)
+      prune_cache(ctxt)
       logger::log_success("Pas de cache valide, exécution réussie ({scales::label_bytes()(our_data$size)})")
       if(metadata) {
         return(our_data)
@@ -146,7 +150,7 @@ sourcoise <- function(
   }
 
   one_gooddata <- pick_gooddata(good_datas, ctxt)
-  prune_cache(ctxt, grow_cache)
+  prune_cache(ctxt)
   logger::log_success("Données en cache trouvées ({scales::label_bytes()(one_gooddata$size)})")
 
   if(metadata) {

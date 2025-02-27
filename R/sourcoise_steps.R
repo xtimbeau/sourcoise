@@ -1,6 +1,7 @@
 # calcule les différents chemins et trouve les fichiers/répertoire dont on a besoin
 
-setup_context <- function(path, root, src_in, cache_rep, exec_wd, wd, track, args, lapse, nocache, quiet=TRUE) {
+setup_context <- function(path, root, src_in, cache_rep, exec_wd, wd, track, args,
+                          lapse, nocache, limit_mb, grow_cache, quiet=TRUE) {
 
   ctxt <- list()
 
@@ -19,6 +20,8 @@ setup_context <- function(path, root, src_in, cache_rep, exec_wd, wd, track, arg
   ctxt$wd <- wd
   ctxt$src_in <- src_in
   ctxt$nocache <- nocache
+  ctxt$grow_cache <- grow_cache
+  ctxt$limit_mb <- limit_mb
 
   # on trouve le fichier
   ctxt$name <- remove_ext(path)
@@ -192,14 +195,14 @@ startup_log <- function(log, ctxt) {
   }
 }
 
-prune_cache <- function(ctxt, grow_cache) {
-  if(is.infinite(grow_cache))
+prune_cache <- function(ctxt) {
+  if(is.infinite(ctxt$grow_cache))
     return(NULL)
   md <- get_mdatas(ctxt$basename, ctxt$full_cache_rep)
   if(length(md)<=grow_cache)
     return(NULL)
   date <- purrr::map_chr(md, "date")
-  rdate <- rank(date) > length(md) - grow_cache
+  rdate <- rank(date) > length(md) - ctxt$grow_cache
 
   sure_delete <- function(fn) {
     if(fs::file_exists(fn))

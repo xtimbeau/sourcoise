@@ -182,12 +182,11 @@ cache_data <- function(data, ctxt) {
   data$cc <- cc
   fnm <- fs::path_join(c(ctxt$root_cache_rep,
                          stringr::str_c(ctxt$name, "_", data$id))) |> fs::path_ext_set("json")
-  if(!ctxt$nocache) {
+  if(!ctxt$nocache&!(lobstr::obj_size(data$data)<= ctxt$limit_mb*1024*1024)) {
     if(!exists) {
       fnd <- fs::path_join(c(ctxt$root_cache_rep,
                              stringr::str_c(ctxt$name, "_", data$id))) |> fs::path_ext_set("qs")
-      les_datas <- data$data
-      qs::qsave(les_datas, file = fnd)
+      qs::qsave(data$data, file = fnd)
     } else
       fnd <- last_m_data$data_file
     les_metas <- data
