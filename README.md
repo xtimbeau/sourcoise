@@ -18,7 +18,7 @@ La structure est donc :
 
 -   tout cela est conçu pour fonctionner avec *github* et donc partager le cache entre utilisateurs d'un même dépot. On peut donc mettre à jour les données sur une machine et les utiliser sur une autre.
 
-Par exemple, si le script `R` `prix_insee.r` utilise l'API de l'INSEE pour télécharger l'indice des prix à la consommation, et si il se termine par l'instruction `return(ipc)` alors sourcoise("prix_insee.r") renvoie toujours les données correspondantes, et si elles sont en cache, le retour est très rapide et ne nécessite pas d'accès à internet.
+Par exemple, si le script `R` `prix_insee.r` utilise l'API de l'INSEE pour télécharger l'indice des prix à la consommation, et si il se termine par l'instruction `return(ipc)`, alors `sourcoise("prix_insee.r")` renvoie toujours les données correspondantes, et si elles sont en cache, le retour est très rapide et ne nécessite pas d'accès à internet.
 
 ```{r}
 library(insee)
@@ -52,6 +52,8 @@ ggplot(ipc$ipch) + ...
 
 Le stockage des données a une faible empreinte disque (elles ne servent qu'à construire un graphique, il y a donc une série ou deux, trois dans cet exemple), ce qui ne pose pas de problème pour *github*. Si l'API de l'INSEE est en panne, alors le cache sera utilisé. On peut réutiliser cette instruction de nombreuses fois, puisqu'elle ne sera exécuté réellement qu'une fois et que les autres fois, c'est le cache qui est utilisé.
 
+`sourcoise()` exécute le script en local, ce qui limite les effets de bord.
+
 ## par rapport à *memoise*
 
 Par rapport à `memoise::memoise()`, `sourcoise()` utilise systématiquement un cache, localisé dans le projet R ou quarto et destiné à être synchronisé par github. Il s'applique à un script et non à une fonction et utilise des règles d'invalidation du cache légèrement différentes :
@@ -64,6 +66,7 @@ Par rapport à `memoise::memoise()`, `sourcoise()` utilise systématiquement un 
 -   on peut également forcer l'invalidation du cache par un paramètre passé à la fonction, éventuellement un paramètre global ou en utilisant la fonction `sourcoise_refresh()`. Ce dernier point est une différence important par rapport à `memoise::memoise()` et permet une exécution régulière du rafraichissement du cache.
 -   on peut *logger* les accès à `sourcoise()` ce qui permet de comprendre pourquoi le cache n'est pas invalidé et quels sont fichiers qui ont déclenché `sourcoise()`. Un dossier `.logs` est ajouté au dossier du projet.
 -   on peut limiter la taille du cache, par le paramètre `grow_cache` et par `limit_mb` qui empêche de mettre en cache des données au delà d'une taille limite ; par défaut 50mb, pour ne pas fâcher *github*.
+-   une heuristique maline trouve le fichier source même si il est caché, ce qui augmente la portabilité des fichiers sources.
 
 ## autres fonctionalités
 
@@ -77,6 +80,6 @@ Par rapport à `memoise::memoise()`, `sourcoise()` utilise systématiquement un 
 
 Seront bientôt implémentés :
 
--   la possibiité de stocker les données cachées hors de *github* et d'utiliser `{pins}` pour les partager (mais au prix d'un accès plus lent).
+-   la possibiité de stocker les données cachées hors de *github* et d'utiliser `{pins}` pour les partager (mais au prix d'un accès plus lent peut être).
 
 -   et éventuellement une interface *shiny* de mise à jour (*gui* pour `sourcoise_refresh()`)

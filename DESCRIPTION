@@ -1,7 +1,7 @@
 Package: sourcoise
 Type: Package
 Title: Exec a script, like source, and cache results on disk
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: c(
     person(
       "Xavier", "Timbeau",
@@ -31,7 +31,8 @@ Imports:
   glue,
   rprojroot,
   rlang,
-  scales
+  scales,
+  logger
 Suggests:
   ofce,
   knitr
