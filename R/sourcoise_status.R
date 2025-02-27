@@ -17,44 +17,42 @@ sourcoise_status <- function(
     cache_rep = NULL,
     quiet = TRUE,
     root = NULL,
-    src_in = getOption("ofce.source_data.src_in") %||% "project",
+    src_in = getOption("sourcoise.src_in") %||% "project",
     prune = TRUE) {
+
   root <- try_find_root(root, src_in)
-  caches <- list()
-  if(src_in == "project") {
-    if(is.null(cache_rep))
-      cache_rep <- fs::path_join(c(root, ".data"))
+  a_caches <- list()
+  z_caches <- list()
+  if(is.null(cache_rep))
+    cache_rep <- fs::path_join(c(root, ".data"))
 
-    if(!quiet)
-      cli::cli_alert_info("répertoire cache {.file {cache_rep}}")
+  if(!quiet)
+    cli::cli_alert_info("répertoire cache {.file {cache_rep}}")
 
-    if(fs::dir_exists(cache_rep))
-      caches <- fs::dir_ls(path = cache_rep, glob = "*.json", recurse = TRUE)
+  if(fs::dir_exists(cache_rep))
+    a_caches <- fs::dir_ls(path = cache_rep, glob = "*.json", recurse = TRUE)
 
-    if(length(caches)>0)
-      caches <- rlang::set_names(list(caches), root)
-  }
+  if(length(a_caches)>0)
+      a_caches <- rlang::set_names(list(a_caches), root)
 
-  if(src_in %in% c("wd","file")) {
-    qmds <- fs::dir_ls(root, glob = "*.qmd", recurse = TRUE)
-    qmds_folders <- unique(qmds |> fs::path_dir())
-    caches <- list()
+  qmds <- fs::dir_ls(root, glob = "*.qmd", recurse = TRUE)
+  qmds_folders <- unique(qmds |> fs::path_dir()) |> setdiff(root)
 
-    folders <- qmds_folders |>
-      purrr::discard(~stringr::str_detect(.x, "^_|/_")) |>
-      purrr::keep(~fs::dir_exists(fs::path_join(c(.x, ".data"))))
-    folders <- rlang::set_names(folders)
+  folders <- qmds_folders |>
+    purrr::discard(~stringr::str_detect(.x, "^_|/_")) |>
+    purrr::keep(~fs::dir_exists(fs::path_join(c(.x, ".data"))))
+  folders <- rlang::set_names(folders)
 
-    if(length(folders)>0)
-      caches <- purrr::imap(
-        folders,
-        ~fs::dir_ls(path = fs::path_join(c(.x, ".data")), glob = "*.json", recurse = TRUE))
-  }
+  if(length(folders)>0)
+    z_caches <- purrr::imap(
+      folders,
+      ~fs::dir_ls(path = fs::path_join(c(.x, ".data")), glob = "*.json", recurse = TRUE))
+
+  caches <- c(a_caches, z_caches)
 
   if(length(caches)>0) {
     cached <- purrr::map_dfr(names(caches), \(root) {
       purrr::map_dfr(caches[[root]], ~{
-
         dd <- jsonlite::read_json(.x) |>
           purrr::map( ~if(length(.x)>1) purrr::list_flatten(.x) else unlist(.x))
         valid <- valid_meta4meta(dd, root = root)
@@ -71,12 +69,12 @@ sourcoise_status <- function(
           lapse = dd$lapse |> as.character(),
           wd = dd$wd,
           args = list(dd$args),
-          where = .x,
+          json_file = fs::path_rel(.x, root),
           qmd_file = list(dd$qmd_file),
           src_in = dd$src_in,
           data_file = dd$data_file,
           root =  dd$root %||% ".",
-          src_hash = dd$hash,
+          src_hash = dd$src_hash,
           track_hash = list(dd$track_hash),
           track = list(dd$track),
           args_hash = dd$args_hash,
@@ -86,8 +84,8 @@ sourcoise_status <- function(
       dplyr::arrange(src, dplyr::desc(date))
     if(prune)
       cached <- cached |>
-        dplyr::group_by(src) |>
-        dplyr::filter(valid|index == max(index)) |>
+        dplyr::group_by(tolower(src)) |>
+        dplyr::filter(date == max(date)) |>
         dplyr::ungroup()
     return(cached)
   } else {

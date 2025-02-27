@@ -9,7 +9,9 @@
     sourcoise.lapse = "never",
     sourcoise.src_in = "project",
     sourcoise.wd = "file",
-    sourcoise.unfreeze = FALSE
+    sourcoise.unfreeze = FALSE,
+    sourcoise.log = "OFF",
+    sourcoise.grow_cache = 3
     )
 
   toset <- !(names(op.sourcoise) %in% names(op))

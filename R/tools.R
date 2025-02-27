@@ -33,23 +33,25 @@ valid_meta4meta <- function(meta, root) {
   return(meta)
 }
 
-valid_metas <- function(metas, src_hash, arg_hash, track_hash, lapse, root) {
+valid_metas <- function(ctxt) {
 
   meme_null <- function(x, n, def = 0) ifelse(is.null(x[[n]]), def, x[[n]])
 
-  metas <- purrr::map(metas, ~{
-    .x$valid_src <- meme_null(.x,"src_hash")==src_hash
-    .x$valid_arg <- meme_null(.x,"arg_hash", digest::digest(list()))==arg_hash
-    .x$valid_track <- setequal(.x$track_hash, track_hash)
-    .x$data_exists <- fs::file_exists(fs::path_join(c(root, .x$data_file)))
-    if(lapse != "never") {
-      alapse <- what_lapse(lapse)
+  ctxt$meta_datas <- purrr::map(ctxt$meta_datas, ~{
+    .x$valid_src <- meme_null(.x,"src_hash")==ctxt$src_hash
+    .x$valid_arg <- meme_null(.x,"arg_hash", digest::digest(list()))==ctxt$arg_hash
+    .x$valid_track <- setequal(.x$track_hash, ctxt$track_hash)
+    .x$data_exists <- fs::file_exists(fs::path_join(c(ctxt$root, .x$data_file)))
+    if(ctxt$lapse != "never") {
+      alapse <- what_lapse(ctxt$lapse)
       .x$valid_lapse <- lubridate::now() - lubridate::as_datetime(.x[["date"]]) <= alapse
     } else
       .x$valid_lapse <- TRUE
     .x$valid <- .x$valid_src & .x$valid_arg & .x$valid_track & .x$valid_lapse & .x$data_exists
     .x
   })
+
+  return(ctxt)
 }
 
 hash_file <- function(path) {
@@ -102,17 +104,19 @@ get_ddatas <- function(name, data_rep) {
   res
 }
 
-exec_source <- function(src, wd, args = list()) {
+exec_source <- function(ctxt) {
+
   safe_source <- purrr::safely(\(src, args) {
     args <- args
     res <- suppressMessages(
       suppressWarnings( base::source(src, local=TRUE) ) )
     res
   })
+
   current_wd <- getwd()
-  setwd(wd)
+  setwd(ctxt$exec_wd)
   start <- Sys.time()
-  res <- safe_source(src, args = args)
+  res <- safe_source(ctxt$src, args = ctxt$args)
   timing <- as.numeric(Sys.time() - start)
   setwd(current_wd)
   if(!is.null(res$error)) {
@@ -121,23 +125,36 @@ exec_source <- function(src, wd, args = list()) {
                            {.err {res$error}}")
     return(list(ok=FALSE, error = res$error))
   }
+  if(!ctxt$quiet)
+    cli::cli_alert_sucess("Source ex\u00e9cut\u00e9")
+
   list(
     data = res$result$value,
     timing = timing,
     date = lubridate::now(),
     size = lobstr::obj_size(res$result$value) |> as.numeric(),
-    args = args,
-    ok = TRUE
-  )
+    args =ctxt$args,
+    lapse = ctxt$lapse,
+    src = ctxt$relname,
+    src_hash = ctxt$src_hash,
+    arg_hash = ctxt$arg_hash,
+    track_hash = ctxt$track_hash,
+    track = ctxt$track,
+    wd = ctxt$wd,
+    qmd_file = ctxt$new_qmds,
+    src_in = ctxt$src_in,
+    ok = "exec",
+    root = fs::path_rel(ctxt$root, ctxt$paths$project_path) )
 }
 
-cache_data <- function(data, cache_rep, name, root, uid="00000000", nocache = FALSE) {
-  pat <- stringr::str_c(name, "_([a-f0-9]{8})-([0-9]+)\\.json")
+cache_data <- function(data, ctxt) {
+  pat <- stringr::str_c(ctxt$name, "_([a-f0-9]{8})-([0-9]+)\\.json")
   files <- tibble::tibble()
-  if(fs::dir_exists(cache_rep)) {
-    files <- fs::dir_info(path = cache_rep, regexp = pat) |>
+
+  if(fs::dir_exists(ctxt$full_cache_rep)) {
+    files <- fs::dir_info(path = ctxt$full_cache_rep, regexp = pat) |>
       dplyr::mutate(uid = stringr::str_extract(path, pat, group=1),
-             cc = stringr::str_extract(path, pat, group=2) |> as.numeric())
+                    cc = stringr::str_extract(path, pat, group=2) |> as.numeric())
   }
   cc <- 1
   exists <- FALSE
@@ -152,31 +169,30 @@ cache_data <- function(data, cache_rep, name, root, uid="00000000", nocache = FA
     last_data_hash <- last_m_data$data_hash
     if(!is.null(last_data_hash)) {
       if(data_hash == last_data_hash) {
-        cc <- last_fn$cc
         exists <- TRUE
       }
-      else
-        cc <- max(files$cc, na.rm = TRUE) + 1
-    } else
-      cc <- max(files$cc, na.rm = TRUE) + 1
+    }
+    cc <- max(files$cc, na.rm = TRUE) + 1
   }
-  if(!fs::dir_exists(cache_rep))
-    fs::dir_create(cache_rep, recurse=TRUE)
+  if(!fs::dir_exists(ctxt$full_cache_rep))
+    fs::dir_create(ctxt$full_cache_rep, recurse=TRUE)
   data$data_hash <- data_hash
-  data$id <- stringr::str_c(uid, "-", cc)
-  data$uid <- uid
+  data$id <- stringr::str_c(ctxt$uid, "-", cc)
+  data$uid <- ctxt$uid
   data$cc <- cc
-  fnm <- fs::path_join(c(cache_rep, stringr::str_c(name, "_", data$id))) |> fs::path_ext_set("json")
-  if(!nocache) {
+  fnm <- fs::path_join(c(ctxt$root_cache_rep,
+                         stringr::str_c(ctxt$name, "_", data$id))) |> fs::path_ext_set("json")
+  if(!ctxt$nocache) {
     if(!exists) {
-      fnd <- fs::path_join(c(cache_rep, stringr::str_c(name, "_", data$id))) |> fs::path_ext_set("qs")
+      fnd <- fs::path_join(c(ctxt$root_cache_rep,
+                             stringr::str_c(ctxt$name, "_", data$id))) |> fs::path_ext_set("qs")
       les_datas <- data$data
       qs::qsave(les_datas, file = fnd)
     } else
       fnd <- last_m_data$data_file
     les_metas <- data
     les_metas$data <- NULL
-    les_metas$data_file <- fs::path_rel(fnd, root)
+    les_metas$data_file <- fs::path_rel(fnd, ctxt$root)
     les_metas$file <- NULL
     jsonlite::write_json(les_metas, path = fnm)
   }

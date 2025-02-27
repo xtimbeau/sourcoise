@@ -60,6 +60,8 @@
 #' @param root (character) force le root (usage non recommandé)
 #' @param nocache (boléen) n'enregistre pas le cache même si nécessaire
 #' @param cache_rep (character) défaut .data sauf usage particulier
+#' @param log ("OFF" par défaut) niveau de cache (voir `logger::log_treshold()`)
+#' @param grow_cache ("Inf" par défaut) stratégie de cache
 #'
 #' @family sourcoise
 #' @return data (list ou ce que le code retourne)
@@ -80,217 +82,76 @@ sourcoise <- function(
     exec_wd = NULL,
     cache_rep = NULL,
     root = NULL,
-    quiet = TRUE, nocache = FALSE) {
+    quiet = TRUE,
+    nocache = FALSE,
+    log = getOption("sourcoise.log"),
+    grow_cache = getOption("sourcoise.grow_cache")) {
 
-  if(is.null(args))
-    args <- list()
+  ctxt <- setup_context(
+    path = path,
+    root = root,
+    src_in = src_in,
+    cache_rep = cache_rep,
+    exec_wd = exec_wd,
+    wd = wd,
+    track = track,
+    args = args,
+    lapse = lapse,
+    nocache = nocache,
+    quiet = quiet)
 
-  if(is.null(track))
-    track <- list()
-
-  # on trouve le fichier
-  name <- remove_ext(path)
-  paths <- find_project_root()
-  root <- try_find_root(root, src_in)
-
-  if(!quiet)
-    cli::cli_alert_info("root: {root}")
-  uid <- digest::digest(root, algo = "crc32")
-  if(!quiet)
-    cli::cli_alert_info("uid: {uid}")
-  if(is.null(cache_rep))
-    root_cache_rep <- fs::path_join(c(root, ".data")) |> fs::path_norm()
-  else
-    root_cache_rep <- fs::path_abs(cache_rep)
-  if(!quiet)
-    cli::cli_alert_info("cache: {root_cache_rep}")
-
-
-  src <- find_src(root, name)
-  if(is.null(src)) {
-    src <- try_find_src(root, name)
-    if(length(src)==0) {
-      if(!quiet)
-        cli::cli_alert_warning("Le fichier n'existe pas en .r ou .R, vérifier le chemin")
-      return(NULL)
-    }
-    if(length(src)>1) {
-      if(!quiet)
-        cli::cli_alert_warning("Plusieurs fichiers src sont possibles")
-      l_src <- purrr::map(src, length)
-      src <- src[[which.max(l_src)]]
-    }
-  }
-
-  if(!quiet)
-    cli::cli_alert_info("{.file {src}} comme source")
-
-  if(length(check_return(src))==0) {
-    cli::cli_alert_danger("Pas de return() d\u00e9t\u00e9ct\u00e9 dans le fichier {.file {src}}")
-  }
-
-  if(length(check_return(src))>1) {
-    if(!quiet)
-      cli::cli_alert_info("Plusieurs return() dans le fichier {src}, attention !")
-  }
-
-  basename <- fs::path_file(name)
-  relname <- fs::path_rel(src, root)
-  reldirname <- fs::path_dir(relname)
-  full_cache_rep <- fs::path_join(c(root_cache_rep, reldirname)) |>
-    fs::path_norm()
-  qmd_path <- paths$doc_path
-  if(Sys.getenv("QUARTO_DOCUMENT_PATH") != "") {
-    qmd_file <- fs::path_join(c(qmd_path, knitr::current_input())) |>
-      fs::path_ext_set("qmd") |>
-      fs::path_norm()
-  } else {
-    qmd_file <- NULL
-  }
-
-  if(is.null(exec_wd)) {
-    exec_wd <- getwd()
-    if(wd=="project")
-      exec_wd <- root
-    if(wd=="file")
-      exec_wd <- fs::path_dir(src)
-    if(wd=="qmd") {
-      if(!is.null(qmd_path)) {
-        exec_wd <- qmd_path
-      } else {
-        cli::cli_alert_warning("Pas de document identifié, probablement, non exectu\u00e9 de quarto")
-        exec_wd <- fs::path_dir(src)
-      }
-    }
-  }
+  startup_log(log, ctxt)
 
   if(is.null(force_exec)) force <- FALSE else if(force_exec=="TRUE") force <- TRUE else force <- FALSE
   if(is.null(prevent_exec)) prevent <- FALSE else if(prevent_exec=="TRUE") prevent <- TRUE else prevent <- FALSE
-
-  src_hash <- hash_file(src)
-  arg_hash <- digest::digest(args, "crc32")
-  track_hash <- 0
-
-  if(length(track) > 0) {
-    track_files <- purrr::map(track, ~fs::path_join(c(root, .x)))
-    ok_files <- purrr::map_lgl(track_files, fs::file_exists)
-    if(any(ok_files))
-      track_hash <- hash_file(as.character(track_files[ok_files]))
-    else {
-      cli::cli_alert_warning("Les fichiers de track sont invalides, v\u00e9rifiez les chemins")
-    }
-  }
-  meta_datas <- get_mdatas(basename, full_cache_rep)
-  qmds <- purrr::map(meta_datas, "qmd_file") |>
-    purrr::list_flatten() |>
-    purrr::discard(is.null) |>
-    unlist() |>
-    unique()
-  new_qmds <- unique(c(qmds, qmd_file))
   if(force&!prevent) {
-    our_data <- exec_source(src, exec_wd, args)
-    if(our_data$ok) {
-      our_data$lapse <- lapse
-      our_data$src <- relname
-      our_data$src_hash <- src_hash
-      our_data$arg_hash <- arg_hash
-      our_data$track_hash <- track_hash
-      our_data$track <- track
-      our_data$wd <- wd
-      our_data$qmd_file <- new_qmds
-      our_data$src_in <- src_in
-      our_data$ok <- "exec"
-      our_data$root <- fs::path_rel(root, paths$project_path)
-
-      our_data <- cache_data(our_data, cache_rep = full_cache_rep, root = root, name = basename, uid = uid)
-      if(!quiet)
-        cli::cli_alert_warning("Ex\u00e9cution du source")
-
+    our_data <- exec_source(ctxt)
+    if(our_data$ok=="exec") {
+      our_data <- cache_data(our_data, ctxt)
+      prune_cache(ctxt, grow_cache)
+      logger::log_success("force exec réussi ({scales::label_bytes()(our_data$size)})")
       if(metadata) {
         return(our_data)
       } else {
         return(our_data$data)
       }
     } else {
-      if(!quiet)
-        cli::cli_alert_warning("le fichier {src} retourne une erreur, on cherche dans le cache")
+      logger::log_warning("force exec échoué")
     }
   }
 
-  meta_datas <- valid_metas(meta_datas, src_hash = src_hash, arg_hash = arg_hash,
-                            track_hash = track_hash, lapse = lapse, root = root)
+  ctxt <- valid_metas(ctxt)
 
+  good_datas <- ctxt$meta_datas |> purrr::keep(~.x$valid)
 
-  good_datas <- meta_datas |> purrr::keep(~.x$valid)
   if(length(good_datas)==0) {
     if(prevent) {
-      if(!quiet)
-        cli::cli_alert_warning("Pas de donn\u00e9es en cache et pas d'ex\u00e9cution")
+      logger::log_warnings("Pas de données en cache et exécution suspendue, NULL retourné")
       return(NULL)
     }
-    our_data <- exec_source(src, exec_wd, args)
-    if(our_data$ok) {
-      our_data$lapse <- lapse
-      our_data$src <- relname
-      our_data$src_hash <- src_hash
-      our_data$qmd_file <- new_qmds
-      our_data$arg_hash <- arg_hash
-      our_data$track_hash <- track_hash
-      our_data$track <- track
-      our_data$wd <- wd
-      our_data$src_in <- src_in
-      our_data$ok <- "exec"
-      our_data$root <- fs::path_rel(root, paths$project_path)
-
-      our_data <- cache_data(our_data, cache_rep = full_cache_rep, name = basename, uid = uid, root = root)
-      if(!quiet)
-        cli::cli_alert_warning("Ex\u00e9cution du source")
-
+    our_data <- exec_source(ctxt)
+    if(our_data$ok=="exec") {
+      our_data <- cache_data(our_data, ctxt)
+      prune_cache(ctxt, grow_cache)
+      logger::log_success("Pas de cache valide, exécution réussie ({scales::label_bytes()(our_data$size)})")
       if(metadata) {
         return(our_data)
       } else {
         return(our_data$data)
       }
     } else {
+      logger::log_warning("le fichier {ctxt$src} retourne une erreur, et pas de cache trouvé, NULL retourné")
       return(NULL)
     }
   }
 
-  dates <- purrr::map(good_datas, "date") |>
-    unlist() |>
-    lubridate::as_datetime()
-  mdd <- which.max(dates)
-  good_good_data <- good_datas[[mdd]]
-  fnm <- names(good_datas)[[mdd]]
-  fnd <- fs::path_join(c(root, good_good_data$data_file))
+  one_gooddata <- pick_gooddata(good_datas, ctxt)
+  prune_cache(ctxt, grow_cache)
+  logger::log_success("Données en cache trouvées ({scales::label_bytes()(one_gooddata$size)})")
 
-  if(!quiet)
-    cli::cli_alert_warning("M\u00e9tadonnées lues dans {.file {fnd}}")
-
-  ggd_lapse <- good_good_data$lapse %||% "never"
-  ggd_wd <- good_good_data$wd %||% "file"
-  ggd_qmds <- setequal(good_good_data$qmd_file, new_qmds)
-  ggd_track <- setequal(good_good_data$track, track)
-  ggd_src_in <- src_in == good_good_data$src_in %||% "project"
-
-  if(ggd_lapse != lapse | ggd_wd != wd | !ggd_qmds | !ggd_track | !ggd_src_in) {
-    newmdata <- good_good_data
-    newmdata$file <- NULL
-    newmdata$lapse <- lapse
-    newmdata$wd <- wd
-    newmdata$qmd_file <- new_qmds
-    newmdata$track <- track
-    newmdata$src_in <- src_in
-    jsonlite::write_json(newmdata, path = fnm)
-  }
-  if(!quiet)
-    cli::cli_alert_warning("Donn\u00e9es en cache")
-
-  good_good_data$ok <- "cache"
-  good_good_data$data <- qs::qread(fnd)
   if(metadata) {
-    return(good_good_data)
+    return(one_gooddata)
   } else {
-    return(good_good_data$data)
+    return(one_gooddata$data)
   }
 }
