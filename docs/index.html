@@ -57,12 +57,12 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="mise-en-cache-avec-sourcoise">mise en cache avec sourcoise<a class="anchor" aria-label="anchor" href="#mise-en-cache-avec-sourcoise"></a>
 </h1></div>
-<p><code>{sourcoise}</code> est un package qui fournit des outils pour exécuter un script R et mettre en cache les résultats. Le but est de pouvoir exécuter très rapidement un code qui accède à des fichiers ou une API et qui, en l’absence de mises à jour, produit toujours le même résultat. Lorsque l’API est suceptible de bloquer (ou si on a pas de connection internet), cela évite de bloquer le rendu d’un document ou d’un site quarto.</p>
+<p><a href="https://xtimbeau.github.io/sourcoise">sourcoise</a> est un package qui fournit des outils pour exécuter un script R et mettre en cache les résultats. Le but est de pouvoir exécuter très rapidement un code qui accède à des fichiers ou une API et qui, en l’absence de mises à jour, produit toujours le même résultat. Lorsque l’API est suceptible de bloquer (ou si on a pas de connection internet), cela évite de bloquer le rendu d’un document ou d’un site quarto.</p>
 <p>Accessoirement, cela oblige à isoler le code du script qui récupère les données dans un fichier afin d’améliorer la reproductibilité. <code><a href="reference/sourcoise.html">sourcoise()</a></code> peut être appelé dans un <code><a href="reference/sourcoise.html">sourcoise()</a></code> ce qui permet la modularité. Il fournit des outils pour vérifier le cache et le rafraichir à la demande.</p>
 <div class="section level2">
 <h2 id="installation">installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>Pour installer <code>{sourcoise}</code> il faut le faire depuis <em>github</em> :</p>
+<p>Pour installer <a href="https://xtimbeau.github.io/sourcoise">sourcoise</a> il faut le faire depuis <em>github</em> :</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_gitub</span><span class="op">(</span><span class="st">"xtimbeau/sourcoise"</span><span class="op">)</span></span>
 <span></span>
@@ -79,7 +79,12 @@
 <li><p>des scripts <code>R</code>, dans le même dossier ou ailleurs, qui produisent les données à partir de calculs, d’interrogation de bases externes ou d’API. Des objets plus complexes peuvent être renvoyés, comme par exemple des listes d’objets, des graphiques, des tableaux, des fonctions fabriquant des tableaux ou des graphiques, etc…</p></li>
 <li><p>lorsqu’un cache est disponible et valide (voir plus bas) il est utilisé et la fonction répond très rapidement suivant la taille des données (0.006 secondes pour des données de 2Mb).</p></li>
 <li><p>tout cela est conçu pour fonctionner avec <em>github</em> et donc partager le cache entre utilisateurs d’un même dépot. On peut donc mettre à jour les données sur une machine et les utiliser sur une autre.</p></li>
+<li><p>une dernière chose, <code><a href="reference/sourcoise.html">sourcoise()</a></code> est doté d’une heuristique maline trouve le fichier source même si il est caché (i.e. que le chemin est approximatif, ce qui déclenche une erreur normalement, mais là ça passe), ce qui augmente la portabilité des fichiers sources et facilite l’orgnisation d’un projet. Bien sûr, en cas d’ambiguité, <code><a href="reference/sourcoise.html">sourcoise()</a></code> prévient.</p></li>
 </ul>
+</div>
+<div class="section level2">
+<h2 id="un-exemple">un exemple<a class="anchor" aria-label="anchor" href="#un-exemple"></a>
+</h2>
 <p>Par exemple, si le script <code>R</code> <code>prix_insee.r</code> utilise l’API de l’INSEE pour télécharger l’indice des prix à la consommation, et si il se termine par l’instruction <code>return(ipc)</code>, alors <code>sourcoise("prix_insee.r")</code> renvoie toujours les données correspondantes, et si elles sont en cache, le retour est très rapide et ne nécessite pas d’accès à internet.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://pyr-opendatafr.github.io/R-Insee-Data/" class="external-link">insee</a></span><span class="op">)</span></span>
@@ -105,7 +110,7 @@
 <span><span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>ipcha <span class="op">=</span> <span class="va">ipcha</span>, ipchm <span class="op">=</span> <span class="va">ipchm</span>, ipch <span class="op">=</span> <span class="va">ipch</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Dans le <code>qmd</code> on a alors un chunk <code>r</code> :</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">sourcoise</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://xtimbeau.github.io/sourcoise">sourcoise</a></span><span class="op">)</span></span>
 <span><span class="va">ipc</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sourcoise.html">sourcoise</a></span><span class="op">(</span><span class="st">"prix_insee.r"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">ipc</span><span class="op">$</span><span class="va">ipch</span><span class="op">)</span> <span class="op">+</span> <span class="va">...</span></span></code></pre></div>
 <p>Le stockage des données a une faible empreinte disque (elles ne servent qu’à construire un graphique, il y a donc une série ou deux, trois dans cet exemple), ce qui ne pose pas de problème pour <em>github</em>. Si l’API de l’INSEE est en panne, alors le cache sera utilisé. On peut réutiliser cette instruction de nombreuses fois, puisqu’elle ne sera exécuté réellement qu’une fois et que les autres fois, c’est le cache qui est utilisé.</p>
@@ -115,7 +120,7 @@
 <h2 id="par-rapport-à-memoise">par rapport à <em>memoise</em>
 <a class="anchor" aria-label="anchor" href="#par-rapport-%C3%A0-memoise"></a>
 </h2>
-<p>Par rapport à <code><a href="https://memoise.r-lib.org/reference/memoise.html" class="external-link">memoise::memoise()</a></code>, <code><a href="reference/sourcoise.html">sourcoise()</a></code> utilise systématiquement un cache, localisé dans le projet R ou quarto et destiné à être synchronisé par github. Il s’applique à un script et non à une fonction et utilise des règles d’invalidation du cache légèrement différentes :</p>
+<p><code><a href="https://memoise.r-lib.org/reference/memoise.html" class="external-link">memoise::memoise()</a></code> propose une solution assez proche, avec la possibilité de partager le cache entre session. Par rapport à <code><a href="https://memoise.r-lib.org/reference/memoise.html" class="external-link">memoise::memoise()</a></code>, <code><a href="reference/sourcoise.html">sourcoise()</a></code> utilise systématiquement un cache sur disque, persistant, localisé dans le projet R ou quarto et destiné à être synchronisé par <em>github</em>. Il s’applique à un script et non à une fonction et utilise des règles d’invalidation du cache différentes :</p>
 <ul>
 <li>le cache est conçu principalement pour être passé entre session. Il est utilisé lors du rendu d’un <code>.qmd</code> et il est transportable avec les fichiers associés.</li>
 <li>le cache est invalidé si le script est modifié (similaire à l’invalidation par le corps de la fonction dans <code><a href="https://memoise.r-lib.org/reference/memoise.html" class="external-link">memoise::memoise()</a></code>).</li>
@@ -125,7 +130,6 @@
 <li>on peut également forcer l’invalidation du cache par un paramètre passé à la fonction, éventuellement un paramètre global ou en utilisant la fonction <code><a href="reference/sourcoise_refresh.html">sourcoise_refresh()</a></code>. Ce dernier point est une différence important par rapport à <code><a href="https://memoise.r-lib.org/reference/memoise.html" class="external-link">memoise::memoise()</a></code> et permet une exécution régulière du rafraichissement du cache.</li>
 <li>on peut <em>logger</em> les accès à <code><a href="reference/sourcoise.html">sourcoise()</a></code> ce qui permet de comprendre pourquoi le cache n’est pas invalidé et quels sont fichiers qui ont déclenché <code><a href="reference/sourcoise.html">sourcoise()</a></code>. Un dossier <code>.logs</code> est ajouté au dossier du projet.</li>
 <li>on peut limiter la taille du cache, par le paramètre <code>grow_cache</code> qui contraint l’historique du cache et par <code>limit_mb</code> qui empêche de mettre en cache des données au delà d’une taille limite ; par défaut 50mb, pour ne pas fâcher <em>github</em>.</li>
-<li>une heuristique maline trouve le fichier source même si il est caché (i.e. que le chemin est approximatif, ce qui déclenche une erreur), ce qui augmente la portabilité des fichiers sources.</li>
 </ul>
 </div>
 <div class="section level2">

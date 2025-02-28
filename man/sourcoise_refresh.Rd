@@ -11,8 +11,7 @@ sourcoise_refresh(
   hash = TRUE,
   unfreeze = TRUE,
   quiet = TRUE,
-  init_qmd = TRUE,
-  root = NULL
+  init_qmd = TRUE
 )
 }
 \arguments{
@@ -42,6 +41,7 @@ Exécute les sources sélectionnés
 Other sourcoise: 
 \code{\link{sourcoise}()},
 \code{\link{sourcoise_clear}()},
+\code{\link{sourcoise_reset}()},
 \code{\link{sourcoise_status}()}
 }
 \concept{sourcoise}

@@ -5,7 +5,6 @@
 \title{Etat du cache de sourcoise}
 \usage{
 sourcoise_status(
-  cache_rep = NULL,
   quiet = TRUE,
   root = NULL,
   src_in = getOption("sourcoise.src_in") \%||\% "project",
@@ -13,8 +12,6 @@ sourcoise_status(
 )
 }
 \arguments{
-\item{cache_rep}{le répertoire de cache -- à ne pas utiliser sauf expert}
-
 \item{quiet}{(boléen) TRUE par défaut, ne dit rien}
 
 \item{root}{force le root -- à ne pas utiliser sauf expert}
@@ -33,6 +30,7 @@ Donne des informations sur le cache de source_data sous la forme d'un tibble
 Other sourcoise: 
 \code{\link{sourcoise}()},
 \code{\link{sourcoise_clear}()},
-\code{\link{sourcoise_refresh}()}
+\code{\link{sourcoise_refresh}()},
+\code{\link{sourcoise_reset}()}
 }
 \concept{sourcoise}

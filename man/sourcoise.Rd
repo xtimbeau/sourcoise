@@ -48,7 +48,7 @@ sourcoise(
 
 \item{exec_wd}{(character) NULL par défaut sauf usage particulier}
 
-\item{cache_rep}{(character) défaut .data sauf usage particulier}
+\item{cache_rep}{(character) défaut .sourcoise sauf usage particulier}
 
 \item{root}{(character) force le root (usage non recommandé)}
 
@@ -111,6 +111,7 @@ En donnant des fichers à suivre par `track`, on peut déclencher l'exécution d
 Other sourcoise: 
 \code{\link{sourcoise_clear}()},
 \code{\link{sourcoise_refresh}()},
+\code{\link{sourcoise_reset}()},
 \code{\link{sourcoise_status}()}
 }
 \concept{sourcoise}

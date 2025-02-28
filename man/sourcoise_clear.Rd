@@ -27,6 +27,7 @@ Vide le cache
 Other sourcoise: 
 \code{\link{sourcoise}()},
 \code{\link{sourcoise_refresh}()},
+\code{\link{sourcoise_reset}()},
 \code{\link{sourcoise_status}()}
 }
 \concept{sourcoise}
