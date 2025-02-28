@@ -15,7 +15,6 @@ Description: provide a function that behave nearly as base::source() but provide
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.2
 URL: https://xtimbeau.github.io/sourcoise
 Imports:
   fs,
@@ -33,7 +32,15 @@ Imports:
   rprojroot,
   rlang,
   scales,
-  logger
+  logger,
+  quarto
 Suggests:
   ofce,
   knitr
+VignetteBuilder:
+  quarto
+Config/testthat/edition: 3
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+SystemRequirements: Quarto command line tools
+    (https://github.com/quarto-dev/quarto-cli).

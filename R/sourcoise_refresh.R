@@ -23,11 +23,12 @@ sourcoise_refresh <- function(
     hash = TRUE,
     unfreeze = TRUE,
     quiet = TRUE,
-    init_qmd = TRUE) {
+    init_qmd = TRUE,
+    root = root) {
 
   start <- Sys.time()
   if(is.null(what))
-    what <- sourcoise_status(cache_rep = cache_rep, root = root, quiet = quiet)
+    what <- sourcoise_status(root = root, quiet = quiet)
 
   if(!force_exec)
     what <- what |>

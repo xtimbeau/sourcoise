@@ -17,14 +17,15 @@ sourcoise_status <- function(
     root = NULL,
     src_in = getOption("sourcoise.src_in") %||% "project",
     prune = TRUE) {
+
   root <- try_find_root(root, src_in)
   caches_reps <- fs::dir_ls(path = root, regex = "\\.sourcoise$", all = TRUE, recurse = TRUE)
   roots <- fs::path_dir(caches_reps)
-  caches_reps <- set_names(caches_reps, roots)
+  caches_reps <- rlang::set_names(caches_reps, roots)
 
-  jsons <- map(caches_reps,
+  jsons <- purrr::map(caches_reps,
                 ~fs::dir_ls(.x, glob = "*.json", recurse = TRUE))
-  qs2 <- map(caches_reps,
+  qs2 <- purrr::map(caches_reps,
              ~fs::dir_ls(.x, glob = "*.qs2", recurse = TRUE))
 
   if(length(roots)>0) {
@@ -35,7 +36,7 @@ sourcoise_status <- function(
         valid <- valid_meta4meta(dd, root = a_root)
 
         tibble::tibble(
-          src = dd$src,
+          src = tolower(dd$src),
           date = lubridate::as_datetime(dd$date),
           valid = valid$valid,
           id = dd$id,
@@ -66,7 +67,6 @@ sourcoise_status <- function(
 
     if(prune)
       cached <- cached |>
-        dplyr::mutate(src = tolower(src)) |>
         dplyr::group_by(src) |>
         dplyr::filter(date == max(date)) |>
         dplyr::ungroup()

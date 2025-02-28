@@ -11,7 +11,8 @@ sourcoise_refresh(
   hash = TRUE,
   unfreeze = TRUE,
   quiet = TRUE,
-  init_qmd = TRUE
+  init_qmd = TRUE,
+  root = root
 )
 }
 \arguments{
@@ -19,17 +20,17 @@ sourcoise_refresh(
 
 \item{cache_rep}{le répertoire de cache si il n'est pas évident}
 
-\item{force_exec}{(boléen) Si `TRUE` alors le code est exécuté (FALSE par défaut)}
+\item{force_exec}{(boléen) Si \code{TRUE} alors le code est exécuté (FALSE par défaut)}
 
-\item{hash}{(boléen) (`TRUE` par défaut) vérifie les hashs}
+\item{hash}{(boléen) (\code{TRUE} par défaut) vérifie les hashs}
 
-\item{unfreeze}{(boléen) (`TRUE` par défaut) essaye de unfreezé et uncaché les qmd dont les données ont été rafraichies}
+\item{unfreeze}{(boléen) (\code{TRUE} par défaut) essaye de unfreezé et uncaché les qmd dont les données ont été rafraichies}
 
 \item{quiet}{reste silencieux}
 
-\item{init_qmd}{(`TRUE` par défaut) exécute `ofce::init_qmd()`}
+\item{init_qmd}{(\code{TRUE} par défaut) exécute \code{ofce::init_qmd()}}
 
-\item{root}{(`NULL` par défaut) essaye de trouver le root à partir du point d'exécution ou utilise celui fournit}
+\item{root}{(\code{NULL} par défaut) essaye de trouver le root à partir du point d'exécution ou utilise celui fournit}
 }
 \value{
 la liste des sources exécutés

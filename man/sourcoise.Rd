@@ -56,21 +56,21 @@ sourcoise(
 
 \item{nocache}{(boléen) n'enregistre pas le cache même si nécessaire}
 
-\item{log}{("OFF" par défaut) niveau de cache (voir `logger::log_treshold()`)}
+\item{log}{("OFF" par défaut) niveau de cache (voir \code{logger::log_treshold()})}
 
 \item{grow_cache}{("Inf" par défaut) stratégie de cache}
 
-\item{limit_mb}{(50 par défaut) limite le fichier de données à x mb (pour github). Si au dessus de la limite, **pas de cache**.}
+\item{limit_mb}{(50 par défaut) limite le fichier de données à x mb (pour github). Si au dessus de la limite, \strong{pas de cache}.}
 }
 \value{
 data (list ou ce que le code retourne)
 }
 \description{
-Cette fonction s'utilise presque comme `base::source()` et permet d'en accélérer l'exécution par le cache des données. `source_data()` est un alias de `sourcoise()`.
+Cette fonction s'utilise presque comme \code{base::source()} et permet d'en accélérer l'exécution par le cache des données. \code{source_data()} est un alias de \code{sourcoise()}.
 }
 \details{
 Le fichier source est donné en entrée. Le chemin est relatif au projet, mais si il n'est pas trouvé dans le projet, il est cherché en partant de la racine.
-Si le paramètre `src_in` est mis à `"file"`, alors le source est cherché à partir du qmd (ou du wd si il n'y pas encore de qmd) et les données sont stockées à ce niveau.
+Si le paramètre \code{src_in} est mis à \code{"file"}, alors le source est cherché à partir du qmd (ou du wd si il n'y pas encore de qmd) et les données sont stockées à ce niveau.
 Ce cas correspond donc à des dossiers qui ne partagent pas de code (le blog de l'OFCE), alors que l'autre cas correspond à des codes pouvant être partagés (la prévision)
 
 Le code est exécuté (dans un environnement local) et le résultat est mis en cache. Il est important que le code se termine par un return(les_donnees).
@@ -81,31 +81,31 @@ les appels suivants seront plus rapides et sans erreur (sauf si l'erreur n'est p
 Une modification du code est détectée, invalide le cache et déclenche l'éxécution si sourcoise est exécutée.
 
 Suivant le paramètre lapse on peut déclencher une exécution périodique.
-Par exemple, pour ne pas rater une MAJ, on peut mettre `lapse = "1 day"` ou `"day"` et une fois par jour le code sera exécuté.
+Par exemple, pour ne pas rater une MAJ, on peut mettre \code{lapse = "1 day"} ou \code{"day"} et une fois par jour le code sera exécuté.
 Cela permet d'éviter une exécution à chaque rendu, mais permet de vérifier fréquemment la MAJ.
-On peut spécifier l'intervalle en heures (`hours`), en jours (`days`), en semaines (`weeks`), en mois (`months`) ou en trimestres (`quarters`).
+On peut spécifier l'intervalle en heures (\code{hours}), en jours (\code{days}), en semaines (\code{weeks}), en mois (\code{months}) ou en trimestres (\code{quarters}).
 
-On peut bloquer l'exécution en renseignant la variable d'environnement `PREVENT_EXEC` par `Sys.setenv(PREVENT_EXEC = "TRUE")` ou dans `.Renviron`.
+On peut bloquer l'exécution en renseignant la variable d'environnement \code{PREVENT_EXEC} par \code{Sys.setenv(PREVENT_EXEC = "TRUE")} ou dans \code{.Renviron}.
 Ce blocage est prioritaire sur tous les autres critères (sauf en cas d'absence de cache ou l'exécution est essayée).
 
-Des métadonnées peuvent être renvoyées (paramètre `metadata`) avec la date de la dernière exécution (`$date`), le temps d'exécution (`$timing`),
-la taille des données (`$size`), le chemin de la source (`$where`), le hash du source (`$hash_src`) et bien sûr les données (`$data`).
+Des métadonnées peuvent être renvoyées (paramètre \code{metadata}) avec la date de la dernière exécution (\verb{$date}), le temps d'exécution (\verb{$timing}),
+la taille des données (\verb{$size}), le chemin de la source (\verb{$where}), le hash du source (\verb{$hash_src}) et bien sûr les données (\verb{$data}).
 Cela peut servir pour renseigner un graphique.
 
-Les valeurs par défaut peuvent être modifiées simplement par `options(sourcoise.hash = FALSE)` par exemple et persistent pour une session.
-Typiquement cela peut être mis dans rinit.r (et donc être exécuté par `ofce::init_qmd()`) et cela sera l'option par défaut du projet.
+Les valeurs par défaut peuvent être modifiées simplement par \code{options(sourcoise.hash = FALSE)} par exemple et persistent pour une session.
+Typiquement cela peut être mis dans rinit.r (et donc être exécuté par \code{ofce::init_qmd()}) et cela sera l'option par défaut du projet.
 
-Le paramètre `wd` perment de spécifier le répertoire d'exécution du source.
-Si il est mis à `"file"`, les appels à l'intérieur du code source, comme par exemple un save ou un load seront compris dans le répertoire où se trouve le fichier source.
+Le paramètre \code{wd} perment de spécifier le répertoire d'exécution du source.
+Si il est mis à \code{"file"}, les appels à l'intérieur du code source, comme par exemple un save ou un load seront compris dans le répertoire où se trouve le fichier source.
 L'intérêt est que le code peut avoir des éléments persistants, locaux
-L'alternative est d'utiliser `wd="project"` auquel cas, le répertoire d'exécution sera independant de l'endroit où est appelé le code source.
+L'alternative est d'utiliser \code{wd="project"} auquel cas, le répertoire d'exécution sera independant de l'endroit où est appelé le code source.
 Les éléments persistants peuvent alors être dasn un endroit commun et le code peut appeler des éléments persistants d'autres codes sources.
-En le mettant à `qmd`l'exécution part du fichier qmd, ce qui est le comportement standard de `quarto`.
+En le mettant à \code{qmd}l'exécution part du fichier qmd, ce qui est le comportement standard de \code{quarto}.
 Toute autre valeur pour wd laisse le working directory inchnagé et donc dépendant du contexte d'exécution. Pour ceux qui aiment l'incertitude.
 
-En donnant des fichers à suivre par `track`, on peut déclencher l'exécution du source lorsque ces fichiers sont modifiés, c'est utile pour des fichiers sources sous excel (ou csv).
+En donnant des fichers à suivre par \code{track}, on peut déclencher l'exécution du source lorsque ces fichiers sont modifiés, c'est utile pour des fichiers sources sous excel (ou csv).
 
-`unfreeze` permet d'invalider le cache de quarto et de déclencher l'exécution du qmd pour mettre à jour la publication (et pas seulement les données en cache).
+\code{unfreeze} permet d'invalider le cache de quarto et de déclencher l'exécution du qmd pour mettre à jour la publication (et pas seulement les données en cache).
 }
 \seealso{
 Other sourcoise: 
