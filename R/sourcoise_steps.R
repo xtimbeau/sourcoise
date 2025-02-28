@@ -199,7 +199,7 @@ prune_cache <- function(ctxt) {
   if(is.infinite(ctxt$grow_cache))
     return(NULL)
   md <- get_mdatas(ctxt$basename, ctxt$full_cache_rep)
-  if(length(md)<=grow_cache)
+  if(length(md)<=ctxt$grow_cache)
     return(NULL)
   date <- purrr::map_chr(md, "date")
   rdate <- rank(date) > length(md) - ctxt$grow_cache
