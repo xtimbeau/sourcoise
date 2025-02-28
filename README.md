@@ -4,6 +4,17 @@
 
 Accessoirement, cela oblige à isoler le code du script qui récupère les données dans un fichier afin d'améliorer la reproductibilité. `sourcoise()` peut être appelé dans un `sourcoise()` ce qui permet la modularité. Il fournit des outils pour vérifier le cache et le rafraichir à la demande.
 
+## installation
+
+Pour installer `{sourcoise}` il faut le faire depuis *github* :
+
+```r
+devtools::install_gitub("xtimbeau/sourcoise")
+
+# alternativement
+pak::pak("xtimbeau/sourcoise")
+```
+
 ## utilisation
 
 La structure est donc :
