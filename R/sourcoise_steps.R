@@ -184,7 +184,7 @@ startup_log <- function(log, ctxt) {
     log_dir <- fs::path_join(c(ctxt$root,".logs"))
     if(!fs::dir_exists(log_dir))
       fs::dir_create(log_dir)
-    log_fn <- fs::path_join(c(log_dir, str_c("sourcoise_", lubridate::today() |> as.character()))) |>
+    log_fn <- fs::path_join(c(log_dir, stringr::str_c("sourcoise_", lubridate::today() |> as.character()))) |>
       fs::path_ext_set("log")
     logger::log_appender(logger::appender_file(log_fn))
     if(!is.null(ctxt$qmd_file))

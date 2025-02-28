@@ -20,7 +20,10 @@ sourcoise(
   cache_rep = NULL,
   root = NULL,
   quiet = TRUE,
-  nocache = FALSE
+  nocache = FALSE,
+  log = getOption("sourcoise.log"),
+  grow_cache = getOption("sourcoise.grow_cache"),
+  limit_mb = getOption("sourcoise.limit_mb")
 )
 
 source_data(
@@ -38,7 +41,10 @@ source_data(
   cache_rep = NULL,
   root = NULL,
   quiet = TRUE,
-  nocache = FALSE
+  nocache = FALSE,
+  log = getOption("sourcoise.log"),
+  grow_cache = getOption("sourcoise.grow_cache"),
+  limit_mb = getOption("sourcoise.limit_mb")
 )
 }
 \arguments{
@@ -71,6 +77,12 @@ source_data(
 \item{quiet}{(boléen) pas de messages}
 
 \item{nocache}{(boléen) n'enregistre pas le cache même si nécessaire}
+
+\item{log}{("OFF" par défaut) niveau de cache (voir `logger::log_treshold()`)}
+
+\item{grow_cache}{("Inf" par défaut) stratégie de cache}
+
+\item{limit_mb}{(50 par défaut) limite le fichier de données à x mb (pour github). Si au dessus de la limite, **pas de cache**.}
 }
 \value{
 data (list ou ce que le code retourne)

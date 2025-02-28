@@ -5,7 +5,7 @@
 \title{Vide le cache}
 \usage{
 sourcoise_clear(
-  what = sourcoise_status(root = root),
+  what = sourcoise_status(root = root, prune = FALSE),
   cache_rep = NULL,
   root = NULL
 )

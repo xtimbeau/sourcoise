@@ -9,7 +9,7 @@ sourcoise_status(
   cache_rep = NULL,
   quiet = TRUE,
   root = NULL,
-  src_in = getOption("ofce.source_data.src_in") \%||\% "project",
+  src_in = getOption("sourcoise.src_in") \%||\% "project",
   prune = TRUE
 )
 
@@ -17,7 +17,7 @@ source_data_status(
   cache_rep = NULL,
   quiet = TRUE,
   root = NULL,
-  src_in = getOption("ofce.source_data.src_in") \%||\% "project",
+  src_in = getOption("sourcoise.src_in") \%||\% "project",
   prune = TRUE
 )
 }
