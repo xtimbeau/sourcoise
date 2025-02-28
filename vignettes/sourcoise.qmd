@@ -36,7 +36,7 @@ Les bénéfices sont nombreux :
 
 Première chose mettre son code de données dans un script et l'enregistrer là où est le qmd, dans cet exemple `souverains.qmd` et un dossier remplis de csv, scripts R, etc :
 
-```         
+```bash         
 ├── souverains
 │   ├── ratings.R
 │   ├── ratings.rds
@@ -49,7 +49,7 @@ Première chose mettre son code de données dans un script et l'enregistrer là 
 
 Dans `souverains.qmd` on trouve le chunk suivant. `sourcoise()` est capable de retrouver le dossier dans le même dossier que le `qmd` (ce n'est pas automatique, dans un projet commme la prévision, les chemins sont relatifs à la racine du projet, ici le qmd et ses fichiers peuvent être mis n'importe où grâce à cette heuristique). Le source est ensuite exécuté en changeant le dossier de travail à celui qui le contient (dans cet exemple, `souverains`) ce qui permet d'utiliser des chemins relatifs et donc de pouvoir transporter le code n'importe où.
 
-```{{r}}
+```r
 library(sourcoise)
 
 taux_souverains_historiques <- sourcoise("souverains/taux_souverains_historiques.R", lapse = "day")
@@ -60,7 +60,7 @@ ratings_taux <- sourcoise("souverains/ratings", lapse = "day")
 Le script doit se terminer par un `return` qui renvoie les données calculées ou téléchargées. Ce sont ces données qui sont mises en cache.
 
 ````         
-``` {{r}}
+```r
 library(INSEE)
 library(tidyverse)
 ...
@@ -92,7 +92,7 @@ En utlisant l'option `metadata=TRUE` dans `sourcoise()` on peut récupérer des 
 
 En code cela donne le chunk ci dessous. Les données sont accessibles par `$data` et la date de téléchargement par `$date`. Cela permet de construire la note (noter que `glue::glue()` est appliqué aux textes passés à `ofce_caption()`).
 
-```{{r}}
+```r
 transactions <- sourcoise("immo/data_transaction.r", metadata=TRUE)
 
 trsc <- ggplot(transactions$data) + 

@@ -5,7 +5,6 @@
 #' @param src_in est ce que les données sont avec les qmd ?
 #' @param quiet (boléen) TRUE par défaut, ne dit rien
 #' @param root force le root -- à ne pas utiliser sauf expert
-#' @param cache_rep le répertoire de cache -- à ne pas utiliser sauf expert
 #' @param prune (boléen) limite la liste au dernier cache (TRUE par défaut)
 #' @family sourcoise
 #'
