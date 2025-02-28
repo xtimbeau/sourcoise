@@ -70,9 +70,9 @@ hash_file <- function(path) {
 get_datas <- function(name, data_rep) {
   m <- get_mdatas(name, data_rep)
   dn <- names(m) |>
-    stringr::str_replace(glue::glue(".json"), glue::glue(".qs")) |>
+    stringr::str_replace(glue::glue(".json"), glue::glue(".qs2")) |>
     rlang::set_names(names(m))
-  d <- purrr::map(dn, ~qs::qread(.x))
+  d <- purrr::map(dn, ~qs2::qs_read(.x, nthreads = getOption("sourcoise.nthreads") ))
   purrr::map(rlang::set_names(names(m)), ~{
     l <- m[[.x]]
     l$data <- d[[.x]]
@@ -95,11 +95,11 @@ read_mdata <- function(path) {
 }
 
 get_ddatas <- function(name, data_rep) {
-  pat <- stringr::str_c(name, "_([a-f0-9]){8}-([0-9]+).qs")
+  pat <- stringr::str_c(name, "_([a-f0-9]){8}-([0-9]+).qs2")
   files <- list()
   if(fs::dir_exists(data_rep))
     files <- fs::dir_ls(path = data_rep, regexp = pat, fail=FALSE)
-  res <- purrr::map(files, ~ qs::qread(.x))
+  res <- purrr::map(files, ~ qs2::qs_read(.x, nthreads = getOption("sourcoise.nthreads")))
   names(res) <- files
   res
 }
@@ -114,6 +114,7 @@ exec_source <- function(ctxt) {
   })
 
   current_wd <- getwd()
+  on.exit(setwd(current_wd))
   setwd(ctxt$exec_wd)
   start <- Sys.time()
   res <- safe_source(ctxt$src, args = ctxt$args)
@@ -121,12 +122,11 @@ exec_source <- function(ctxt) {
   setwd(current_wd)
   if(!is.null(res$error)) {
     cli::cli_div(class = "err", theme = list(.err = list(color = "red")))
-    cli::cli_alert_warning("Erreur dans {src}\n\n
+    cli::cli_alert_warning("Erreur dans {ctxt$src}\n\n
                            {.err {res$error}}")
+    logger::log_error(res$error)
     return(list(ok=FALSE, error = res$error))
   }
-  if(!ctxt$quiet)
-    cli::cli_alert_sucess("Source ex\u00e9cut\u00e9")
 
   list(
     data = res$result$value,
@@ -180,13 +180,16 @@ cache_data <- function(data, ctxt) {
   data$id <- stringr::str_c(ctxt$uid, "-", cc)
   data$uid <- ctxt$uid
   data$cc <- cc
-  fnm <- fs::path_join(c(ctxt$root_cache_rep,
-                         stringr::str_c(ctxt$name, "_", data$id))) |> fs::path_ext_set("json")
-  if(!ctxt$nocache&!(lobstr::obj_size(data$data)<= ctxt$limit_mb*1024*1024)) {
+  fnm <- fs::path_join(c(ctxt$full_cache_rep,
+                         stringr::str_c(ctxt$basename, "_", data$id))) |> fs::path_ext_set("json")
+  if(!ctxt$nocache) {
     if(!exists) {
-      fnd <- fs::path_join(c(ctxt$root_cache_rep,
-                             stringr::str_c(ctxt$name, "_", data$id))) |> fs::path_ext_set("qs")
-      qs::qsave(data$data, file = fnd)
+      fnd <- fs::path_join(
+        c(ctxt$full_cache_rep,
+          stringr::str_c(ctxt$basename, "_", data$id))) |> fs::path_ext_set("qs2")
+      qs2::qs_save( data$data, file = fnd, nthreads = getOption("sourcoise.nthreads") )
+      if(fs::file_info(fnd)$size > ctxt$limit_mb*1024*1024)
+        fs::file_delete(fnd)
     } else
       fnd <- last_m_data$data_file
     les_metas <- data
@@ -282,7 +285,8 @@ uncache <- function(qmd_file, root, quiet=TRUE) {
 }
 
 try_find_root <- function(root=NULL, src_in = getOption("sourcoise.src_in"), quiet = TRUE) {
-
+  if(!is.null(root))
+    return(root)
   if(src_in == "project") {
     if(Sys.getenv("QUARTO_PROJECT_DIR") == "") {
       safe_find_root <- purrr::safely(rprojroot::find_root)

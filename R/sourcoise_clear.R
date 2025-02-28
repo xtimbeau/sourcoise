@@ -8,17 +8,13 @@
 #'
 #' @return la liste des fichiers supprimés
 #' @export
-#'
-#'
-#'
+
 sourcoise_clear <- function(
     what = sourcoise_status(root=root, prune=FALSE),
     cache_rep = NULL,
     root = NULL) {
 
-  root <- find_project_root()$project_path
-
-  root <- fs::path_norm(root)
+  root <- try_find_root(root)
 
   sure_delete <- function(fn) {
     if(fs::file_exists(fn))
@@ -31,3 +27,25 @@ sourcoise_clear <- function(
     src
   })
 }
+
+#' Efface les .sourcoise
+#'
+#' @param root pour forcer le root (non recommandé)
+#'
+#' @family sourcoise
+#'
+#' @return NULL
+#' @export
+
+sourcoise_reset <- function(
+    root = NULL) {
+
+  root <- try_find_root(root)
+
+  caches_reps <- fs::dir_ls(path = root, regex = "\\.sourcoise$", all = TRUE, recurse = TRUE)
+
+  purrr::walk(caches_reps, ~fs::dir_delete(.x))
+
+}
+
+

@@ -26,48 +26,41 @@ setup_context <- function(path, root, src_in, cache_rep, exec_wd, wd, track, arg
   # on trouve le fichier
   ctxt$name <- remove_ext(path)
   ctxt$paths <- find_project_root()
-  ctxt$root <- try_find_root(root, src_in)
+  if(is.null(root))
+    ctxt$root <- try_find_root(root, src_in)
+  else
+    ctxt$root <- fs::path_abs(root)
+
   ctxt$uid <- digest::digest(ctxt$root, algo = "crc32")
 
-  if(!ctxt$quiet)
-    cli::cli_alert_info("root: {ctxt$root}")
-  if(!ctxt$quiet)
-    cli::cli_alert_info("uid: {ctxt$uid}")
   if(is.null(cache_rep))
-    ctxt$root_cache_rep <- fs::path_join(c(ctxt$root, ".data")) |>
+    ctxt$root_cache_rep <- fs::path_join(c(ctxt$root, ".sourcoise")) |>
     fs::path_norm()
   else
     ctxt$root_cache_rep <- fs::path_abs(cache_rep)
-  if(!quiet)
-    cli::cli_alert_info("cache: {ctxt$root_cache_rep}")
 
   ctxt[["src"]] <- find_src(ctxt$root, ctxt$name)
   if(is.null(ctxt[["src"]])) {
     ctxt[["src"]] <- try_find_src(ctxt$root, ctxt$name)
     if(length(ctxt[["src"]])==0) {
-      if(!ctxt$quiet)
-        cli::cli_alert_warning("Le fichier n'existe pas en .r ou .R, vérifier le chemin")
+      cli::cli_alert_warning("Le fichier n'existe pas en .r ou .R, vérifier le chemin")
       return(NULL)
     }
     if(length(ctxt[["src"]])>1) {
-      if(!ctxt$quiet)
-        cli::cli_alert_warning("Plusieurs fichiers src sont possibles")
+      cli::cli_alert_warning("Plusieurs fichiers src sont possibles")
       l_src <- purrr::map(ctxt[["src"]], stringr::str_length) # ce critère est curieux
       ctxt[["src"]] <- ctxt[["src"]][[which.min(l_src)]]
     }
   }
 
-  if(!ctxt$quiet)
-    cli::cli_alert_info("{.file {ctxt[['src']]}} comme source")
-
-  if(length(check_return(ctxt[['src']]))==0) {
-    cli::cli_alert_danger("Pas de return() d\u00e9t\u00e9ct\u00e9 dans le fichier {.file {ctxt[['src']]}}")
-  }
-
-  if(length(check_return(ctxt[['src']]))>1) {
-    if(!ctxt$quiet)
-      cli::cli_alert_info("Plusieurs return() dans le fichier {ctxt[['src']]}, attention !")
-  }
+  # if(length(check_return(ctxt[['src']]))==0) {
+  #   cli::cli_alert_danger("Pas de return() d\u00e9t\u00e9ct\u00e9 dans le fichier {.file {ctxt[['src']]}}")
+  # }
+  #
+  # if(length(check_return(ctxt[['src']]))>1) {
+  #   if(!ctxt$quiet)
+  #     cli::cli_alert_info("Plusieurs return() dans le fichier {ctxt[['src']]}, attention !")
+  # }
 
   ctxt$basename <- fs::path_file(ctxt$name)
   ctxt$relname <- fs::path_rel(ctxt$src, ctxt$root)
@@ -169,7 +162,7 @@ pick_gooddata <- function(good_datas, ctxt) {
     cli::cli_alert_warning("Donn\u00e9es en cache")
 
   good_good_data$ok <- "cache"
-  good_good_data$data <- qs::qread(fnd)
+  good_good_data$data <- qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
 
   return(good_good_data)
 }

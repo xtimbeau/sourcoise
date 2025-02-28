@@ -59,7 +59,7 @@
 #' @param quiet (boléen) pas de messages
 #' @param root (character) force le root (usage non recommandé)
 #' @param nocache (boléen) n'enregistre pas le cache même si nécessaire
-#' @param cache_rep (character) défaut .data sauf usage particulier
+#' @param cache_rep (character) défaut .sourcoise sauf usage particulier
 #' @param log ("OFF" par défaut) niveau de cache (voir `logger::log_treshold()`)
 #' @param grow_cache ("Inf" par défaut) stratégie de cache
 #' @param limit_mb (50 par défaut) limite le fichier de données à x mb (pour github). Si au dessus de la limite, **pas de cache**.
@@ -107,7 +107,13 @@ sourcoise <- function(
   startup_log(log, ctxt)
 
   if(is.null(force_exec)) force <- FALSE else if(force_exec=="TRUE") force <- TRUE else force <- FALSE
-  if(is.null(prevent_exec)) prevent <- FALSE else if(prevent_exec=="TRUE") prevent <- TRUE else prevent <- FALSE
+  if(is.null(prevent_exec))
+    prevent <- FALSE
+  else if(prevent_exec=="TRUE")
+    prevent <- TRUE
+  else
+    prevent <- FALSE
+
   if(force&!prevent) {
     our_data <- exec_source(ctxt)
     if(our_data$ok=="exec") {
@@ -120,7 +126,7 @@ sourcoise <- function(
         return(our_data$data)
       }
     } else {
-      logger::log_warning("force exec échoué")
+      logger::log_warn("force exec échoué")
     }
   }
 
@@ -130,7 +136,7 @@ sourcoise <- function(
 
   if(length(good_datas)==0) {
     if(prevent) {
-      logger::log_warnings("Pas de données en cache et exécution suspendue, NULL retourné")
+      logger::log_warn("Pas de données en cache et exécution suspendue, NULL retourné")
       return(NULL)
     }
     our_data <- exec_source(ctxt)
@@ -144,7 +150,7 @@ sourcoise <- function(
         return(our_data$data)
       }
     } else {
-      logger::log_warning("le fichier {ctxt$src} retourne une erreur, et pas de cache trouvé, NULL retourné")
+      logger::log_warn("le fichier {ctxt$src} retourne une erreur, et pas de cache trouvé, NULL retourné")
       return(NULL)
     }
   }

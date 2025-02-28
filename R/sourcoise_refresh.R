@@ -23,13 +23,11 @@ sourcoise_refresh <- function(
     hash = TRUE,
     unfreeze = TRUE,
     quiet = TRUE,
-    init_qmd = TRUE,
-    root = NULL) {
+    init_qmd = TRUE) {
 
   start <- Sys.time()
-  sroot <- root
   if(is.null(what))
-    what <- source_data_status(cache_rep = cache_rep, root = sroot, quiet = quiet)
+    what <- sourcoise_status(cache_rep = cache_rep, root = root, quiet = quiet)
 
   if(!force_exec)
     what <- what |>
@@ -49,7 +47,6 @@ sourcoise_refresh <- function(
 
   if(nrow(what)==0)
     return(list())
-  sroot <- find_project_root(project_path = sroot)$project_path
 
   if(init_qmd&rlang::is_installed("ofce"))
     ofce::init_qmd()
@@ -58,17 +55,18 @@ sourcoise_refresh <- function(
 
     exec_wd <- getwd()
     if(wd=="project")
-      exec_wd <- sroot |> fs::path_norm()
+      exec_wd <- root |> fs::path_norm()
     if(wd=="file")
-      exec_wd <- fs::path_join(c(sroot, root, fs::path_dir(src))) |> fs::path_norm()
+      exec_wd <- fs::path_join(c(root, fs::path_dir(src))) |> fs::path_norm()
     if(wd=="qmd")
-      exec_wd <- fs::path_join(c(sroot, fs::path_dir(qmd_file[[1]]))) |> fs::path_norm()
+      exec_wd <- fs::path_join(c(root, fs::path_dir(qmd_file[[1]]))) |> fs::path_norm()
 
-    if(src_in %in% c("file", "qmd"))
-      root <- fs::path_join(c(sroot, root)) |> fs::path_norm()
-    if(src_in %in% c("project"))
-      root <- sroot
-    src_data <- source_data(path = src,
+    # if(src_in %in% c("file", "qmd"))
+    #   root <- fs::path_join(c(sroot, root)) |> fs::path_norm()
+    # if(src_in %in% c("project"))
+    #   root <- sroot
+
+    src_data <- sourcoise(path = src,
                             force_exec = force_exec,
                             hash = hash,
                             track = track,

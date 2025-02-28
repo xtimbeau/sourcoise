@@ -19,7 +19,7 @@ RoxygenNote: 7.3.2
 URL: https://xtimbeau.github.io/sourcoise
 Imports:
   fs,
-  qs, 
+  qs2, 
   cli,
   purrr,
   digest,

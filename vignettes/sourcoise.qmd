@@ -119,6 +119,6 @@ Le package `{sourcoise}` fournit des outils pour s'occuper des caches. Le premie
 
 `sourcoise_refresh()` rafraîchit (en le forçant) tous les caches. On peut passer à `sourcoise_refresh()` un `tibble` comme celui renvoyé par `sourcoise_status()` mais filtré pour ne rafraîchir que la liste voulue (attention passer toutes les colonnes sans modification). Cela sert lorsqu'on a un processus plus complexe d'invalidation du cache (en fonction d'un calendrier, en interrogeant une API, etc...) et qu'on déclenche en fonction de cette logique l'exécution des caches.
 
-On peut également à partir de `sourcoise_status()` accéder aux données en cache. Elles sont enregistrées en `.qs` et donc se chargent avec un `qs::qread()`.
+On peut également à partir de `sourcoise_status()` accéder aux données en cache. Elles sont enregistrées en `.qs2` avec les ackage `{qs2}` et donc se chargent avec un `qs2::qs_read()`.
 
 On peut également nettoyer complètement le cache (ce qui provoquera sa ré exécution) avec `sourcoise_clear()`.
