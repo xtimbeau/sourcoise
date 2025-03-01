@@ -74,7 +74,12 @@ Le stockage des données a une faible empreinte disque (elles ne servent qu'à c
 
 ## par rapport à *memoise*
 
-`memoise::memoise()` propose une solution assez proche, avec la possibilité de partager le cache entre session. Par rapport à `memoise::memoise()`, `sourcoise()` utilise systématiquement un cache sur disque, persistant, localisé dans le projet R ou quarto et destiné à être synchronisé par *github*. Il s'applique à un script et non à une fonction et utilise des règles d'invalidation du cache différentes :
+`memoise::memoise()` propose une solution assez proche, avec la possibilité de rendre le cache persistant entre sessions.
+
+Mais `memoise()` répond au besoin de l'évaluation d'une fonction, qui pour un même jeux de paramètres renvoie toujours la même chose. Ce qui est la définition d'une fonction dans la paradigme fonctionnel. Le cache permet alors d'échanger espace disque contre performance. `sourcoise()` part d'une hypothèse différente : le bout de code appelé ressemble à une fonction mais n'en est pas une : les mêmes arguments peuvent renvoyer une valeur différente. C'est le cas notamment lors de l'accès à une API à des données qui renvoie souvent la même chose, mais périodiquement propose une nouvelle version. Le temps d'accès à l'API eut être long et évebntuellement l'accès hasardeux. Or les appels à l'API peuvent être dans un workflow typique quarto/R très fréquent (à chaque rendu par exemple), `sourcoise()` permet donc de mettre en cache et de déclencher une "vraie" exécution périodiquement mais pas tgrop souvent. Si l'appel à l'API est très long, le gain en performance peut être considérable et si l'API bloque parfois, alors `sourcoise()` permet de continuer le reste du flow sans interruption. L'exécution de l'API peut ainsi être asynchrone, dans un process différent ou sur une machine différente, la synchronisation étant assurée par 
+github ou ``{pins}`.
+
+Par rapport à `memoise::memoise()`, `sourcoise()` utilise systématiquement un cache sur disque, persistant, localisé dans le projet R ou quarto et destiné à être synchronisé par *github*. Il s'applique à un script et non à une fonction et utilise des règles d'invalidation du cache différentes :
 
 -   le cache est conçu principalement pour être passé entre session. Il est utilisé lors du rendu d'un `.qmd` et il est transportable avec les fichiers associés.
 -   le cache est invalidé si le script est modifié (similaire à l'invalidation par le corps de la fonction dans `memoise::memoise()`).

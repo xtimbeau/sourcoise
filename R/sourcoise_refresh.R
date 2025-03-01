@@ -24,7 +24,7 @@ sourcoise_refresh <- function(
     unfreeze = TRUE,
     quiet = TRUE,
     init_qmd = TRUE,
-    root = root) {
+    root = NULL) {
 
   start <- Sys.time()
   if(is.null(what))
