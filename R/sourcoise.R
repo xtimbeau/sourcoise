@@ -106,6 +106,11 @@ sourcoise <- function(
 
   startup_log(log, ctxt)
 
+  if(is.null(ctxt)) {
+    logger::log_warn("Impossible de trouver le ficher {path}")
+    return(list(error = "file not found", ok = FALSE))
+  }
+
   if(is.null(force_exec)) force <- FALSE else if(force_exec=="TRUE") force <- TRUE else force <- FALSE
   if(is.null(prevent_exec))
     prevent <- FALSE
@@ -136,8 +141,8 @@ sourcoise <- function(
 
   if(length(good_datas)==0) {
     if(prevent) {
-      logger::log_warn("Pas de données en cache et exécution suspendue, NULL retourné")
-      return(NULL)
+      logger::log_warn("Pas de données en cache et exécution suspendue, erreur retournée")
+      return(list(error = "No cache&prevent"))
     }
     our_data <- exec_source(ctxt)
     if(our_data$ok=="exec") {
@@ -150,8 +155,8 @@ sourcoise <- function(
         return(our_data$data)
       }
     } else {
-      logger::log_warn("le fichier {ctxt$src} retourne une erreur, et pas de cache trouvé, NULL retourné")
-      return(NULL)
+      logger::log_warn("le fichier {ctxt$src} retourne une erreur, et pas de cache trouvé, erreur retourné")
+      return(our_data)
     }
   }
 

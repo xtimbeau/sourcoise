@@ -143,8 +143,7 @@ exec_source <- function(ctxt) {
     wd = ctxt$wd,
     qmd_file = ctxt$new_qmds,
     src_in = ctxt$src_in,
-    ok = "exec",
-    root = fs::path_rel(ctxt$root, ctxt$paths$project_path) )
+    ok = "exec" )
 }
 
 cache_data <- function(data, ctxt) {
@@ -158,30 +157,37 @@ cache_data <- function(data, ctxt) {
   }
   cc <- 1
   exists <- FALSE
-  data_hash <- digest::digest(data$data)
+  new_data_hash <- digest::digest(data$data)
+
   if(nrow(files)>0) {
     uids <- files$uid
     ccs <- files$cc
-    last_fn <- files |>
-      dplyr::arrange( dplyr::desc(modification_time)) |>
-      dplyr::slice(1)
-    last_m_data <- read_mdata(last_fn$path)
-    last_data_hash <- last_m_data$data_hash
-    if(!is.null(last_data_hash)) {
-      if(data_hash == last_data_hash) {
+    hashes <- purrr::map_dfr(
+      files$path, ~{
+        mdata <- read_mdata(.x)
+        tibble::tibble(path = .x, data_hash = mdata$data_hash, data_file = mdata$data_file)
+      }) |>
+      dplyr::filter(data_hash == new_data_hash)
+    if(nrow(hashes)>0) {
         exists <- TRUE
-      }
+        exists_data_file <- hashes |>
+          dplyr::slice(1) |>
+          dplyr::pull(data_file) |>
+          fs::path_file()
+
+        exists_data_file <- fs::path_join(c(ctxt$full_cache_rep, exists_data_file))
     }
     cc <- max(files$cc, na.rm = TRUE) + 1
   }
   if(!fs::dir_exists(ctxt$full_cache_rep))
     fs::dir_create(ctxt$full_cache_rep, recurse=TRUE)
-  data$data_hash <- data_hash
+  data$data_hash <- new_data_hash
   data$id <- stringr::str_c(ctxt$uid, "-", cc)
   data$uid <- ctxt$uid
   data$cc <- cc
-  fnm <- fs::path_join(c(ctxt$full_cache_rep,
-                         stringr::str_c(ctxt$basename, "_", data$id))) |> fs::path_ext_set("json")
+  fnm <- fs::path_join(
+    c(ctxt$full_cache_rep,
+      stringr::str_c(ctxt$basename, "_", data$id))) |> fs::path_ext_set("json")
   if(!ctxt$nocache) {
     if(!exists) {
       fnd <- fs::path_join(
@@ -191,10 +197,10 @@ cache_data <- function(data, ctxt) {
       if(fs::file_info(fnd)$size > ctxt$limit_mb*1024*1024)
         fs::file_delete(fnd)
     } else
-      fnd <- last_m_data$data_file
+      fnd <- exists_data_file
     les_metas <- data
     les_metas$data <- NULL
-    les_metas$data_file <- fs::path_rel(fnd, ctxt$root)
+    les_metas$data_file <- fs::path_file(fnd)
     les_metas$file <- NULL
     jsonlite::write_json(les_metas, path = fnm)
   }
@@ -254,8 +260,7 @@ unfreeze <- function(qmd_file, root, quiet=TRUE) {
   if(is.null(qmd_file))
     return(NULL)
   qmd_folder <- qmd_file |> fs::path_ext_remove()
-  rel_path <- fs::path_rel(qmd_folder, root)
-  freeze_path <- fs::path_join(c(root, "_freeze", rel_path))
+  freeze_path <- fs::path_join(c(root, "_freeze", qmd_folder))
   if(fs::dir_exists(freeze_path)) {
     if(!quiet)
       cli::cli_alert_info("Unfreezing {.file {freeze_path}}")
@@ -268,7 +273,7 @@ uncache <- function(qmd_file, root, quiet=TRUE) {
   if(is.null(qmd_file))
     return(NULL)
   qmd_bn <- qmd_file |> fs::path_file() |> fs::path_ext_remove()
-  rel_path <- fs::path_dir(qmd_file) |> fs::path_rel(root)
+  rel_path <- fs::path_dir(qmd_file)
   cache_path <- fs::path_join(c(root, rel_path, stringr::str_c(qmd_bn, "_cache")))
   files_path <- fs::path_join(c(root, rel_path, stringr::str_c(qmd_bn, "_files")))
   if(fs::dir_exists(cache_path)) {

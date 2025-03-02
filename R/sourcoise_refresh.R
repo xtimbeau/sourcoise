@@ -10,6 +10,8 @@
 #' @param quiet reste silencieux
 #' @param init_qmd (`TRUE` par défaut) exécute `ofce::init_qmd()`
 #' @param root (`NULL` par défaut) essaye de trouver le root à partir du point d'exécution ou utilise celui fournit
+#' @param log ("INFO" par défaut) niveau de log (voir `logger::log_threshold()`)
+#' @param .progress (TRUE par défaut) affiche une barre de progression
 #'
 #' @family sourcoise
 #'
@@ -22,19 +24,22 @@ sourcoise_refresh <- function(
     force_exec = TRUE,
     hash = TRUE,
     unfreeze = TRUE,
-    quiet = TRUE,
+    quiet = FALSE,
     init_qmd = TRUE,
-    root = NULL) {
+    root = NULL,
+    log = "INFO",
+    .progress = TRUE) {
 
-  start <- Sys.time()
+  refresh_start <- Sys.time()
+
   if(is.null(what))
     what <- sourcoise_status(root = root, quiet = quiet)
 
   if(!force_exec)
     what <- what |>
-    dplyr::group_by(src) |>
-    dplyr::filter(!any(valid)) |>
-    dplyr::ungroup()
+      dplyr::group_by(src) |>
+      dplyr::filter(!any(valid)) |>
+      dplyr::ungroup()
 
   if(nrow(what)==0)
     return(list())
@@ -51,9 +56,12 @@ sourcoise_refresh <- function(
 
   if(init_qmd&rlang::is_installed("ofce"))
     ofce::init_qmd()
+  total_time <- ceiling(sum(what$timing, na.rm=TRUE))
+  cwd <- getwd() |> fs::path_abs()
+  if(.progress)
+    idpgr <- cli::cli_progress_bar("refreshing", total = total_time)
 
-  res <- purrr::pmap(what, function(src, wd, lapse, args, root, track, qmd_file, src_in, ...) {
-
+  res <- purrr::pmap(what, function(src, wd, lapse, args, root, track, qmd_file, src_in, timing, ...) {
     exec_wd <- getwd()
     if(wd=="project")
       exec_wd <- root |> fs::path_norm()
@@ -68,16 +76,20 @@ sourcoise_refresh <- function(
     #   root <- sroot
 
     src_data <- sourcoise(path = src,
-                            force_exec = force_exec,
-                            hash = hash,
-                            track = track,
-                            args = args,
-                            wd = wd,
-                            lapse = lapse,
-                            metadata = TRUE,
-                            quiet = quiet,
-                            src_in = src_in,
-                            root = root)
+                          force_exec = force_exec,
+                          hash = hash,
+                          track = track,
+                          args = args,
+                          wd = wd,
+                          lapse = lapse,
+                          metadata = TRUE,
+                          quiet = quiet,
+                          src_in = src_in,
+                          root = root,
+                          log = log)
+
+    if(.progress)
+      cli::cli_progress_update(inc = timing, id = idpgr)
 
     if(unfreeze)
       purrr::walk(src_data$qmd_file, ~{
@@ -86,12 +98,32 @@ sourcoise_refresh <- function(
           uncache(.x, root, quiet = quiet)
         }
       })
-    list(src = src_data$src, ok = src_data$ok)
+    if(!is.null(src_data$error))
+      list(src = fs::path_join(c(root, src)), ok = "error", timing = NA, size = NA)
+    else
+      list(src = fs::path_join(c(root, src)), ok = src_data$ok, timing = src_data$timing, size = src_data$size)
   }
   )
 
-  cli::cli_alert_success("Refresh en {round(as.numeric(Sys.time()-start))} s.")
+  if(.progress)
+    cli::cli_process_done(id = idpgr)
+
+  if(!quiet) purrr::walk(res, ~{
+    msrc <-  fs::path_rel(.x$src , cwd)
+    timing <- .x$timing
+    size <- .x$size
+    if( .x$ok == "exec" )
+      cli::cli_alert_success(
+        "{msrc} exécuté avec succès en {round(timing)} s. pour {scales::label_bytes()(size)}" )
+    else
+      cli::cli_alert_danger(
+        "{msrc} retourne une erreur (voir le log)" )
+  })
 
   res <- purrr::transpose(res)
-  res$src[res$ok == "exec"] |> purrr::list_c()
+
+  dt <- round(as.numeric(Sys.time()-refresh_start) )
+  if(!quiet)
+    cli::cli_alert_info("Refresh en {dt} secondes")
+  invisible(res)
 }

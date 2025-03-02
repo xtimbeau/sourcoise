@@ -42,10 +42,8 @@ setup_context <- function(path, root, src_in, cache_rep, exec_wd, wd, track, arg
   ctxt[["src"]] <- find_src(ctxt$root, ctxt$name)
   if(is.null(ctxt[["src"]])) {
     ctxt[["src"]] <- try_find_src(ctxt$root, ctxt$name)
-    if(length(ctxt[["src"]])==0) {
-      cli::cli_alert_warning("Le fichier n'existe pas en .r ou .R, vérifier le chemin")
+    if(length(ctxt[["src"]])==0)
       return(NULL)
-    }
     if(length(ctxt[["src"]])>1) {
       cli::cli_alert_warning("Plusieurs fichiers src sont possibles")
       l_src <- purrr::map(ctxt[["src"]], stringr::str_length) # ce critère est curieux
@@ -139,9 +137,6 @@ pick_gooddata <- function(good_datas, ctxt) {
   fnm <- names(good_datas)[[mdd]]
   fnd <- fs::path_join(c(ctxt$root, good_good_data$data_file))
 
-  if(!ctxt$quiet)
-    cli::cli_alert_warning("M\u00e9tadonn\u00e9es lues dans {.file {fnd}}")
-
   ggd_lapse <- good_good_data$lapse %||% "never"
   ggd_wd <- good_good_data$wd %||% "file"
   ggd_qmds <- setequal(good_good_data$qmd_file, ctxt$new_qmds)
@@ -158,8 +153,6 @@ pick_gooddata <- function(good_datas, ctxt) {
     newmdata$src_in <- ctxt$src_in
     jsonlite::write_json(newmdata, path = fnm)
   }
-  if(!ctxt$quiet)
-    cli::cli_alert_warning("Donn\u00e9es en cache")
 
   good_good_data$ok <- "cache"
   good_good_data$data <- qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
@@ -180,11 +173,13 @@ startup_log <- function(log, ctxt) {
     log_fn <- fs::path_join(c(log_dir, stringr::str_c("sourcoise_", lubridate::today() |> as.character()))) |>
       fs::path_ext_set("log")
     logger::log_appender(logger::appender_file(log_fn))
-    if(!is.null(ctxt$qmd_file))
-      logger::log_info("qmd file : {ctxt[['qmd_file']]}")
-    logger::log_info("source file : {ctxt[['src']]}")
-    logger::log_debug("root : {ctxt[['root']]}")
-    logger::log_debug("cache : {ctxt[['full_cache_rep']]}")
+    if(!is.null(ctxt)) {
+      if(!is.null(ctxt$qmd_file))
+        logger::log_info("qmd file : {ctxt[['qmd_file']]}")
+      logger::log_info("source file : {ctxt[['src']]}")
+      logger::log_debug("root : {ctxt[['root']]}")
+      logger::log_debug("cache : {ctxt[['full_cache_rep']]}")
+    }
   }
 }
 

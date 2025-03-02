@@ -31,10 +31,8 @@ sourcoise_status <- function(
   if(length(roots)>0) {
     cached <- purrr::map_dfr(roots, \(a_root) {
       purrr::map_dfr(jsons[[a_root]], ~{
-        dd <- jsonlite::read_json(.x) |>
-          purrr::map( ~if(length(.x)>1) purrr::list_flatten(.x) else unlist(.x))
+        dd <- read_mdata(.x)
         valid <- valid_meta4meta(dd, root = a_root)
-
         tibble::tibble(
           src = tolower(dd$src),
           date = lubridate::as_datetime(dd$date),
