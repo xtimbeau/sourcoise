@@ -83,7 +83,7 @@ sourcoise <- function(
     exec_wd = NULL,
     cache_rep = NULL,
     root = NULL,
-    quiet = TRUE,
+    quiet = FALSE,
     nocache = FALSE,
     log = getOption("sourcoise.log"),
     grow_cache = getOption("sourcoise.grow_cache"),
@@ -131,7 +131,10 @@ sourcoise <- function(
         return(our_data$data)
       }
     } else {
-      logger::log_error("exécution de {ctxt$src} échouée : {our_data$error$message}")
+      msg <- "exécution de {ctxt$src} échouée : {our_data$error$message}"
+      if(!quiet)
+        cli::cli_alert_danger(msg)
+      logger::log_error(msg)
     }
   }
 
@@ -155,7 +158,10 @@ sourcoise <- function(
         return(our_data$data)
       }
     } else {
-      logger::log_warn("le fichier {ctxt$src} retourne une erreur, et pas de cache trouvé, erreur retourné")
+      msg <- "exécution de {ctxt$src} échouée, pas de cache : {our_data$error$message}"
+      if(!quiet)
+        cli::cli_alert_danger(msg)
+      logger::log_error(msg)
       return(our_data)
     }
   }

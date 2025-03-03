@@ -166,22 +166,23 @@ startup_log <- function(log, ctxt) {
   log_dir <- log_fn <- NULL
   logger::log_threshold(log)
 
-  if(log != "OFF") {
-    log_dir <- fs::path_join(c(ctxt$root,".sourcoise", "logs"))
-    if(!fs::dir_exists(log_dir))
-      fs::dir_create(log_dir)
-    log_fn <- fs::path_join(c(log_dir, stringr::str_c("sourcoise_", lubridate::today() |> as.character()))) |>
-      fs::path_ext_set("log")
+  log_dir <- fs::path_join(c(ctxt$root,".sourcoise", "logs"))
+  if(!fs::dir_exists(log_dir))
+    fs::dir_create(log_dir)
+  log_fn <- fs::path_join(c(log_dir, stringr::str_c("sourcoise_", lubridate::today() |> as.character()))) |>
+    fs::path_ext_set("log")
+
     logger::log_appender(logger::appender_file(log_fn))
-    if(!is.null(ctxt)) {
-      if(!is.null(ctxt$qmd_file))
-        logger::log_info("qmd file : {ctxt[['qmd_file']]}")
-      logger::log_info("source file : {ctxt[['src']]}")
-      logger::log_debug("root : {ctxt[['root']]}")
-      logger::log_debug("cache : {ctxt[['full_cache_rep']]}")
-    }
+
+  if(!is.null(ctxt)) {
+    if(!is.null(ctxt$qmd_file))
+      logger::log_info("qmd file : {ctxt[['qmd_file']]}")
+    logger::log_info("source file : {ctxt[['src']]}")
+    logger::log_debug("root : {ctxt[['root']]}")
+    logger::log_debug("cache : {ctxt[['full_cache_rep']]}")
+    ctxt$log_file <- fs::path_rel(log_fn, ctxt$root)
   }
-  ctxt$log_fn <- fs::path_rel(log_fn, ctxt$root)
+
   return(ctxt)
 }
 

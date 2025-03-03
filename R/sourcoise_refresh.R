@@ -75,18 +75,19 @@ sourcoise_refresh <- function(
     # if(src_in %in% c("project"))
     #   root <- sroot
 
-    src_data <- sourcoise(path = src,
-                          force_exec = force_exec,
-                          hash = hash,
-                          track = track,
-                          args = args,
-                          wd = wd,
-                          lapse = lapse,
-                          metadata = TRUE,
-                          quiet = quiet,
-                          src_in = src_in,
-                          root = root,
-                          log = log)
+    src_data <- sourcoise(
+      path = src,
+      force_exec = force_exec,
+      hash = hash,
+      track = track,
+      args = args,
+      wd = wd,
+      lapse = lapse,
+      metadata = TRUE,
+      quiet = TRUE,
+      src_in = src_in,
+      root = root,
+      log = log)
 
     if(.progress)
       cli::cli_progress_update(inc = timing, id = idpgr)
@@ -97,8 +98,8 @@ sourcoise_refresh <- function(
         "{msrc} exécuté avec succès en {round(src_data$timing)} s. pour {scales::label_bytes()(src_data$size)}" )
     } else {
       log_dir <- fs::path_join(c(root, ".sourcoise", "log")) |> fs::path_rel(cwd)
-    cli::cli_alert_danger(
-      "{msrc} retourne une erreur (voir le log {log_file})" )
+      cli::cli_alert_danger(
+        "{msrc} retourne une erreur (voir le log {log_file})" )
     }
 
     if(unfreeze)
@@ -118,22 +119,11 @@ sourcoise_refresh <- function(
   if(.progress)
     cli::cli_process_done(id = idpgr)
 
-  if(!quiet) purrr::walk(res, ~{
-    msrc <-  fs::path_rel(.x$src , cwd)
-    timing <- .x$timing
-    size <- .x$size
-    if( .x$ok == "exec" )
-      cli::cli_alert_success(
-        "{msrc} exécuté avec succès en {round(timing)} s. pour {scales::label_bytes()(size)}" )
-    else
-      cli::cli_alert_danger(
-        "{msrc} retourne une erreur (voir le log)" )
-  })
-
   res <- purrr::transpose(res)
 
   dt <- difftime(Sys.time(), refresh_start, units = "secs") |> as.numeric() |> round()
   if(!quiet)
     cli::cli_alert_info("Refresh en {dt} secondes")
+
   invisible(res)
 }
