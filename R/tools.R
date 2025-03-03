@@ -242,7 +242,7 @@ find_src <- function(root, name) {
 }
 
 try_find_src <- function(root, name) {
-  pat <- glue::glue("{name}\\.[R|r]$")
+  pat <- glue::glue("{name}\\.[Rr]$")
   ff <- fs::dir_ls(path = root, regexp=pat, recurse=TRUE)
   ff |> purrr::discard(~ stringr::str_detect(.x, "/_"))
 }
@@ -304,6 +304,11 @@ try_find_root <- function(root=NULL, src_in = getOption("sourcoise.src_in"), qui
       }
     }
     return(Sys.getenv("QUARTO_PROJECT_DIR") |> fs::path_abs() |> fs::path_norm())
+  }
+
+  if(src_in == "file") {
+    paths <- find_project_root(NULL, NULL)
+    return( fs::path_join(c(paths$project_path, paths$doc_path)) |> fs::path_norm() )
   }
   root <- NULL
 }
