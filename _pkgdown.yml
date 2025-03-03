@@ -1,35 +1,4 @@
-url: https://xtimbeau.github.io/sourcoise/
-
+url: ~
 template:
   bootstrap: 5
-  theme: atom-one-light
-  bslib:
-    base_font: {google: "Open Sans"}
-    heading_font: {google: "Open Sans"}
-    code_font: {google: "Fira Code"}
 
-deploy:
-  install_metadata: true
-
-footer:
-  structure:
-    left: [developed_by]
-    right: [rtfm, ccby, built_with]
-  components:
-    rtfm: RTFM
-    ccby: CC BY 4.0
-
-navbar:
-  structure:
-    left: [guides, charte, reference, news]
-    right: [search, github]
-
-  components:
-    github:
-      icon: fa-github
-      href: https://github.com/ofce/ofce
-    guides:
-      text: Articles
-      menu:
-        - text: Démmarer avec soucrcoise()
-          href: articles/sourcoise.html

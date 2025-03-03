@@ -1,9 +1,0 @@
-pandoc: '3.2'
-pkgdown: 2.1.1
-pkgdown_sha: ~
-articles:
-  sourcoise: sourcoise.html
-last_built: 2025-03-01T12:32Z
-urls:
-  reference: https://xtimbeau.github.io/sourcoise/reference
-  article: https://xtimbeau.github.io/sourcoise/articles
