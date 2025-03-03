@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   sourcoise: sourcoise.html
-last_built: 2025-03-03T17:27Z
+last_built: 2025-03-03T18:33Z
 urls:
   reference: https://xtimbeau.github.io/sourcoise/reference
   article: https://xtimbeau.github.io/sourcoise/articles
