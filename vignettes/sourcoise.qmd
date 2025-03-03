@@ -15,11 +15,6 @@ message: false
 warning: false
 ---
 
-```{r}
-#| include: false
-ofce::init_qmd(echo=TRUE)
-```
-
 ## Mettre en cache le résultat des calculs avec `sourcoise()`
 
 `sourcoise()` est une fonction qui permet de mettre en cache les résultats d'un script `r` et de ne pas avoir à ré-exécuter le code à chaque fois.

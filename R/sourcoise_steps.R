@@ -1,6 +1,6 @@
 # calcule les différents chemins et trouve les fichiers/répertoire dont on a besoin
 
-setup_context <- function(path, root, src_in, cache_rep, exec_wd, wd, track, args,
+setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
                           lapse, nocache, limit_mb, grow_cache, quiet=TRUE) {
 
   ctxt <- list()
@@ -33,11 +33,8 @@ setup_context <- function(path, root, src_in, cache_rep, exec_wd, wd, track, arg
 
   ctxt$uid <- digest::digest(ctxt$root, algo = "crc32")
 
-  if(is.null(cache_rep))
-    ctxt$root_cache_rep <- fs::path_join(c(ctxt$root, ".sourcoise")) |>
+  ctxt$root_cache_rep <- fs::path_join(c(ctxt$root, ".sourcoise")) |>
     fs::path_norm()
-  else
-    ctxt$root_cache_rep <- fs::path_abs(cache_rep)
 
   ctxt[["src"]] <- find_src(ctxt$root, ctxt$name)
   if(is.null(ctxt[["src"]])) {
@@ -50,15 +47,6 @@ setup_context <- function(path, root, src_in, cache_rep, exec_wd, wd, track, arg
       ctxt[["src"]] <- ctxt[["src"]][[which.min(l_src)]]
     }
   }
-
-  # if(length(check_return(ctxt[['src']]))==0) {
-  #   cli::cli_alert_danger("Pas de return() d\u00e9t\u00e9ct\u00e9 dans le fichier {.file {ctxt[['src']]}}")
-  # }
-  #
-  # if(length(check_return(ctxt[['src']]))>1) {
-  #   if(!ctxt$quiet)
-  #     cli::cli_alert_info("Plusieurs return() dans le fichier {ctxt[['src']]}, attention !")
-  # }
 
   ctxt$basename <- fs::path_file(ctxt$name)
   ctxt$relname <- fs::path_rel(ctxt$src, ctxt$root)
@@ -172,7 +160,7 @@ startup_log <- function(log, ctxt) {
   log_fn <- fs::path_join(c(log_dir, stringr::str_c("sourcoise_", lubridate::today() |> as.character()))) |>
     fs::path_ext_set("log")
 
-    logger::log_appender(logger::appender_file(log_fn))
+  logger::log_appender(logger::appender_file(log_fn))
 
   if(!is.null(ctxt)) {
     if(!is.null(ctxt$qmd_file))

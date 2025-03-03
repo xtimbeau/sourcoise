@@ -172,6 +172,7 @@ cache_data <- function(data, ctxt) {
           fs::path_file()
 
         exists_data_file <- fs::path_join(c(ctxt$full_cache_rep, exists_data_file))
+        file_size <- fs::file_info(exists_data_file)$size
     }
     cc <- max(files$cc, na.rm = TRUE) + 1
   }
@@ -188,15 +189,19 @@ cache_data <- function(data, ctxt) {
     if(!exists) {
       fnd <- fs::path_join(
         c(ctxt$full_cache_rep,
-          stringr::str_c(ctxt$basename, "_", data$id))) |> fs::path_ext_set("qs2")
+          stringr::str_c(ctxt$basename, "_", data$data_hash))) |> fs::path_ext_set("qs2")
       qs2::qs_save( data$data, file = fnd, nthreads = getOption("sourcoise.nthreads") )
-      if(fs::file_info(fnd)$size > ctxt$limit_mb*1024*1024)
+      file_size <- fs::file_info(fnd)$size
+      if(fs::file_info(fnd)$size > ctxt$limit_mb*1024*1024) {
         fs::file_delete(fnd)
+        logger::log_warn("Les données ne sont pas mis en cache parce que trop volumineuses ({scales::label_bytes()(file_size)}")
+      }
     } else
       fnd <- exists_data_file
     les_metas <- data
     les_metas$data <- NULL
     les_metas$data_file <- fs::path_file(fnd)
+    les_metas$file_size <- file_size
     les_metas$file <- NULL
     les_metas$ok <- NULL
     les_metas$id <- NULL

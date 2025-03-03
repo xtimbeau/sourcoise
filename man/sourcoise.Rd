@@ -7,7 +7,6 @@
 sourcoise(
   path,
   args = list(),
-  hash = getOption("sourcoise.hash"),
   track = list(),
   lapse = getOption("sourcoise.lapse"),
   force_exec = getOption("sourcoise.force_exec"),
@@ -16,9 +15,8 @@ sourcoise(
   wd = getOption("sourcoise.wd"),
   src_in = getOption("sourcoise.src_in"),
   exec_wd = NULL,
-  cache_rep = NULL,
   root = NULL,
-  quiet = TRUE,
+  quiet = FALSE,
   nocache = FALSE,
   log = getOption("sourcoise.log"),
   grow_cache = getOption("sourcoise.grow_cache"),
@@ -29,8 +27,6 @@ sourcoise(
 \item{path}{(character) le chemin vers le code à exécuter (sans extension .r ou .R ou avec au choix), ce chemin doit être relatif au projet (voir détails)}
 
 \item{args}{(list) une liste d'arguments que l'on peut utliser dans source (args$xxx)}
-
-\item{hash}{(boléen) Si TRUE (défaut) un changement dans le code déclenche son exécution}
 
 \item{track}{(list) une liste de fichiers (suivant la même règle que src pour les trouver) qui déclenchent l'exécution.}
 
@@ -48,8 +44,6 @@ sourcoise(
 
 \item{exec_wd}{(character) NULL par défaut sauf usage particulier}
 
-\item{cache_rep}{(character) défaut .sourcoise sauf usage particulier}
-
 \item{root}{(character) force le root (usage non recommandé)}
 
 \item{quiet}{(boléen) pas de messages}
@@ -58,7 +52,7 @@ sourcoise(
 
 \item{log}{("OFF" par défaut) niveau de cache (voir \code{logger::log_treshold()})}
 
-\item{grow_cache}{("Inf" par défaut) stratégie de cache}
+\item{grow_cache}{(5 par défaut) stratégie de cache}
 
 \item{limit_mb}{(50 par défaut) limite le fichier de données à x mb (pour github). Si au dessus de la limite, \strong{pas de cache}.}
 }

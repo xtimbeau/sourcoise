@@ -47,7 +47,6 @@
 #'
 #' @param path (character) le chemin vers le code à exécuter (sans extension .r ou .R ou avec au choix), ce chemin doit être relatif au projet (voir détails)
 #' @param args (list) une liste d'arguments que l'on peut utliser dans source (args$xxx)
-#' @param hash (boléen) Si TRUE (défaut) un changement dans le code déclenche son exécution
 #' @param track (list) une liste de fichiers (suivant la même règle que src pour les trouver) qui déclenchent l'exécution.
 #' @param lapse (character) peut être "never" (défaut) "x hours", "x days", "x weeks", "x months", "x quarters", "x years"
 #' @param force_exec (boléen) Si TRUE alors le code est exécuté.
@@ -59,9 +58,8 @@
 #' @param quiet (boléen) pas de messages
 #' @param root (character) force le root (usage non recommandé)
 #' @param nocache (boléen) n'enregistre pas le cache même si nécessaire
-#' @param cache_rep (character) défaut .sourcoise sauf usage particulier
 #' @param log ("OFF" par défaut) niveau de cache (voir `logger::log_treshold()`)
-#' @param grow_cache ("Inf" par défaut) stratégie de cache
+#' @param grow_cache (5 par défaut) stratégie de cache
 #' @param limit_mb (50 par défaut) limite le fichier de données à x mb (pour github). Si au dessus de la limite, **pas de cache**.
 #'
 #' @family sourcoise
@@ -72,7 +70,6 @@
 sourcoise <- function(
     path,
     args = list(),
-    hash = getOption("sourcoise.hash"),
     track = list(),
     lapse = getOption("sourcoise.lapse"),
     force_exec = getOption("sourcoise.force_exec"),
@@ -81,7 +78,6 @@ sourcoise <- function(
     wd = getOption("sourcoise.wd"),
     src_in = getOption("sourcoise.src_in"),
     exec_wd = NULL,
-    cache_rep = NULL,
     root = NULL,
     quiet = FALSE,
     nocache = FALSE,
@@ -93,7 +89,6 @@ sourcoise <- function(
     path = path,
     root = root,
     src_in = src_in,
-    cache_rep = cache_rep,
     exec_wd = exec_wd,
     wd = wd,
     track = track,
