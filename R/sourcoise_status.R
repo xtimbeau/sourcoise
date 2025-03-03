@@ -59,7 +59,11 @@ sourcoise_status <- function(
     }) |>
       dplyr::arrange(src, dplyr::desc(date))
 
-    qs2_jsoned <- purrr::pmap_chr(cached, \(root, data_file, ...) {fs::path_join(c(root, data_file))})
+    qs2_jsoned <- purrr::pmap_chr(cached, \(root, json_file, data_file, ...) {
+      dir <- fs::path_join(c(root, json_file)) |>
+        fs::path_dir()
+      fs::path_join(c(dir, data_file))
+      })
     qs2_orphed <- setdiff(qs2 |> purrr::list_c(), qs2_jsoned)
     purrr::walk(qs2_orphed, fs::file_delete)
 

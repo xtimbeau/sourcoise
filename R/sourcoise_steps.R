@@ -123,7 +123,7 @@ pick_gooddata <- function(good_datas, ctxt) {
   mdd <- which.max(dates)
   good_good_data <- good_datas[[mdd]]
   fnm <- names(good_datas)[[mdd]]
-  fnd <- fs::path_join(c(ctxt$root, good_good_data$data_file))
+  fnd <- fs::path_join(c(ctxt$full_cache_rep, good_good_data$data_file))
 
   ggd_lapse <- good_good_data$lapse %||% "never"
   ggd_wd <- good_good_data$wd %||% "file"
@@ -151,10 +151,11 @@ pick_gooddata <- function(good_datas, ctxt) {
 startup_log <- function(log, ctxt) {
   if(log==FALSE)
     log <- "OFF"
-  log_dir <- log_fn <- NULL
-  logger::log_threshold(log)
-
   log_dir <- fs::path_join(c(ctxt$root,".sourcoise", "logs"))
+  logger::log_threshold(log)
+  if(log == "OFF") {
+    return(ctxt)
+  }
   if(!fs::dir_exists(log_dir))
     fs::dir_create(log_dir)
   log_fn <- fs::path_join(c(log_dir, stringr::str_c("sourcoise_", lubridate::today() |> as.character()))) |>
@@ -178,19 +179,25 @@ prune_cache <- function(ctxt) {
   if(is.infinite(ctxt$grow_cache))
     return(NULL)
   md <- get_mdatas(ctxt$basename, ctxt$full_cache_rep)
-  if(length(md)<=ctxt$grow_cache)
-    return(NULL)
-  date <- purrr::map_chr(md, "date")
-  rdate <- rank(date) > length(md) - ctxt$grow_cache
+
+  pairs <- purrr::imap_dfr(
+    md,
+    ~tibble(data_file = .x$data_file, json_file = .y, date = .x$date) )
+
+  datas <- unique(pairs$data_file)
+  jsons <- unique(pairs$json_file)
+  pairs <- pairs |>
+    group_by(data_file) |>
+    arrange(desc(date)) |>
+    summarize(date = first(date), json_file = first(json_file)) |>
+    slice_head(n=ctxt$grow_cache)
+  jsons_out <- setdiff(jsons, pairs$json_file)
+  datas_out <- setdiff(datas, pairs$data_file)
 
   sure_delete <- function(fn) {
     if(fs::file_exists(fn))
       fs::file_delete(fn)
   }
-  good_datas <- map_chr(md[rdate], "data_file") |> unique()
-  purrr::iwalk(md[!rdate], ~{
-    sure_delete(.y)
-    if(!.x$data_file %in% good_datas)
-      sure_delete(.x$data_file)
-  })
+  purrr::walk(jsons_out, ~ sure_delete(.x))
+  purrr::walk(jsons_out, ~ sure_delete(fs::path_join(c(ctxt$full_cache_rep, .x))))
 }

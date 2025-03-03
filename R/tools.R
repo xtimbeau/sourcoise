@@ -41,7 +41,7 @@ valid_metas <- function(ctxt) {
     .x$valid_src <- meme_null(.x,"src_hash")==ctxt$src_hash
     .x$valid_arg <- meme_null(.x,"arg_hash", digest::digest(list()))==ctxt$arg_hash
     .x$valid_track <- setequal(.x$track_hash, ctxt$track_hash)
-    .x$data_exists <- fs::file_exists(fs::path_join(c(ctxt$root, .x$data_file)))
+    .x$data_exists <- fs::file_exists(fs::path_join(c(ctxt$full_cache_rep, .x$data_file)))
     if(ctxt$lapse != "never") {
       alapse <- what_lapse(ctxt$lapse)
       .x$valid_lapse <- lubridate::now() - lubridate::as_datetime(.x[["date"]]) <= alapse
@@ -213,10 +213,10 @@ cache_data <- function(data, ctxt) {
       }
     } else
       fnd <- exists_data_file
+    data$data_file <- fs::path_file(fnd)
+    data$file_size <- file_size
     les_metas <- data
     les_metas$data <- NULL
-    les_metas$data_file <- fs::path_file(fnd)
-    les_metas$file_size <- file_size
     les_metas$file <- NULL
     les_metas$ok <- NULL
     les_metas$id <- NULL

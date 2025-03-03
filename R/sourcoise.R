@@ -159,7 +159,6 @@ sourcoise <- function(
   }
 
   one_gooddata <- pick_gooddata(good_datas, ctxt)
-  prune_cache(ctxt)
   logger::log_success("Cache valid ({scales::label_bytes()(one_gooddata$size)})")
 
   if(metadata) {
