@@ -168,7 +168,7 @@ startup_log <- function(log, ctxt) {
     logger::log_info("source file : {ctxt[['src']]}")
     logger::log_debug("root : {ctxt[['root']]}")
     logger::log_debug("cache : {ctxt[['full_cache_rep']]}")
-    ctxt$log_file <- fs::path_rel(log_fn, ctxt$root)
+    ctxt$log_file <- fs::path_rel(log_fn, getwd() |> fs::path_abs())
   }
 
   return(ctxt)

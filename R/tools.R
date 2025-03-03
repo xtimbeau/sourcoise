@@ -120,7 +120,22 @@ exec_source <- function(ctxt) {
   timing <- difftime(Sys.time() , start, unit = "secs") |> as.numeric()
   setwd(current_wd)
   if(!is.null(res$error)) {
-    return(list(ok=FALSE, error = res$error))
+    return(
+      list(
+        ok=FALSE,
+        error = res$error,
+        args =ctxt$args,
+        lapse = ctxt$lapse,
+        src = ctxt$relname,
+        src_hash = ctxt$src_hash,
+        arg_hash = ctxt$arg_hash,
+        track_hash = ctxt$track_hash,
+        track = ctxt$track,
+        wd = ctxt$wd,
+        qmd_file = ctxt$new_qmds,
+        src_in = ctxt$src_in,
+        ok = "exec",
+        log_file = ctxt$log_file))
   }
 
   list(
@@ -165,14 +180,14 @@ cache_data <- function(data, ctxt) {
       }) |>
       dplyr::filter(data_hash == new_data_hash)
     if(nrow(hashes)>0) {
-        exists <- TRUE
-        exists_data_file <- hashes |>
-          dplyr::slice(1) |>
-          dplyr::pull(data_file) |>
-          fs::path_file()
+      exists <- TRUE
+      exists_data_file <- hashes |>
+        dplyr::slice(1) |>
+        dplyr::pull(data_file) |>
+        fs::path_file()
 
-        exists_data_file <- fs::path_join(c(ctxt$full_cache_rep, exists_data_file))
-        file_size <- fs::file_info(exists_data_file)$size
+      exists_data_file <- fs::path_join(c(ctxt$full_cache_rep, exists_data_file))
+      file_size <- fs::file_info(exists_data_file)$size
     }
     cc <- max(files$cc, na.rm = TRUE) + 1
   }
@@ -250,13 +265,6 @@ try_find_src <- function(root, name) {
   pat <- glue::glue("{name}\\.[Rr]$")
   ff <- fs::dir_ls(path = root, regexp=pat, recurse=TRUE)
   ff |> purrr::discard(~ stringr::str_detect(.x, "/_"))
-}
-
-find_cache_rep <- function() {
-  if(exists("session.source_data.cache_rep"))
-    session.source_data.cache_rep
-  else
-    getOption("sourcoise.cache_rep")
 }
 
 unfreeze <- function(qmd_file, root, quiet=TRUE) {
@@ -341,19 +349,4 @@ find_project_root <- function(project_path = NULL, doc_path = NULL) {
   project_path <- project_path |> fs::path_norm() |> fs::path_abs()
   doc_path <- doc_path |> fs::path_norm() |> fs::path_abs() |> fs::path_rel(project_path)
   return(list(project_path = project_path, doc_path = doc_path))
-}
-
-# set cache rep ----------------------
-
-#' répertoire de cache persistant
-#'
-#' @param cache_rep (character) le répertoire
-#'
-#' @family source_data
-#'
-#' @return rien
-#' @export
-#'
-set_cache_rep <- function(cache_rep = find_cache_rep()) {
-  session.source_data.cache_rep <<- cache_rep
 }

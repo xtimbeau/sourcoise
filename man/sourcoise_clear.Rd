@@ -6,14 +6,11 @@
 \usage{
 sourcoise_clear(
   what = sourcoise_status(root = root, prune = FALSE),
-  cache_rep = NULL,
   root = NULL
 )
 }
 \arguments{
 \item{what}{(--) un tibble issu de source_data, éventuellement filtré}
-
-\item{cache_rep}{le répertoire de cache}
 
 \item{root}{pour forcer le root (non recommandé)}
 }

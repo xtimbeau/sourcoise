@@ -1,7 +1,6 @@
 #' Vide le cache
 #'
 #' @param what (--) un tibble issu de source_data, éventuellement filtré
-#' @param cache_rep le répertoire de cache
 #' @param root pour forcer le root (non recommandé)
 #'
 #' @family sourcoise
@@ -11,7 +10,6 @@
 
 sourcoise_clear <- function(
     what = sourcoise_status(root=root, prune=FALSE),
-    cache_rep = NULL,
     root = NULL) {
 
   root <- try_find_root(root)

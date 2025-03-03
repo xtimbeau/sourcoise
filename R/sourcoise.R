@@ -1,18 +1,23 @@
-# sourcoise est un outil qui permet d'exécuter un code, d'en cacher le résultat dans un dossier spécial (_data) en gardant des métadonnées
-# sauf modifications ou écart de temps (à configurer), les appels suivant au code ne sont pas exécutés mais le ficheir de data est relu
-# quelques fonctions permettent de diagnostiquer le cache et de suivre les mises à jour.
-
-
-#' sourcoise : exécute le code et cache les données
+#' sources code and caches results
 #'
-#' Cette fonction s'utilise presque comme `base::source()` et permet d'en accélérer l'exécution par le cache des données. `source_data()` est un alias de `sourcoise()`.
+#' `sourcoise()` is used as a drop in replacement for `base::source()` but caches results on disk. Cache is persistant.
 #'
-#' Le fichier source est donné en entrée. Le chemin est relatif au projet, mais si il n'est pas trouvé dans le projet, il est cherché en partant de la racine.
-#' Si le paramètre `src_in` est mis à `"file"`, alors le source est cherché à partir du qmd (ou du wd si il n'y pas encore de qmd) et les données sont stockées à ce niveau.
-#' Ce cas correspond donc à des dossiers qui ne partagent pas de code (le blog de l'OFCE), alors que l'autre cas correspond à des codes pouvant être partagés (la prévision)
+#'  However, there are some minor differences. First, the script called in `sourcoise()` must end by a `return()` or by an object returned.
+#'  Second, the script is always executed in a local environment, and the working directory is changed to be the one of the script.
+#'  Third, an heuristic is applied to find the script, evnt is the path given is incomplete. The closer to the working directory at the moment of the call will be prefered.
+#'  Fourth, in cas of an error is triggered by the script, `sourcoise()` does not fail and return the error, except if cached data is found and returned. In any case, the error is logged.
 #'
-#' Le code est exécuté (dans un environnement local) et le résultat est mis en cache. Il est important que le code se termine par un return(les_donnees).
-#' Si return() n'est pas présent dans le code, il n'est pas exécuté et un message d'erreur est envoyé ("NULL" est retourné).
+#'  Cache is invalidated when :
+#'  1 -   a cache is not found
+#'  2 -   the script has been modified
+#'  3 -   tracked files have been modified
+#'  4 -   last execution occurred a certan time ago and is considered as experied
+#'  5 -   execution is forced
+#'
+#' Si le paramètre `src_in` est `"file"`, alors le source est cherché à partir du qmd (ou du wd si il n'y pas qmd) et les données sont stockées à ce niveau.
+#' Ce cas correspond donc à des dossiers qui ne partagent pas de code (i.e. le blog de l'OFCE), alors que l'autre cas correspond à des codes pouvant être partagés (la prévision)
+#'
+#' Le code est execute (dans un environnement local) et le resultat est mis en cache. Il est important que le code se termine par un return(les_donnees).
 #' le code est exécuté avec un contrôle d'erreur, donc si il bloque, "NULL" est renvoyé, mais sans erreur ni arrêt.
 #' les appels suivants seront plus rapides et sans erreur (sauf si l'erreur n'est pas corrigée).
 #'
@@ -23,15 +28,9 @@
 #' Cela permet d'éviter une exécution à chaque rendu, mais permet de vérifier fréquemment la MAJ.
 #' On peut spécifier l'intervalle en heures (`hours`), en jours (`days`), en semaines (`weeks`), en mois (`months`) ou en trimestres (`quarters`).
 #'
-#' On peut bloquer l'exécution en renseignant la variable d'environnement `PREVENT_EXEC` par `Sys.setenv(PREVENT_EXEC = "TRUE")` ou dans `.Renviron`.
-#' Ce blocage est prioritaire sur tous les autres critères (sauf en cas d'absence de cache ou l'exécution est essayée).
-#'
 #' Des métadonnées peuvent être renvoyées (paramètre `metadata`) avec la date de la dernière exécution (`$date`), le temps d'exécution (`$timing`),
 #' la taille des données (`$size`), le chemin de la source (`$where`), le hash du source (`$hash_src`) et bien sûr les données (`$data`).
 #' Cela peut servir pour renseigner un graphique.
-#'
-#' Les valeurs par défaut peuvent être modifiées simplement par `options(sourcoise.hash = FALSE)` par exemple et persistent pour une session.
-#' Typiquement cela peut être mis dans rinit.r (et donc être exécuté par `ofce::init_qmd()`) et cela sera l'option par défaut du projet.
 #'
 #' Le paramètre `wd` perment de spécifier le répertoire d'exécution du source.
 #' Si il est mis à `"file"`, les appels à l'intérieur du code source, comme par exemple un save ou un load seront compris dans le répertoire où se trouve le fichier source.
@@ -42,8 +41,6 @@
 #' Toute autre valeur pour wd laisse le working directory inchnagé et donc dépendant du contexte d'exécution. Pour ceux qui aiment l'incertitude.
 #'
 #' En donnant des fichers à suivre par `track`, on peut déclencher l'exécution du source lorsque ces fichiers sont modifiés, c'est utile pour des fichiers sources sous excel (ou csv).
-#'
-#' `unfreeze` permet d'invalider le cache de quarto et de déclencher l'exécution du qmd pour mettre à jour la publication (et pas seulement les données en cache).
 #'
 #' @param path (character) le chemin vers le code à exécuter (sans extension .r ou .R ou avec au choix), ce chemin doit être relatif au projet (voir détails)
 #' @param args (list) une liste d'arguments que l'on peut utliser dans source (args$xxx)
@@ -102,8 +99,8 @@ sourcoise <- function(
   ctxt <- startup_log(log, ctxt)
 
   if(is.null(ctxt)) {
-    logger::log_error("Impossible de trouver le ficher {path}")
-    return(list(error = "file not found", ok = FALSE))
+    logger::log_error("file {path} not found")
+    return(list(error = glue("file {path} not found"), ok = FALSE, log_file = ctxt$log_file))
   }
 
   if(is.null(force_exec)) force <- FALSE else if(force_exec=="TRUE") force <- TRUE else force <- FALSE
@@ -119,14 +116,14 @@ sourcoise <- function(
     if(our_data$ok=="exec") {
       our_data <- cache_data(our_data, ctxt)
       prune_cache(ctxt)
-      logger::log_success("exécution forcée et réussie en {round(our_data$timing)} s. ({scales::label_bytes()(our_data$size)})")
+      logger::log_success("Successful forced execution in {round(our_data$timing)} s. ({scales::label_bytes()(our_data$size)})")
       if(metadata) {
         return(our_data)
       } else {
         return(our_data$data)
       }
     } else {
-      msg <- "exécution de {ctxt$src} échouée : {our_data$error$message}"
+      msg <- "Failed execution of {ctxt$src}: {our_data$error$message}"
       if(!quiet)
         cli::cli_alert_danger(msg)
       logger::log_error(msg)
@@ -139,21 +136,21 @@ sourcoise <- function(
 
   if(length(good_datas)==0) {
     if(prevent) {
-      logger::log_warn("Pas de données en cache et exécution suspendue, erreur retournée")
-      return(list(error = "No cache&prevent"))
+      logger::log_warn("No cached data, execution prevented")
+      return(list(error = "No cache&prevent", ok = FALSE, log_file = ctxt$log_file))
     }
     our_data <- exec_source(ctxt)
     if(our_data$ok=="exec") {
       our_data <- cache_data(our_data, ctxt)
       prune_cache(ctxt)
-      logger::log_success("Pas de cache valide, exécution réussie ({scales::label_bytes()(our_data$size)})")
+      logger::log_success("Successful execution (no cache found) in {round(our_data$timing)} s. ({scales::label_bytes()(our_data$size)})")
       if(metadata) {
         return(our_data)
       } else {
         return(our_data$data)
       }
     } else {
-      msg <- "exécution de {ctxt$src} échouée, pas de cache : {our_data$error$message}"
+      msg <- "Failed execution of {ctxt$src}, No cache: {our_data$error$message}"
       if(!quiet)
         cli::cli_alert_danger(msg)
       logger::log_error(msg)
@@ -163,7 +160,7 @@ sourcoise <- function(
 
   one_gooddata <- pick_gooddata(good_datas, ctxt)
   prune_cache(ctxt)
-  logger::log_success("Données en cache trouvées ({scales::label_bytes()(one_gooddata$size)})")
+  logger::log_success("Cache valid ({scales::label_bytes()(one_gooddata$size)})")
 
   if(metadata) {
     return(one_gooddata)

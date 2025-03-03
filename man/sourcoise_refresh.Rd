@@ -2,14 +2,14 @@
 % Please edit documentation in R/sourcoise_refresh.R
 \name{sourcoise_refresh}
 \alias{sourcoise_refresh}
-\title{execute all sources selected (in the what tibble)}
+\title{Refresh cache by executing sources selected}
 \usage{
 sourcoise_refresh(
   what = NULL,
   force_exec = TRUE,
   unfreeze = TRUE,
   quiet = FALSE,
-  init_fn = getOption(sourcoise.init_fn),
+  init_fn = getOption("sourcoise.init_fn"),
   root = NULL,
   log = "INFO",
   .progress = TRUE
@@ -28,7 +28,7 @@ sourcoise_refresh(
 
 \item{root}{(default \code{NULL}) force root to be set, instead of letting the function finding the root, for advanced uses}
 
-\item{log}{(string) (default "INFO") log levels as in \code{logger::log_threshold()} (c("OFF", "INFO", ...))}
+\item{log}{(string) (default "INFO") log levels as in \code{logger::log_threshold()} (c("OFF", "INFO", ...)), comes with a performance cost}
 
 \item{.progress}{(boolean) (default \code{TRUE}) displays a progression bar based on previous execution timings}
 }
@@ -36,7 +36,7 @@ sourcoise_refresh(
 a list of r scripts (characters) executed, with timing and success
 }
 \description{
-execute all sources selected (in the what tibble)
+Refresh cache by executing sources selected
 }
 \seealso{
 Other sourcoise: 
