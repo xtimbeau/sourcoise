@@ -3,7 +3,8 @@
 * ajout de `sourcoise_reset()` qui est efface tout (enfin, tout ce que `sourcoise` fabrique).
 * `sourcoise_clear()` est plus prudent et plus efficace.
 * `sourcoise_status()` est plus robuste et nettoie les data_file orphelins.
-* `{qs}` est remplacé par `{qs2}`, ce qui corrige le bug de `{gt}` (-;)
+* `{qs}` est remplacé par `{qs2}`, ce qui corrige le bug de `{gt}` (-;) 
+* le cache est enregistré dans .sourcoise (ainsi que le log)
 
 ## sourcoise 0.2.0
 

@@ -104,10 +104,10 @@ sourcoise <- function(
     limit_mb = limit_mb,
     quiet = quiet)
 
-  startup_log(log, ctxt)
+  ctxt <- startup_log(log, ctxt)
 
   if(is.null(ctxt)) {
-    logger::log_warn("Impossible de trouver le ficher {path}")
+    logger::log_error("Impossible de trouver le ficher {path}")
     return(list(error = "file not found", ok = FALSE))
   }
 
@@ -124,14 +124,14 @@ sourcoise <- function(
     if(our_data$ok=="exec") {
       our_data <- cache_data(our_data, ctxt)
       prune_cache(ctxt)
-      logger::log_success("force exec réussi ({scales::label_bytes()(our_data$size)})")
+      logger::log_success("exécution forcée et réussie en {round(our_data$timing)} s. ({scales::label_bytes()(our_data$size)})")
       if(metadata) {
         return(our_data)
       } else {
         return(our_data$data)
       }
     } else {
-      logger::log_warn("force exec échoué")
+      logger::log_error("exécution de {ctxt$src} échouée : {our_data$error$message}")
     }
   }
 

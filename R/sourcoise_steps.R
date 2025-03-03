@@ -163,11 +163,11 @@ pick_gooddata <- function(good_datas, ctxt) {
 startup_log <- function(log, ctxt) {
   if(log==FALSE)
     log <- "OFF"
-
+  log_dir <- log_fn <- NULL
   logger::log_threshold(log)
 
   if(log != "OFF") {
-    log_dir <- fs::path_join(c(ctxt$root,".logs"))
+    log_dir <- fs::path_join(c(ctxt$root,".sourcoise", "logs"))
     if(!fs::dir_exists(log_dir))
       fs::dir_create(log_dir)
     log_fn <- fs::path_join(c(log_dir, stringr::str_c("sourcoise_", lubridate::today() |> as.character()))) |>
@@ -181,6 +181,8 @@ startup_log <- function(log, ctxt) {
       logger::log_debug("cache : {ctxt[['full_cache_rep']]}")
     }
   }
+  ctxt$log_fn <- fs::path_rel(log_fn, ctxt$root)
+  return(ctxt)
 }
 
 prune_cache <- function(ctxt) {

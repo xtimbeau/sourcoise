@@ -105,7 +105,6 @@ get_ddatas <- function(name, data_rep) {
 }
 
 exec_source <- function(ctxt) {
-
   safe_source <- purrr::safely(\(src, args) {
     args <- args
     res <- suppressMessages(
@@ -118,13 +117,9 @@ exec_source <- function(ctxt) {
   setwd(ctxt$exec_wd)
   start <- Sys.time()
   res <- safe_source(ctxt$src, args = ctxt$args)
-  timing <- as.numeric(Sys.time() - start)
+  timing <- difftime(Sys.time() , start, unit = "secs") |> as.numeric()
   setwd(current_wd)
   if(!is.null(res$error)) {
-    cli::cli_div(class = "err", theme = list(.err = list(color = "red")))
-    cli::cli_alert_warning("Erreur dans {ctxt$src}\n\n
-                           {.err {res$error}}")
-    logger::log_error(res$error)
     return(list(ok=FALSE, error = res$error))
   }
 
@@ -143,7 +138,8 @@ exec_source <- function(ctxt) {
     wd = ctxt$wd,
     qmd_file = ctxt$new_qmds,
     src_in = ctxt$src_in,
-    ok = "exec" )
+    ok = "exec",
+    log_file = ctxt$log_file)
 }
 
 cache_data <- function(data, ctxt) {
@@ -202,6 +198,8 @@ cache_data <- function(data, ctxt) {
     les_metas$data <- NULL
     les_metas$data_file <- fs::path_file(fnd)
     les_metas$file <- NULL
+    les_metas$ok <- NULL
+    les_metas$id <- NULL
     jsonlite::write_json(les_metas, path = fnm)
   }
   return(data)
