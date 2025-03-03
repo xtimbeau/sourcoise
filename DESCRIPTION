@@ -15,7 +15,7 @@ Description: provide a function that behave nearly as base::source() but provide
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-URL: https://xtimbeau.github.io/sourcoise
+URL: https://xtimbeau.github.io/sourcoise, https://xtimbeau.github.io/sourcoise/
 Imports:
   fs,
   qs2, 
