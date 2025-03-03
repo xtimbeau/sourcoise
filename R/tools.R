@@ -180,13 +180,13 @@ cache_data <- function(data, ctxt) {
       }) |>
       dplyr::filter(data_hash == new_data_hash)
     if(nrow(hashes)>0) {
-      exists <- TRUE
       exists_data_file <- hashes |>
         dplyr::slice(1) |>
         dplyr::pull(data_file) |>
         fs::path_file()
 
       exists_data_file <- fs::path_join(c(ctxt$full_cache_rep, exists_data_file))
+      exists <- fs::file_exists(exists_data_file)
       file_size <- fs::file_info(exists_data_file)$size
     }
     cc <- max(files$cc, na.rm = TRUE) + 1
