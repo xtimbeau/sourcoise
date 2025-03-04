@@ -33,9 +33,6 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
 
   ctxt$uid <- digest::digest(ctxt$root, algo = "crc32")
 
-  ctxt$root_cache_rep <- fs::path_join(c(ctxt$root, ".sourcoise")) |>
-    fs::path_norm()
-
   ctxt[["src"]] <- find_src(ctxt$root, ctxt$name)
   if(is.null(ctxt[["src"]])) {
     ctxt[["src"]] <- try_find_src(ctxt$root, ctxt$name)
@@ -51,8 +48,21 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
   ctxt$basename <- fs::path_file(ctxt$name)
   ctxt$relname <- fs::path_rel(ctxt$src, ctxt$root)
   ctxt$reldirname <- fs::path_dir(ctxt$relname)
-  ctxt$full_cache_rep <- fs::path_join(c(ctxt$root_cache_rep, ctxt$reldirname)) |>
-    fs::path_norm()
+
+  if(src_in == "project") {
+    ctxt$root_cache_rep <- fs::path_join(c(ctxt$root, ".sourcoise")) |>
+      fs::path_norm()
+    ctxt$full_cache_rep <- fs::path_join(c(ctxt$root_cache_rep, ctxt$reldirname)) |>
+      fs::path_norm()
+  }
+  if(src_in == "file") {
+    file_path <- fs::path_dir(ctxt$src)
+    ctxt$root_cache_rep <- fs::path_join(c(file_path, ".sourcoise")) |>
+      fs::path_norm()
+    ctxt$full_cache_rep <- ctxt$root_cache_rep
+    wd <- "file"
+  }
+
   ctxt$qmd_path <- ctxt$paths$doc_path
   if(Sys.getenv("QUARTO_DOCUMENT_PATH") != "") {
     ctxt$qmd_file <- fs::path_join(c(ctxt$qmd_path, knitr::current_input())) |>

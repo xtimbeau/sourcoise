@@ -97,7 +97,6 @@ sourcoise <- function(
     quiet = quiet)
 
   ctxt <- startup_log(log, ctxt)
-
   if(is.null(ctxt)) {
     logger::log_error("file {path} not found")
     return(list(error = glue("file {path} not found"), ok = FALSE, log_file = ctxt$log_file))
@@ -141,7 +140,8 @@ sourcoise <- function(
     our_data <- exec_source(ctxt)
     if(our_data$ok=="exec") {
       our_data <- cache_data(our_data, ctxt)
-      logger::log_success("Successful execution (no cache found) in {round(our_data$timing)} s. ({scales::label_bytes()(our_data$size)})")
+      logger::log_success(
+        "Successful execution (no cache found) in {round(our_data$timing)} s. ({scales::label_bytes()(our_data$size)})")
       if(metadata) {
         return(our_data)
       } else {
