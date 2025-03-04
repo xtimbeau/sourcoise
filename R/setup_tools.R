@@ -114,40 +114,6 @@ hash_context <- function(ctxt) {
   return(ctxt)
 }
 
-# pick les meilleures données en cache
-
-pick_gooddata <- function(good_datas, ctxt) {
-  dates <- purrr::map(good_datas, "date") |>
-    unlist() |>
-    lubridate::as_datetime()
-  mdd <- which.max(dates)
-  good_good_data <- good_datas[[mdd]]
-  fnm <- names(good_datas)[[mdd]]
-  fnd <- fs::path_join(c(ctxt$full_cache_rep, good_good_data$data_file))
-
-  ggd_lapse <- good_good_data$lapse %||% "never"
-  ggd_wd <- good_good_data$wd %||% "file"
-  ggd_qmds <- setequal(good_good_data$qmd_file, ctxt$new_qmds)
-  ggd_track <- setequal(good_good_data$track, ctxt$track)
-  ggd_src_in <- ctxt$src_in == good_good_data$src_in %||% "project"
-
-  if(ggd_lapse != ctxt$lapse | ggd_wd != ctxt$wd | !ggd_qmds | !ggd_track | !ggd_src_in) {
-    newmdata <- good_good_data
-    newmdata$file <- NULL
-    newmdata$lapse <- ctxt$lapse
-    newmdata$wd <- ctxt$wd
-    newmdata$qmd_file <- ctxt$new_qmds
-    newmdata$track <- ctxt$track
-    newmdata$src_in <- ctxt$src_in
-    jsonlite::write_json(newmdata, path = fnm)
-  }
-
-  good_good_data$ok <- "cache"
-  good_good_data$data <- qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
-
-  return(good_good_data)
-}
-
 startup_log <- function(log, ctxt) {
   if(log==FALSE)
     log <- "OFF"
@@ -173,31 +139,4 @@ startup_log <- function(log, ctxt) {
   }
 
   return(ctxt)
-}
-
-prune_cache <- function(ctxt) {
-  if(is.infinite(ctxt$grow_cache))
-    return(NULL)
-  md <- get_mdatas(ctxt$basename, ctxt$full_cache_rep)
-
-  pairs <- purrr::imap_dfr(
-    md,
-    ~tibble(data_file = .x$data_file, json_file = .y, date = .x$date) )
-
-  datas <- unique(pairs$data_file)
-  jsons <- unique(pairs$json_file)
-  pairs <- pairs |>
-    group_by(data_file) |>
-    arrange(desc(date)) |>
-    summarize(date = first(date), json_file = first(json_file)) |>
-    slice_head(n=ctxt$grow_cache)
-  jsons_out <- setdiff(jsons, pairs$json_file)
-  datas_out <- setdiff(datas, pairs$data_file)
-
-  sure_delete <- function(fn) {
-    if(fs::file_exists(fn))
-      fs::file_delete(fn)
-  }
-  purrr::walk(jsons_out, ~ sure_delete(.x))
-  purrr::walk(jsons_out, ~ sure_delete(fs::path_join(c(ctxt$full_cache_rep, .x))))
 }

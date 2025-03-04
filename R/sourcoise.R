@@ -115,7 +115,6 @@ sourcoise <- function(
     our_data <- exec_source(ctxt)
     if(our_data$ok=="exec") {
       our_data <- cache_data(our_data, ctxt)
-      prune_cache(ctxt)
       logger::log_success("Successful forced execution in {round(our_data$timing)} s. ({scales::label_bytes()(our_data$size)})")
       if(metadata) {
         return(our_data)
@@ -142,7 +141,6 @@ sourcoise <- function(
     our_data <- exec_source(ctxt)
     if(our_data$ok=="exec") {
       our_data <- cache_data(our_data, ctxt)
-      prune_cache(ctxt)
       logger::log_success("Successful execution (no cache found) in {round(our_data$timing)} s. ({scales::label_bytes()(our_data$size)})")
       if(metadata) {
         return(our_data)
