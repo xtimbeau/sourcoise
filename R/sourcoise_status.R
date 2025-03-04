@@ -1,6 +1,6 @@
 #' Cache status of sourcoise
 #'
-#' Given the current project, `soucoise_status()` collects all ionformation about cache (could be project level, file level)
+#' Given the current project, `soucoise_status()` collects all information about cache (could be project level, file level)
 #' and return a tibble with this data.
 #'
 #' Data returned is:

@@ -2,29 +2,50 @@
 % Please edit documentation in R/sourcoise_status.R
 \name{sourcoise_status}
 \alias{sourcoise_status}
-\title{Etat du cache de sourcoise}
+\title{Cache status of sourcoise}
 \usage{
-sourcoise_status(
-  quiet = TRUE,
-  root = NULL,
-  src_in = getOption("sourcoise.src_in") \%||\% "project",
-  prune = TRUE
-)
+sourcoise_status(quiet = TRUE, root = NULL, prune = TRUE, clean = FALSE)
 }
 \arguments{
-\item{quiet}{(boléen) TRUE par défaut, ne dit rien}
+\item{quiet}{(boolean) default \code{TRUE} no messages during execution}
 
-\item{root}{force le root -- à ne pas utiliser sauf expert}
+\item{root}{(string) (default \code{NULL}) force root to a defined path, advanced and not recommanded use}
 
-\item{src_in}{est ce que les données sont avec les qmd ?}
+\item{prune}{(boolean) (default \code{TRUE}) clean up status to display only last relevant caches. Does not clean cache files.}
 
-\item{prune}{(boléen) limite la liste au dernier cache (TRUE par défaut)}
+\item{clean}{(boolean) (defaut \code{FALSE}) check if some data files have not json referring to them and cleans if any.}
 }
 \value{
-tibble des fichiers en cache avec les informations des scripts appelants
+tibble of cached files
 }
 \description{
-Donne des informations sur le cache de source_data sous la forme d'un tibble
+Given the current project, \code{soucoise_status()} collects all information about cache (could be project level, file level)
+and return a tibble with this data.
+}
+\details{
+Data returned is:
+\code{src}: path to the source file (r script)
+\code{date}: last execution date
+\code{valid}: is cache valid ?
+\code{uid}: id of user
+\code{index}: index of cache
+\code{timing}: last execution timing
+\code{size}: size of the R object(s) returned
+\code{lapse}: periodic refresh trigger
+\code{wd}: wd setting for execution of r script
+\code{args}: arguments passed to R script
+\code{json_file}: path to the file keeping cache information
+\code{qmd_file}: list of path to qmd files calling this script (relevant only for quarto projects)
+\code{src_in}: localisaiton of cache option
+\code{data_file}: path to data cached
+\code{data_date}: date and time of last save of data
+\code{log_file}: path to log file, if logging activated
+\code{root}: path to the project root, used as reference for all paths
+\code{scr_hash}: hash of the source file
+\code{track_hash}: hash of the tracked files, if any
+\code{track}: list of files tracked
+\code{args_hash}: hash of arguments
+\code{data_hahs}: hahs of data cached
 }
 \seealso{
 Other sourcoise: 

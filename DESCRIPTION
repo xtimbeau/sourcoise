@@ -32,7 +32,8 @@ Imports:
   rprojroot,
   rlang,
   scales,
-  logger
+  logger,
+  quarto
 Suggests:
   knitr
 VignetteBuilder:
