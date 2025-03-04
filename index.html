@@ -13,6 +13,7 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Exec a script, like source, and cache results on disk">
 <meta name="description" content="provide a function that behave nearly as base::source() but provide a caching mechanism on disk. Allows to source() R scripts that gather data but can fail or consume to much time to respond even if nothing new is expected. Comes with a bunch of tools to execute periodically, when cache is invalid of force refresh of the cache.">
 <meta property="og:description" content="provide a function that behave nearly as base::source() but provide a caching mechanism on disk. Allows to source() R scripts that gather data but can fail or consume to much time to respond even if nothing new is expected. Comes with a bunch of tools to execute periodically, when cache is invalid of force refresh of the cache.">
+<meta property="og:image" content="https://xtimbeau.github.io/sourcoise/logo.png">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -47,8 +48,11 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="mise-en-cache-avec-sourcoise">mise en cache avec sourcoise<a class="anchor" aria-label="anchor" href="#mise-en-cache-avec-sourcoise"></a>
-</h1></div>
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="sourcoise-">sourcoise 
+<a class="anchor" aria-label="anchor" href="#sourcoise-"></a>
+</h1>
+</div>
 <p><a href="https://xtimbeau.github.io/sourcoise">sourcoise</a> est un package qui fournit des outils pour exécuter un script R et mettre en cache les résultats. Le but est de pouvoir exécuter très rapidement un code qui accède à des fichiers ou une API et qui, en l’absence de mises à jour, produit toujours le même résultat. Lorsque l’API est suceptible de bloquer (ou si on a pas de connection internet), cela évite de bloquer le rendu d’un document ou d’un site quarto.</p>
 <p>Accessoirement, cela oblige à isoler le code du script qui récupère les données dans un fichier afin d’améliorer la reproductibilité. <code><a href="reference/sourcoise.html">sourcoise()</a></code> peut être appelé dans un <code><a href="reference/sourcoise.html">sourcoise()</a></code> ce qui permet la modularité. Il fournit des outils pour vérifier le cache et le rafraichir à la demande.</p>
 <div class="section level2">
