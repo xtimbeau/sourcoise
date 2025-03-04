@@ -1,20 +1,35 @@
-## sourcoise 0.3.0
+# sourcoise 0.3.1
 
-* ajout de `sourcoise_reset()` qui est efface tout (enfin, tout ce que `sourcoise` fabrique).
+## Correction de bugs
+
+* fonctionne correctement avec `src_in="file"` qui enregistre le cache au niveau du script R sourcé
+
+# sourcoise 0.3.0
+
+## Ajouts
+
+* `sourcoise_reset()` qui est efface tout (enfin, tout ce que `sourcoise` fabrique).
+
+## Améliorations
+
 * `sourcoise_clear()` est plus prudent et plus efficace.
 * `sourcoise_status()` est plus robuste et nettoie les data_file orphelins.
 * `{qs}` est remplacé par `{qs2}`, ce qui corrige le bug de `{gt}` (-;) 
 * le cache est enregistré dans .sourcoise (ainsi que le log)
 
-## sourcoise 0.2.0
+# sourcoise 0.2.0
+
+## Ajouts
 
 * `sourcoise()` a son propre package `{sourcoise}`, qui est importé dans `{ofce}`.
 * `sourcoise()` a un système de log (par `{logger}`)
 * `sourcoise()` a un système de prune
 * `sourcoise()` a une limite la taille des données sauvegardées
 
+## Correction de bugs
+
 plus quelques bugs réparés.
 
-## sourcoise 0.1.0
+# sourcoise 0.1.0
 
 `sourcoise()` sort du package `{ofce}` et devient indépendant. Il change de nom (anciennement `source_data()` qui reste un alias pour la compatibilité descendante)
