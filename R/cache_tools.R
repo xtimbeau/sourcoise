@@ -42,25 +42,29 @@ cache_data <- function(data, ctxt) {
     c(ctxt$full_cache_rep,
       stringr::str_c(ctxt$basename, "_", data$id))) |> fs::path_ext_set("json")
   if(!ctxt$nocache) {
-    if(!exists) {
-      fnd <- fs::path_join(
-        c(ctxt$full_cache_rep,
-          stringr::str_c(ctxt$basename, "_", data$data_hash))) |> fs::path_ext_set("qs2")
-      qs2::qs_save( data$data, file = fnd, nthreads = getOption("sourcoise.nthreads") )
-      file_size <- fs::file_info(fnd)$size
-      if(fs::file_info(fnd)$size > ctxt$limit_mb*1024*1024) {
-        fs::file_delete(fnd)
-        logger::log_warn("Les données ne sont pas mis en cache parce que trop volumineuses ({scales::label_bytes()(file_size)}")
-      }
-    } else
-      fnd <- exists_data_file
-    data$data_file <- fs::path_file(fnd)
-    data$file_size <- file_size
+
     les_metas <- data
     les_metas$data <- NULL
     les_metas$file <- NULL
     les_metas$ok <- NULL
     les_metas$id <- NULL
+
+    if(!exists) {
+      fnd <- fs::path_join(
+        c(ctxt$full_cache_rep,
+          stringr::str_c(ctxt$basename, "_", data$data_hash))) |> fs::path_ext_set("qs2")
+      qs2::qs_save( data$data, file = fnd, nthreads = getOption("sourcoise.nthreads") )
+      f_i <- fs::file_info(fnd)
+      les_metas$file_size <- f_i$size
+      les_metas$data_date <- f_i$modification_time |> as.character()
+      if(f_i$size > ctxt$limit_mb*1024*1024) {
+        fs::file_delete(fnd)
+        logger::log_warn("Les données ne sont pas mis en cache parce que trop volumineuses ({scales::label_bytes()(file_size)}")
+      }
+    } else
+      fnd <- exists_data_file
+
+    les_metas$data_file <- data$data_file <- fs::path_file(fnd)
     jsonlite::write_json(les_metas, path = fnm)
     prune_cache(ctxt)
   }
@@ -78,10 +82,12 @@ prune_cache <- function(ctxt) {
 
   datas <- unique(pairs$data_file)
   jsons <- unique(pairs$json_file)
+
   pairs <- pairs |>
     group_by(data_file) |>
     arrange(desc(date)) |>
     summarize(date = first(date), json_file = first(json_file)) |>
+    arrange(desc(date)) |>
     slice_head(n=ctxt$grow_cache)
   jsons_out <- setdiff(jsons, pairs$json_file)
   datas_out <- setdiff(datas, pairs$data_file)

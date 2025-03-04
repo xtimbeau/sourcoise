@@ -1,4 +1,4 @@
-# mise en cache avec sourcoise
+# sourcoise <a href="https://xtimbeau.github.io/sourcoise/"><img src="man/figures/logo.png" align="right" height="102" alt="sourcoise website" /></a>
 
 `{sourcoise}` est un package qui fournit des outils pour exécuter un script R et mettre en cache les résultats. Le but est de pouvoir exécuter très rapidement un code qui accède à des fichiers ou une API et qui, en l'absence de mises à jour, produit toujours le même résultat. Lorsque l'API est suceptible de bloquer (ou si on a pas de connection internet), cela évite de bloquer le rendu d'un document ou d'un site quarto.
 

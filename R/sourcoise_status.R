@@ -1,32 +1,57 @@
-#' Etat du cache de sourcoise
+#' Cache status of sourcoise
 #'
-#' Donne des informations sur le cache de source_data sous la forme d'un tibble
+#' Given the current project, `soucoise_status()` collects all ionformation about cache (could be project level, file level)
+#' and return a tibble with this data.
 #'
-#' @param src_in est ce que les données sont avec les qmd ?
-#' @param quiet (boléen) TRUE par défaut, ne dit rien
-#' @param root force le root -- à ne pas utiliser sauf expert
-#' @param prune (boléen) limite la liste au dernier cache (TRUE par défaut)
+#' Data returned is:
+#' `src`: path to the source file (r script)
+#' `date`: last execution date
+#' `valid`: is cache valid ?
+#' `uid`: id of user
+#' `index`: index of cache
+#' `timing`: last execution timing
+#' `size`: size of the R object(s) returned
+#' `lapse`: periodic refresh trigger
+#' `wd`: wd setting for execution of r script
+#' `args`: arguments passed to R script
+#' `json_file`: path to the file keeping cache information
+#' `qmd_file`: list of path to qmd files calling this script (relevant only for quarto projects)
+#' `src_in`: localisaiton of cache option
+#' `data_file`: path to data cached
+#' `data_date`: date and time of last save of data
+#' `log_file`: path to log file, if logging activated
+#' `root`: path to the project root, used as reference for all paths
+#' `scr_hash`: hash of the source file
+#' `track_hash`: hash of the tracked files, if any
+#' `track`: list of files tracked
+#' `args_hash`: hash of arguments
+#' `data_hahs`: hahs of data cached
+#'
+#' @param quiet (boolean) default `TRUE` no messages during execution
+#' @param root (string) (default `NULL`) force root to a defined path, advanced and not recommanded use
+#' @param prune (boolean) (default `TRUE`) clean up status to display only last relevant caches. Does not clean cache files.
+#' @param clean (boolean) (defaut `FALSE`) check if some data files have not json referring to them and cleans if any.
 #' @family sourcoise
 #'
-#' @return tibble des fichiers en cache avec les informations des scripts appelants
+#' @return tibble of cached files
 #' @export
 #'
 
 sourcoise_status <- function(
     quiet = TRUE,
     root = NULL,
-    src_in = getOption("sourcoise.src_in") %||% "project",
-    prune = TRUE) {
+    prune = TRUE,
+    clean = FALSE) {
 
-  root <- try_find_root(root, src_in)
+  root <- try_find_root(root, src_in = "project")
   caches_reps <- fs::dir_ls(path = root, regex = "\\.sourcoise$", all = TRUE, recurse = TRUE)
   roots <- fs::path_dir(caches_reps)
   caches_reps <- rlang::set_names(caches_reps, roots)
 
   jsons <- purrr::map(caches_reps,
-                ~fs::dir_ls(.x, glob = "*.json", recurse = TRUE))
+                      ~fs::dir_ls(.x, glob = "*.json", recurse = TRUE))
   qs2 <- purrr::map(caches_reps,
-             ~fs::dir_ls(.x, glob = "*.qs2", recurse = TRUE))
+                    ~fs::dir_ls(.x, glob = "*.qs2", recurse = TRUE))
 
   if(length(roots)>0) {
     cached <- purrr::map_dfr(roots, \(a_root) {
@@ -48,6 +73,7 @@ sourcoise_status <- function(
           qmd_file = list(dd$qmd_files),
           src_in = dd$src_in,
           data_file = dd$data_file,
+          data_date = dd$data_date,
           log_file = dd$log_file %||% "",
           root =  a_root,
           src_hash = dd$src_hash,
@@ -59,14 +85,15 @@ sourcoise_status <- function(
     }) |>
       dplyr::arrange(src, dplyr::desc(date))
 
-    qs2_jsoned <- purrr::pmap_chr(cached, \(root, json_file, data_file, ...) {
-      dir <- fs::path_join(c(root, json_file)) |>
-        fs::path_dir()
-      fs::path_join(c(dir, data_file))
+    if(clean) {
+      qs2_jsoned <- purrr::pmap_chr(cached, \(root, json_file, data_file, ...) {
+        dir <- fs::path_join(c(root, json_file)) |>
+          fs::path_dir()
+        fs::path_join(c(dir, data_file))
       })
-    qs2_orphed <- setdiff(qs2 |> purrr::list_c(), qs2_jsoned)
-    purrr::walk(qs2_orphed, fs::file_delete)
-
+      qs2_orphed <- setdiff(qs2 |> purrr::list_c(), qs2_jsoned)
+      purrr::walk(qs2_orphed, fs::file_delete)
+    }
     if(prune)
       cached <- cached |>
         dplyr::group_by(src) |>
@@ -75,7 +102,7 @@ sourcoise_status <- function(
     return(cached)
   } else {
     if(!quiet)
-      cli::cli_alert_danger("Pas de cache trouvé")
+      cli::cli_alert_info("No cache data")
     return(tibble::tibble())
   }
 }
