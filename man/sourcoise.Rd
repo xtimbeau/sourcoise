@@ -92,6 +92,8 @@ If \code{metadata=TRUE}, a list is returned, with some metadatas. Main ones are 
 \code{force_exec} and \code{prevent_exec} are parameters that force the script execution (trigger #5) of prevent it (so cache is returned or NULL if no cache). Those 2 parameters can be set for one specific execution, but they are intendend to a global setting through the option \code{sourcoise.force_exec} or \code{sourcoise.prevent_exec}.
 
 If returned data after execution is not different than previously cached data, then no caching occurs in order to limit the disk use and to avoid keeping an histoiry of the same data files. This implies the possibility of a difference between last execution date and last data modification date.
+
+Working with github : \code{sourcoise()} is designed to function with \emph{github}. Cache information is specific to each user (avoiding conflicts) and cached data is named with the hash. Conflicts could occur in the rare case the same script is executed on different machines and that this script return each time a different result (such as a random generator).
 }
 \seealso{
 Other sourcoise: 

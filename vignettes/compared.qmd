@@ -1,0 +1,74 @@
+---
+title: "Comparé à ..."
+vignette: >
+  %\VignetteIndexEntry{compared}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+
+format:
+  html:
+    code-fold: true
+    code-summary: "code"
+
+echo: true
+message: false
+warning: false
+---
+
+## par rapport à base::source
+
+Une alternative à `sourcoise()` est d'écrire l'enregistrement des données directement dans le script et de charger les données dans le chunk.
+
+``` r
+library(insee)
+library(tidyverse)
+
+ipchm <- get_idbank_list("IPCH-2015") |>
+     filter(COICOP2016=="00", FREQ=="M", NATURE=="INDICE") |> 
+     pull(idbank) |>
+     get_insee_idbank() |>
+     select(DATE, ipch = OBS_VALUE, IDBANK)
+
+ipch <- ipchm |>
+     mutate(DATE = floor_date(DATE, unit="quarter")) |>
+     group_by(DATE) |>
+     summarise(ipch = mean(ipch))
+
+ipcha <- ipch |> 
+     mutate(y = year(DATE)) |> 
+     group_by(y) |>
+     summarize(ipch = mean(ipch)) |> 
+     mutate(ipch = ipch / ipch[y == 2023])
+
+saveRDS(ipcha , ipchm,  ipch, file = "ipch.rds")
+```
+
+et dans le chunk `r` inclure un `loadRDS("ipch.rds")`. En apparence plus simple cette solution est désastreuse pour le *workflow.* On ne sait pas quel script il faut lancer, quand il a été lancé, le chargement du script modifie les variables dans l'environnement, les `.rds` déclenchent des conflits avec *github*, bref, que des mauvaises pratiques.
+
+## par rapport à memoise
+
+`memoise::memoise()` propose une solution proche, avec la possibilité de rendre le cache persistant entre sessions.
+
+Mais `memoise()` répond au besoin de l'évaluation d'une fonction, qui pour un même jeu de paramètres renvoie toujours la même chose. Ce qui est la définition d'une fonction dans la paradigme fonctionnel. Le cache permet alors d'échanger espace disque contre performance.
+
+`sourcoise()` part d'une hypothèse différente, celle d'effets de bord. Le code appelé par le script ressemble à une fonction mais n'en est pas une : les mêmes arguments peuvent renvoyer une valeur différente. C'est le cas notamment lors de l'accès à une API à des données qui renvoie souvent la même chose, mais périodiquement propose une nouvelle version, mise à jour, avec un effet de bord.
+
+Le temps d'accès à l'API eut être long et éventuellement l'accès hasardeux (serveur hors ligne, internet coupé). Or les appels à l'API peuvent être dans un workflow typique quarto/R très fréquent (à chaque rendu par exemple), `sourcoise()` permet donc de mettre en cache et de ne déclencher une "vraie" exécution que de temps en temps. Si l'appel à l'API est très long, le gain en performance peut être considérable. Si l'API bloque parfois, alors `sourcoise()` permet de continuer le reste du workflow sans interruption. L'exécution de l'API peut ainsi être asynchrone, dans un process différent ou sur une machine différente, la synchronisation étant assurée par le système de fichier, github ou `{pins}` (à venir).
+
+Par rapport à `memoise::memoise()`, `sourcoise()` utilise systématiquement un cache sur disque, persistant, localisé dans le projet R ou quarto et destiné à être synchronisé par github. Il s'applique à un script et non à une fonction et utilise des règles d'invalidation du cache différentes :
+
+-   le cache est conçu principalement pour être passé entre session. Il est utilisé lors du rendu d'un .qmd et il est transportable avec les fichiers associés.
+
+-   le cache est invalidé si le script est modifié (similaire à l'invalidation par le corps de la fonction dans memoise::memoise()).
+
+-   le cache est invalidé en fonction du delai entre deux exécutions. Il est possible de ré-exécuter le code si il n'a pas été exécuté depuis une heure, une journée, une semaine, etc...
+
+-   le cache est invalidé si un ou plusieurs fichiers (définis au préalable) ont été modifiés. Cela sert en particulier à invalider le cache si un fichier de données (`.csv` ou `.xls`) a été modifié.
+
+-   le cache est invalidé si les arguments passés à `sourcoise()` pour le script ont été modifiés (comme dans le fonctionnement central de `memoise::memoise()`).
+
+-   on peut également forcer l'invalidation du cache par un paramètre passé à la fonction, éventuellement un paramètre global ou en utilisant la fonction `sourcoise_refresh()`. Ce dernier point est une différence important par rapport à `memoise::memoise()` et permet une exécution régulière du rafraichissement du cache indépendamment de l'endroit où est appelé le script.
+
+-   on peut logger les accès à sourcoise() ce qui permet de comprendre pourquoi le cache n'est pas invalidé et quels sont fichiers qui ont déclenché sourcoise(). Un dossier `logs` est ajouté au dossier `.sourcoise`.
+
+-   on peut limiter la taille du cache, par le paramètre grow_cache qui contraint l'historique du cache et par limit_mb qui empêche de mettre en cache des données au delà d'une taille limite ; par défaut 50mb, pour ne pas fâcher github.

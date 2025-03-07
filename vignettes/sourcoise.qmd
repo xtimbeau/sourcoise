@@ -20,64 +20,82 @@ warning: false
 
 ## Comment l'utiliser ?
 
-Première chose mettre son code de données dans un script et l'enregistrer là où est le qmd, dans cet exemple `souverains.qmd` et un dossier remplis de csv, scripts R, etc :
+1 -   Mettre le code qui fabrique les données dans un script (`"ipch_PiM.r"`) et l'enregistrer dans le dossier où est le qmd. Dans cet exemple, le code `r` télécharge des données (assez volumineuses) sur Eurostat, les transforme et renvoie un tibble prêt pour le graphique. Le script doit se terminer par un `return` qui renvoie les données calculées ou téléchargées. Ce sont ces données qui sont mises en cache. Le temps d'exécution est de 11s et le script peut bloquer si l'API d'eurostat n'est pas accessible (ou si on a pas de connection internet).
 
 ```bash         
-├── ipch.qmd
+├── prix.qmd
 └── ipch
-    └── ipch_PiM.R
+    └── prix_insee.R
 ```
 
-Dans `souverains.qmd` on trouve le chunk suivant. `sourcoise()` est capable de retrouver le dossier dans le même dossier que le `qmd` (ce n'est pas automatique, dans un projet commme la prévision, les chemins sont relatifs à la racine du projet, ici le qmd et ses fichiers peuvent être mis n'importe où grâce à cette heuristique). Le source est ensuite exécuté en changeant le dossier de travail à celui qui le contient (dans cet exemple, `souverains`) ce qui permet d'utiliser des chemins relatifs et donc de pouvoir transporter le code n'importe où.
+Le script `insee.r` comporte un `return()` à la fin :
 
-````qmd
+```r
+library(insee)
+library(tidyverse)
+
+ipchm <- get_idbank_list("IPCH-2015") |>
+     filter(COICOP2016=="00", FREQ=="M", NATURE=="INDICE") |> 
+     pull(idbank) |>
+     get_insee_idbank() |>
+     select(DATE, ipch = OBS_VALUE, IDBANK)
+
+ipch <- ipchm |>
+     mutate(DATE = floor_date(DATE, unit="quarter")) |>
+     group_by(DATE) |>
+     summarise(ipch = mean(ipch))
+
+ipcha <- ipch |> 
+     mutate(y = year(DATE)) |> 
+     group_by(y) |>
+     summarize(ipch = mean(ipch)) |> 
+     mutate(ipch = ipch / ipch[y == 2023])
+
+return(list(ipcha = ipcha, ipchm = ipchm, ipch = ipch))
+```
+
+2. Dans `ipch.qmd` on met le chunk suivant (pas besoin de déclarer les libraries utilisées dans le script) :
+
 ```r
 library(sourcoise)
-
-ipch <- sourcoise("ipch/ipch.r", lapse = "1 month")
-
-ggplot(icpch$)
-```
-````
-
-Le script doit se terminer par un `return` qui renvoie les données calculées ou téléchargées. Ce sont ces données qui sont mises en cache.
-
-````         
-```r
-library(INSEE)
 library(tidyverse)
-...
-télécharge et modifie, calcule, etc
-...
-return(taux_souverains_historiques)
+ipch_data <- sourcoise("ipch/prix_insee.R")
+
+ggplot(data = ipch_data$ipchm) + 
+  aes(x = DATE, y = ipch ) +
+  geom_line()
+
 ```
-````
 
-`sourcoise()` dispose d'un cache (caché dans un dossier `.data`). Il repère le fichier source et détecte les changements faits au code source et invalide le cache. Si le cache est valide, les données sont renvoyées, sinon, le script est exécuté et les nouvelles données mises en cache.
+L'utilisation de `sourcoise()` se fait comme celle de `base::source()` à l'assignement prêt. Le résultat est mis en cache et les exécution suivant prennent quelques millisecondes. Ces appels fonctionnent sans téléchargement et donc sasn erreur possible si le serveur d'Eurostat est hors ligne ou que l'on a plus d'internet.
 
-Il existe d'autres moyens d'invalider le cache : il peut avoir une durée de vie maximale, comme avec l'argument `lapse="day"`. Cette option dit que si le cache est plus vieux que 24h, il est renouvelé par une ré-exécution du script. Ce paramètre peut prendre plusieurs valeurs et des formes comme `2 hours` ou `3 weeks`. D'autres déclencheurs temporels seront ajoutés pour introduire des calendriers (comme 45 jours après la fin du trimestre). Attention, cependant, `source_cache` n'est pas capable d'aller vérifier que les données téléchargées ont un point de plus et donc de ne pas valider le cache si la donnée n'a pas encore été publiée.
+`sourcoise()` dispose d'un cache (caché dans un dossier `.sourcoise`). Il repère le fichier source (le script) et détecte les changements, ce qui invalide le cache. Si le cache est valide, les données sont renvoyées, sinon, le script est exécuté et les nouvelles données mises en cache.
 
-Il est aussi possible de déclencher l'invalidation du cache si un fichier a été modifié. Il suffit de fournir une liste de fichiers (dont les chemins sont relatifs au script) qui seront suivis. Ces fichiers peuvent être des `.csv` ou des fichiers `.xlsx` (ou encore tout autre type de fichier) et donc sont utiles pour déclencher l'exécution du script quand on a fait une modification manuelle ou par un autre programme de ces fichiers. On peut en mettre autant qu'on veut.
+Il existe d'autres moyens d'invalider le cache : il peut avoir une durée de vie maximale, avec l'argument `lapse="day"`. Cette option dit que si le cache est plus vieux que 24h, il est renouvelé par une ré-exécution du script. Ce paramètre peut prendre plusieurs valeurs et des formes comme `2 hours` ou `3 weeks`. D'autres déclencheurs temporels seront possiblement ajoutés pour introduire des calendriers (comme 45 jours après la fin du trimestre). Cependant, `sourcoise()` n'est pas capable d'aller vérifier (de façon générale) que les données téléchargées ont été mise à jour de plus et donc de ne pas invalider le cache sur cette base.
 
-On peut également forcer le déclenchement du script. Cela se fait par une option `force_exec=TRUE`. Cependant, il vaut mieux ne pas spécifier cette option, il existe d'autres moyens pour opérer un rafraîchissement du cache.
+Il est aussi possible de déclencher l'invalidation du cache si un autre fichier a été modifié. Il suffit de fournir une liste de fichiers (dont les chemins sont relatifs au script) qui seront tracés. Ces fichiers peuvent être des `.csv` ou des fichiers `.xlsx` (ou encore tout autre type de fichier) et donc sont utiles pour déclencher l'exécution du script quand on a fait une modification manuelle ou par un autre programme de ces fichiers. On peut en mettre autant qu'on veut.
 
-Il est possible de bloquer l'exécution du code par une option (`prevent_exec`) qui peut être définie comme une option globale (par `options(ofce.source_data.prevent_exec=TRUE)`). Dans ce cas, aucun script ne sera exécuté, ce qui peut servir lorsqu'on veut faire un rendu du site sans prendre le risque d'une erreur d'API ou d'un blocage.
+On peut également forcer le déclenchement du script. Cela se fait par une option `force_exec=TRUE`. Il existe d'autres moyens pour opérer un rafraîchissement du cache plus généraux.
 
-## Comment utiliser sourcoise
+Il est possible de bloquer l'exécution du code par une option (`prevent_exec`) qui peut être définie comme une option globale (par `options(ofce.sourcpose.prevent_exec=TRUE)`). Dans ce cas, aucun script ne sera exécuté, ce qui peut servir lorsqu'on veut faire un rendu du site sans prendre le risque d'une erreur d'API ou d'un blocage.
 
-Le cas d'usage central de `sourcoise()` 
+Il est possible de logger l'exécution de `sourcoise()` pour vérifier que tout s'est bien passé et de répérer les accès aux données.
 
-un projet R ou quarto.
+Une dernière chose, `sourcoise()` est doté d'une heuristique maline trouve le fichier source même si il est caché (i.e. que le chemin est approximatif, ce qui déclenche une erreur normalement, mais là ça passe), ce qui augmente la portabilité des fichiers sources et facilite l'orgnisation d'un projet. Bien sûr, en cas d'ambiguité, `sourcoise()` prévient.
 
-des qmd, appelant sourcoise() pour l'acquisition des données et produisant tableaux ou graphiques à partir de ces données.
+## Le workflow de sourcoise
 
-des scripts R, dans le même dossier ou ailleurs, qui produisent les données à partir de calculs, d'interrogation de bases externes ou d'API. Des objets plus complexes peuvent être renvoyés, comme par exemple des listes d'objets, des graphiques, des tableaux, des fonctions fabriquant des tableaux ou des graphiques, etc...
+Le cas central d'utilisation de sourcoise est dans un projet quarto. On  acuiert des données de diférentes sources, plus ou moins complexes, nécessitant plus ou moins de traitements. Ces donénes peuvent être mises à jour, mais la fréquence de mise à jour est bien plus basse que la fréquence de rendu du projet quarto. Dans les chunks on place les mises en forme de graphiques ou de tableaux, afin de pouvoir les corriger et de pouvoir conserver l'adaptation des rendus aux support lors du `render` du projet quarto. Les données sont fabriquées dans les scripts `r`, placés là où sont les `qmd` et appelés périodiquement ou manuellement pour garantir que l'on dispose de la version à jour.
 
-lorsqu'un cache est disponible et valide (voir plus bas) il est utilisé et la fonction répond très rapidement suivant la taille des données (0.006 secondes pour des données de 2Mb).
+Ce projet quarto est partagé par github entre plusieurs utilisateurs et les données mises en cache sont commitées (et versionnées) par github. Cela permet de dissocier exécution des scripts (et vérification de leur bonne exécution) du rendu des graphiques ou tableaux faits à partir de ces données.
 
-tout cela est conçu pour fonctionner avec github et donc partager le cache entre utilisateurs d'un même dépot. On peut donc mettre à jour les données sur une machine et les utiliser sur une autre.
+`sourcoise_status()` permet de faire un inventaire, pour le projet, de toutes les données en cache. Chaque fichier de donnée en cache, c'est-à-dire qui a été exéctué pleinement avec succès au moins une fois, est repéré (il existe quelque part dans le projet dans un dossier `.sourcoise`). Avec ce fichier, quelques informations sont conservés sur l'exécution (date, temps, taille des données) mais aussi sur le contexte d'exécution (script `r`, `qmd` appelants).
 
-une dernière chose, sourcoise() est doté d'une heuristique maline trouve le fichier source même si il est caché (i.e. que le chemin est approximatif, ce qui déclenche une erreur normalement, mais là ça passe), ce qui augmente la portabilité des fichiers sources et facilite l'orgnisation d'un projet. Bien sûr, en cas d'ambiguité, sourcoise() prévient.
+`sourcoise_refresh()` permet ainsi que rafraicher tout ou partie des données en cache en forçant l'exécution ou en laissant les schémas d'invalidation jouer automatiquement. lorsque les scripts sont exécutés par `sourcoise_refresh()` le log est activé par défaut. Comme les `qmd` appelants sont connus, `sourcoise_refresh()` peut *unfreezé* ou *uncaché* les `qmd`ou les chunks des `qmd`. C'est important dans le workflow, parce que lorsqu'on rafraichit les données, on veut que les chunks soient réévalués pour que les tableaux ou les graphiques soient refait à partir des nouvelles données. Or, si on utilise `freeze` quarto n'a pas de moyen de savoir que le `freeze` est périmé.
+
+Il est possible de sélectionner les données qui sont rafraichies. `sourcoise_refresh()` part du résulat de `sourcoise_status()` par défaut. Il est ainsi possible de faire une sélection des données en cache et de ne passer que celles là à `sourcoise_refresh()`. Avec un peu de programmation, on peut donc mettre en place un schéma qui régulièrement vérifie la validité des données (calendrier, API ou autre) et déclenche séelctivement la mise à jour. `sourcoise()` peut appeler d'autres `sourcoise()` mais pour le moment, il n'y a aucune prise en compte de cette hiérarchie.
+
+
 
 un exemple
 Par exemple, si le script R prix_insee.r utilise l'API de l'INSEE pour télécharger l'indice des prix à la consommation, et si il se termine par l'instruction return(ipc), alors sourcoise("prix_insee.r") renvoie toujours les données correspondantes, et si elles sont en cache, le retour est très rapide et ne nécessite pas d'accès à internet.

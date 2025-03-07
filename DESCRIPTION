@@ -1,6 +1,6 @@
 Package: sourcoise
 Type: Package
-Title: Exec a script, like source, and cache results on disk
+Title: Exec a script and cache results on disk
 Version: 0.3.1
 Authors@R: c(
     person(
@@ -9,9 +9,9 @@ Authors@R: c(
       role = c("aut", "cre")
     )
   )
-Description: provide a function that behave nearly as base::source() but provide a caching mechanism on disk. 
-    Allows to source() R scripts that gather data but can fail or consume to much time to respond even if nothing new is expected.
-    Comes with a bunch of tools to execute periodically, when cache is invalid of force refresh of the cache.
+Description: sourcoise provides a function that behave nearly as base::source() but implements a caching mechanism on disk.
+    It allows to quasi source() R scripts that gather data but can fail or consume to much time to respond even if nothing new is expected.
+    It comes with a bunch of tools to check and execute on demand or when cache is invalid the script.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

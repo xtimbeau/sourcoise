@@ -15,6 +15,22 @@ devtools::install_gitub("xtimbeau/sourcoise")
 pak::pak("xtimbeau/sourcoise")
 ```
 
+## utilisation
+
+Pour alimenter un graphique ou un tableau en données, on met le code dans un script `r` ("mon_script.r") en terminant le script par un `return(data_pour_le_graphique)`. 
+Dans le `.qmd` ou `.rmd` (ou aussi un scirpt R) on a les instructions du graphique :
+
+````qmd
+```{r}
+library(sourcoise)
+mes_datas <- sourcoise("mon_script.r")
+ggplot(mes_datas) + instructions du graphique
+
+```
+````
+
+A la première exécution le script est exécuté, les appels suivants utiliseront le cache, sauf si le cache est invalidé.
+
 ## bénéfices
 
 Les bénéfices sont nombreux :
@@ -33,6 +49,8 @@ Les bénéfices sont nombreux :
 
 Seront bientôt implémentés :
 
--   la possibiité de stocker les données cachées hors de *github* et d'utiliser `{pins}` pour les partager (mais au prix d'un accès plus lent peut être).
+-   la possibilité de stocker les données cachées hors du dossier de projet (et donc horsd de *github*) et d'utiliser `{pins}` pour le stcokage (mais peut être au prix d'un accès plus lent).
+
+-   un schéma pour déclarer les dépendances entre dess appels à `sourcoise()` et déclencher les exécutions en cascade.
 
 -   et éventuellement une interface *shiny* de mise à jour (*gui* pour `sourcoise_refresh()`)
