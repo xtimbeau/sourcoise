@@ -59,7 +59,7 @@ cache_data <- function(data, ctxt) {
       les_metas$data_date <- f_i$modification_time |> as.character()
       if(f_i$size > ctxt$limit_mb*1024*1024) {
         fs::file_delete(fnd)
-        logger::log_warn("Les données ne sont pas mis en cache parce que trop volumineuses ({scales::label_bytes()(file_size)}")
+        logger::log_warn("cached data not saved because ({scales::label_bytes()(file_size)} is over the {ctxt$limit_md} Mb limit.")
       }
     } else
       fnd <- exists_data_file

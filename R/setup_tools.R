@@ -39,7 +39,7 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
     if(length(ctxt[["src"]])==0)
       return(NULL)
     if(length(ctxt[["src"]])>1) {
-      cli::cli_alert_warning("Plusieurs fichiers src sont possibles")
+      cli::cli_alert_warning("More than one ({length(ctxt['src']])}) sources detected.")
       l_src <- purrr::map(ctxt[["src"]], stringr::str_length) # ce critère est curieux
       ctxt[["src"]] <- ctxt[["src"]][[which.min(l_src)]]
     }
@@ -83,7 +83,7 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
       if(!is.null(ctxt$qmd_path)) {
         ctxt$exec_wd <- ctxt$qmd_path
       } else {
-        cli::cli_alert_warning("Pas de document identifié, probablement, non exectu\u00e9 de quarto")
+        cli::cli_alert_warning("No quarto project and wd is set to 'qmd', check your setup.")
         ctxt$exec_wd <- fs::path_dir(ctxt$src)
       }
     }
@@ -109,7 +109,7 @@ hash_context <- function(ctxt) {
     if(any(ok_files))
       ctxt$track_hash <- hash_file(as.character(track_files[ok_files]))
     else {
-      cli::cli_alert_warning("Les fichiers de track sont introuvables, v\u00e9rifiez les chemins")
+      cli::cli_alert_warning("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
     }
   }
 

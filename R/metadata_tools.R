@@ -8,7 +8,7 @@ valid_meta4meta <- function(meta, root) {
     if(any(ok_files))
       track_hash <- hash_file(as.character(track_files[ok_files]))
     else {
-      cli::cli_alert_warning("Les fichiers de track sont invalides, vérifiez les chemins")
+      cli::cli_alert_warning("invalid track ({track_files[!ok_files]}), please check paths.")
     }
   }
 

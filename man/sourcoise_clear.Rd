@@ -10,7 +10,7 @@ sourcoise_clear(
 )
 }
 \arguments{
-\item{what}{(--) un tibble issu de source_data, éventuellement filtré}
+\item{what}{(--) a tibble such as the one obtained by \code{sourcoise_status()}, possibly filtered}
 
 \item{root}{pour forcer le root (non recommandé)}
 }
