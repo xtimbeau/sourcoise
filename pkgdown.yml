@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   compared: compared.html
   sourcoise: sourcoise.html
-last_built: 2025-03-07T13:33Z
+last_built: 2025-03-07T13:37Z
 urls:
   reference: https://xtimbeau.github.io/sourcoise/reference
   article: https://xtimbeau.github.io/sourcoise/articles
