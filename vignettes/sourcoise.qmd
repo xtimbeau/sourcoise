@@ -15,7 +15,7 @@ message: false
 warning: false
 ---
 
-## Mettre en cache le résultat des calculs avec `sourcoise()`
+# Mettre en cache le résultat des calculs avec `sourcoise()`
 
 
 ## Comment l'utiliser ?
@@ -83,12 +83,19 @@ Il est possible de logger l'exécution de `sourcoise()` pour vérifier que tout 
 
 Une dernière chose, `sourcoise()` est doté d'une heuristique maline trouve le fichier source même si il est caché (i.e. que le chemin est approximatif, ce qui déclenche une erreur normalement, mais là ça passe), ce qui augmente la portabilité des fichiers sources et facilite l'orgnisation d'un projet. Bien sûr, en cas d'ambiguité, `sourcoise()` prévient.
 
-## performance
+## Performance
 
-```{r}
+L'exécution "vraie" du scirpt `r` (sur un MacOS M2) prend 34ms et alloue 200kb. Lorsque les données sont en cache, l'exécution est effectuée en moins de 5ms et l'allocation de mémoire est celle des données finales. 
 
 ```
-
+> bench::mark(cache = sourcoise("work/ipch/prix_insee.r"), no_cache = sourcoise("work/ipch/prix_insee.r", force_exec = TRUE))
+# A tibble: 2 × 13
+  expression      min   median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time result       memory    
+  <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl> <int> <dbl>   <bch:tm> <list>       <list>    
+1 cache         4.5ms    4.6ms     216.   188.63KB     11.0    98     5      455ms <named list> <Rprofmem>
+2 no_cache     34.3ms   37.5ms      26.6    1.77MB     11.8     9     4      338ms <named list> <Rprofmem>
+# ℹ 2 more variables: time <list>, gc <list>
+```
 
 ## Le workflow de sourcoise
 
@@ -102,44 +109,9 @@ Ce projet quarto est partagé par github entre plusieurs utilisateurs et les don
 
 Il est possible de sélectionner les données qui sont rafraichies. `sourcoise_refresh()` part du résulat de `sourcoise_status()` par défaut. Il est ainsi possible de faire une sélection des données en cache et de ne passer que celles là à `sourcoise_refresh()`. Avec un peu de programmation, on peut donc mettre en place un schéma qui régulièrement vérifie la validité des données (calendrier, API ou autre) et déclenche séelctivement la mise à jour. `sourcoise()` peut appeler d'autres `sourcoise()` mais pour le moment, il n'y a aucune prise en compte de cette hiérarchie.
 
+## Usage avancé
 
-
-un exemple
-Par exemple, si le script R prix_insee.r utilise l'API de l'INSEE pour télécharger l'indice des prix à la consommation, et si il se termine par l'instruction return(ipc), alors sourcoise("prix_insee.r") renvoie toujours les données correspondantes, et si elles sont en cache, le retour est très rapide et ne nécessite pas d'accès à internet.
-
-library(insee)
-library(tidyverse)
-
-ipchm <- get_idbank_list("IPCH-2015") |>
-     filter(COICOP2016=="00", FREQ=="M", NATURE=="INDICE") |> 
-     pull(idbank) |>
-     get_insee_idbank() |>
-     select(DATE, ipch = OBS_VALUE, IDBANK)
-
-ipch <- ipchm |>
-     mutate(DATE = floor_date(DATE, unit="quarter")) |>
-     group_by(DATE) |>
-     summarise(ipch = mean(ipch))
-
-ipcha <- ipch |> 
-     mutate(y = year(DATE)) |> 
-     group_by(y) |>
-     summarize(ipch = mean(ipch)) |> 
-     mutate(ipch = ipch / ipch[y == 2023])
-
-return(list(ipcha = ipcha, ipchm = ipchm, ipch = ipch))
-Dans le qmd on a alors un chunk r :
-
-library(sourcoise)
-ipc <- sourcoise("prix_insee.r")
-ggplot(ipc$ipch) + ...
-Le stockage des données a une faible empreinte disque (elles ne servent qu'à construire un graphique, il y a donc une série ou deux, trois dans cet exemple), ce qui ne pose pas de problème pour github. Si l'API de l'INSEE est en panne, alors le cache sera utilisé. On peut réutiliser cette instruction de nombreuses fois, puisqu'elle ne sera exécuté réellement qu'une fois et que les autres fois, c'est le cache qui est utilisé.
-
-sourcoise() exécute le script en local, ce qui limite les effets de bord.
-
-
-
-## Usage avancé : passer des paramètres
+### Passer des paramètres
 
 Il est possible de passer des paramètres avec `sourcoise()`, bien que ce soit plus pratique d'écrire une fonction. Les paramètres sont passés sous forme d'une liste (`list(param1="1")` par exemple) et sont disponibles dans le script (dans la variable `args`, donc pour avoir le paramètre `param1` il faut écrire `args$param1` dans le script. Changer les paramètres invalide le cache.
 
@@ -172,7 +144,7 @@ trsc <- ggplot(transactions$data) +
 
 ```
 
-## Quelques opérations sur le cache
+### Quelques opérations sur le cache
 
 Le package `{sourcoise}` fournit des outils pour s'occuper des caches. Le premier est `sourcoise_status()`. il scanne le répertoire et fournit la liste de tous les caches enregistrés et suivis. Il indique si les caches sont valides ou non et les principaux paramètres utilisés pour chaque script.
 
