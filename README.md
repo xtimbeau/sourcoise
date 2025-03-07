@@ -4,7 +4,7 @@
 
 Accessoirement, cela oblige à isoler le code du script qui récupère les données dans un fichier afin d'améliorer la reproductibilité. `sourcoise()` peut être appelé dans un `sourcoise()` ce qui permet la modularité. Il fournit des outils pour vérifier le cache et le rafraichir à la demande.
 
-## installation
+## Installation
 
 Pour installer `{sourcoise}` il faut le faire depuis *github* :
 
@@ -15,9 +15,9 @@ devtools::install_gitub("xtimbeau/sourcoise")
 pak::pak("xtimbeau/sourcoise")
 ```
 
-## utilisation
+## Utilisation
 
-Pour alimenter un graphique ou un tableau en données, on met le code dans un script `r` ("mon_script.r") en terminant le script par un `return(data_pour_le_graphique)`. 
+Pour alimenter un graphique ou un tableau en données, on met le code dans un script `r` (`"mon_script.r"`) en terminant le script par un `return(data_pour_le_graphique)`. 
 Dans le `.qmd` ou `.rmd` (ou aussi un scirpt R) on a les instructions du graphique :
 
 ````qmd
@@ -31,7 +31,7 @@ ggplot(mes_datas) + instructions du graphique
 
 A la première exécution le script est exécuté, les appels suivants utiliseront le cache, sauf si le cache est invalidé.
 
-## bénéfices
+## Bénéfices
 
 Les bénéfices sont nombreux :
 
@@ -45,7 +45,7 @@ Les bénéfices sont nombreux :
 
 5.  cela fournit un embryon de reproductibilité en désignant le script qui fabrique les données.
 
-## à venir
+## A venir
 
 Seront bientôt implémentés :
 
