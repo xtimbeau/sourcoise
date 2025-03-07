@@ -74,11 +74,11 @@
 
 
 
-    <section class="level2"><h2 id="mettre-en-cache-le-résultat-des-calculs-avec-sourcoise">Mettre en cache le résultat des calculs avec <code>sourcoise()</code>
+    <section class="section level2"><h2 id="mettre-en-cache-le-résultat-des-calculs-avec-sourcoise">Mettre en cache le résultat des calculs avec <code>sourcoise()</code>
 <a class="anchor" aria-label="anchor" href="#mettre-en-cache-le-r%C3%A9sultat-des-calculs-avec-sourcoise"></a>
 </h2>
-</section><section class="level2"><h2 id="comment-lutiliser">Comment l’utiliser ?<a class="anchor" aria-label="anchor" href="#comment-lutiliser"></a>
-</h2>
+<section class="level2"><h3 id="comment-lutiliser">Comment l’utiliser ?<a class="anchor" aria-label="anchor" href="#comment-lutiliser"></a>
+</h3>
 <p>1 - Mettre le code qui fabrique les données dans un script (<code>"ipch_PiM.r"</code>) et l’enregistrer dans le dossier où est le qmd. Dans cet exemple, le code <code>r</code> télécharge des données (assez volumineuses) sur Eurostat, les transforme et renvoie un tibble prêt pour le graphique. Le script doit se terminer par un <code>return</code> qui renvoie les données calculées ou téléchargées. Ce sont ces données qui sont mises en cache. Le temps d’exécution est de 11s et le script peut bloquer si l’API d’eurostat n’est pas accessible (ou si on a pas de connection internet).</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> prix.qmd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">└──</span> ipch</span>
@@ -125,32 +125,34 @@
 <p>Il est possible de bloquer l’exécution du code par une option (<code>prevent_exec</code>) qui peut être définie comme une option globale (par <code>options(ofce.sourcpose.prevent_exec=TRUE)</code>). Dans ce cas, aucun script ne sera exécuté, ce qui peut servir lorsqu’on veut faire un rendu du site sans prendre le risque d’une erreur d’API ou d’un blocage.</p>
 <p>Il est possible de logger l’exécution de <code><a href="../reference/sourcoise.html">sourcoise()</a></code> pour vérifier que tout s’est bien passé et de répérer les accès aux données.</p>
 <p>Une dernière chose, <code><a href="../reference/sourcoise.html">sourcoise()</a></code> est doté d’une heuristique maline trouve le fichier source même si il est caché (i.e. que le chemin est approximatif, ce qui déclenche une erreur normalement, mais là ça passe), ce qui augmente la portabilité des fichiers sources et facilite l’orgnisation d’un projet. Bien sûr, en cas d’ambiguité, <code><a href="../reference/sourcoise.html">sourcoise()</a></code> prévient.</p>
-</section><section class="level2"><h2 id="performance">performance<a class="anchor" aria-label="anchor" href="#performance"></a>
-</h2>
-</section><section class="level2"><h2 id="le-workflow-de-sourcoise">Le workflow de sourcoise<a class="anchor" aria-label="anchor" href="#le-workflow-de-sourcoise"></a>
-</h2>
+</section><section class="level2"><h3 id="performance">Performance<a class="anchor" aria-label="anchor" href="#performance"></a>
+</h3>
+<p>L’exécution “vraie” du scirpt <code>r</code> (sur un MacOS M2) prend 34ms et alloue 200kb. Lorsque les données sont en cache, l’exécution est effectuée en moins de 5ms et l’allocation de mémoire est celle des données finales.</p>
+<pre><code>&gt; bench::mark(cache = sourcoise("work/ipch/prix_insee.r"), no_cache = sourcoise("work/ipch/prix_insee.r", force_exec = TRUE))
+# A tibble: 2 × 13
+  expression      min   median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time result       memory
+  &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;   &lt;bch:tm&gt; &lt;list&gt;       &lt;list&gt;
+1 cache         4.5ms    4.6ms     216.   188.63KB     11.0    98     5      455ms &lt;named list&gt; &lt;Rprofmem&gt;
+2 no_cache     34.3ms   37.5ms      26.6    1.77MB     11.8     9     4      338ms &lt;named list&gt; &lt;Rprofmem&gt;
+# ℹ 2 more variables: time &lt;list&gt;, gc &lt;list&gt;</code></pre>
+</section><section class="level2"><h3 id="le-workflow-de-sourcoise">Le workflow de sourcoise<a class="anchor" aria-label="anchor" href="#le-workflow-de-sourcoise"></a>
+</h3>
 <p>Le cas central d’utilisation de sourcoise est dans un projet quarto. On acuiert des données de diférentes sources, plus ou moins complexes, nécessitant plus ou moins de traitements. Ces donénes peuvent être mises à jour, mais la fréquence de mise à jour est bien plus basse que la fréquence de rendu du projet quarto. Dans les chunks on place les mises en forme de graphiques ou de tableaux, afin de pouvoir les corriger et de pouvoir conserver l’adaptation des rendus aux support lors du <code>render</code> du projet quarto. Les données sont fabriquées dans les scripts <code>r</code>, placés là où sont les <code>qmd</code> et appelés périodiquement ou manuellement pour garantir que l’on dispose de la version à jour.</p>
 <p>Ce projet quarto est partagé par github entre plusieurs utilisateurs et les données mises en cache sont commitées (et versionnées) par github. Cela permet de dissocier exécution des scripts (et vérification de leur bonne exécution) du rendu des graphiques ou tableaux faits à partir de ces données.</p>
 <p><code><a href="../reference/sourcoise_status.html">sourcoise_status()</a></code> permet de faire un inventaire, pour le projet, de toutes les données en cache. Chaque fichier de donnée en cache, c’est-à-dire qui a été exéctué pleinement avec succès au moins une fois, est repéré (il existe quelque part dans le projet dans un dossier <code>.sourcoise</code>). Avec ce fichier, quelques informations sont conservés sur l’exécution (date, temps, taille des données) mais aussi sur le contexte d’exécution (script <code>r</code>, <code>qmd</code> appelants).</p>
 <p><code><a href="../reference/sourcoise_refresh.html">sourcoise_refresh()</a></code> permet ainsi que rafraicher tout ou partie des données en cache en forçant l’exécution ou en laissant les schémas d’invalidation jouer automatiquement. lorsque les scripts sont exécutés par <code><a href="../reference/sourcoise_refresh.html">sourcoise_refresh()</a></code> le log est activé par défaut. Comme les <code>qmd</code> appelants sont connus, <code><a href="../reference/sourcoise_refresh.html">sourcoise_refresh()</a></code> peut <em>unfreezé</em> ou <em>uncaché</em> les <code>qmd</code>ou les chunks des <code>qmd</code>. C’est important dans le workflow, parce que lorsqu’on rafraichit les données, on veut que les chunks soient réévalués pour que les tableaux ou les graphiques soient refait à partir des nouvelles données. Or, si on utilise <code>freeze</code> quarto n’a pas de moyen de savoir que le <code>freeze</code> est périmé.</p>
 <p>Il est possible de sélectionner les données qui sont rafraichies. <code><a href="../reference/sourcoise_refresh.html">sourcoise_refresh()</a></code> part du résulat de <code><a href="../reference/sourcoise_status.html">sourcoise_status()</a></code> par défaut. Il est ainsi possible de faire une sélection des données en cache et de ne passer que celles là à <code><a href="../reference/sourcoise_refresh.html">sourcoise_refresh()</a></code>. Avec un peu de programmation, on peut donc mettre en place un schéma qui régulièrement vérifie la validité des données (calendrier, API ou autre) et déclenche séelctivement la mise à jour. <code><a href="../reference/sourcoise.html">sourcoise()</a></code> peut appeler d’autres <code><a href="../reference/sourcoise.html">sourcoise()</a></code> mais pour le moment, il n’y a aucune prise en compte de cette hiérarchie.</p>
-<p>un exemple Par exemple, si le script R prix_insee.r utilise l’API de l’INSEE pour télécharger l’indice des prix à la consommation, et si il se termine par l’instruction return(ipc), alors sourcoise(“prix_insee.r”) renvoie toujours les données correspondantes, et si elles sont en cache, le retour est très rapide et ne nécessite pas d’accès à internet.</p>
-<p>library(insee) library(tidyverse)</p>
-<p>ipchm &lt;- get_idbank_list(“IPCH-2015”) |&gt; filter(COICOP2016==“00”, FREQ==“M”, NATURE==“INDICE”) |&gt; pull(idbank) |&gt; get_insee_idbank() |&gt; select(DATE, ipch = OBS_VALUE, IDBANK)</p>
-<p>ipch &lt;- ipchm |&gt; mutate(DATE = floor_date(DATE, unit=“quarter”)) |&gt; group_by(DATE) |&gt; summarise(ipch = mean(ipch))</p>
-<p>ipcha &lt;- ipch |&gt; mutate(y = year(DATE)) |&gt; group_by(y) |&gt; summarize(ipch = mean(ipch)) |&gt; mutate(ipch = ipch / ipch[y == 2023])</p>
-<p>return(list(ipcha = ipcha, ipchm = ipchm, ipch = ipch)) Dans le qmd on a alors un chunk r :</p>
-<p>library(sourcoise) ipc &lt;- sourcoise(“prix_insee.r”) ggplot(ipc$ipch) + … Le stockage des données a une faible empreinte disque (elles ne servent qu’à construire un graphique, il y a donc une série ou deux, trois dans cet exemple), ce qui ne pose pas de problème pour github. Si l’API de l’INSEE est en panne, alors le cache sera utilisé. On peut réutiliser cette instruction de nombreuses fois, puisqu’elle ne sera exécuté réellement qu’une fois et que les autres fois, c’est le cache qui est utilisé.</p>
-<p>sourcoise() exécute le script en local, ce qui limite les effets de bord.</p>
-</section><section class="level2"><h2 id="usage-avancé-passer-des-paramètres">Usage avancé : passer des paramètres<a class="anchor" aria-label="anchor" href="#usage-avanc%C3%A9-passer-des-param%C3%A8tres"></a>
-</h2>
+</section><section class="level2"><h3 id="usage-avancé">Usage avancé<a class="anchor" aria-label="anchor" href="#usage-avanc%C3%A9"></a>
+</h3>
+<section class="level3"><h4 id="passer-des-paramètres">Passer des paramètres<a class="anchor" aria-label="anchor" href="#passer-des-param%C3%A8tres"></a>
+</h4>
 <p>Il est possible de passer des paramètres avec <code><a href="../reference/sourcoise.html">sourcoise()</a></code>, bien que ce soit plus pratique d’écrire une fonction. Les paramètres sont passés sous forme d’une liste (<code>list(param1="1")</code> par exemple) et sont disponibles dans le script (dans la variable <code>args</code>, donc pour avoir le paramètre <code>param1</code> il faut écrire <code>args$param1</code> dans le script. Changer les paramètres invalide le cache.</p>
 <p>Notez que le script est toujours exécuté en “local” ce qui veut dire que toute variable créée ou tout package ouvert à l’intérieur du script n’est pas renvoyé (comme dans une fonction, en fait).</p>
-</section><section class="level2"><h2 id="usage-avancé-récupérer-les-métadonnées">Usage avancé : récupérer les métadonnées<a class="anchor" aria-label="anchor" href="#usage-avanc%C3%A9-r%C3%A9cup%C3%A9rer-les-m%C3%A9tadonn%C3%A9es"></a>
-</h2>
+</section></section><section class="level2"><h3 id="usage-avancé-récupérer-les-métadonnées">Usage avancé : récupérer les métadonnées<a class="anchor" aria-label="anchor" href="#usage-avanc%C3%A9-r%C3%A9cup%C3%A9rer-les-m%C3%A9tadonn%C3%A9es"></a>
+</h3>
 <p>En utlisant l’option <code>metadata=TRUE</code> dans <code><a href="../reference/sourcoise.html">sourcoise()</a></code> on peut récupérer des informations sur, par exmple, la date de téléchargement. C’est illustré sur quelques graphiques du cachier de graphique.</p>
 <p>En code cela donne le chunk ci dessous. Les données sont accessibles par <code>$data</code> et la date de téléchargement par <code>$date</code>. Cela permet de construire la note (noter que <code><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue::glue()</a></code> est appliqué aux textes passés à <code>ofce_caption()</code>).</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">transactions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sourcoise.html">sourcoise</a></span><span class="op">(</span><span class="st">"immo/data_transaction.r"</span>, metadata<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">trsc</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">transactions</span><span class="op">$</span><span class="va">data</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -168,13 +170,13 @@
 <span>    dpt <span class="op">=</span> <span class="va">transactions</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">date</span>,</span>
 <span>    note <span class="op">=</span> <span class="st">"Transactions cumulées sur 12 mois, dans l'ancien, maisons et appartements, échelle log, données téléchargées le {date_jour(transactions$date)}"</span>,</span>
 <span>    sub<span class="op">=</span> <span class="st">"Nombre de transactions"</span><span class="op">)</span></span></code></pre></div>
-</section><section class="level2"><h2 id="quelques-opérations-sur-le-cache">Quelques opérations sur le cache<a class="anchor" aria-label="anchor" href="#quelques-op%C3%A9rations-sur-le-cache"></a>
-</h2>
+<section class="level3"><h4 id="quelques-opérations-sur-le-cache">Quelques opérations sur le cache<a class="anchor" aria-label="anchor" href="#quelques-op%C3%A9rations-sur-le-cache"></a>
+</h4>
 <p>Le package <a href="https://xtimbeau.github.io/sourcoise">sourcoise</a> fournit des outils pour s’occuper des caches. Le premier est <code><a href="../reference/sourcoise_status.html">sourcoise_status()</a></code>. il scanne le répertoire et fournit la liste de tous les caches enregistrés et suivis. Il indique si les caches sont valides ou non et les principaux paramètres utilisés pour chaque script.</p>
 <p><code><a href="../reference/sourcoise_refresh.html">sourcoise_refresh()</a></code> rafraîchit (en le forçant) tous les caches. On peut passer à <code><a href="../reference/sourcoise_refresh.html">sourcoise_refresh()</a></code> un <code>tibble</code> comme celui renvoyé par <code><a href="../reference/sourcoise_status.html">sourcoise_status()</a></code> mais filtré pour ne rafraîchir que la liste voulue (attention passer toutes les colonnes sans modification). Cela sert lorsqu’on a un processus plus complexe d’invalidation du cache (en fonction d’un calendrier, en interrogeant une API, etc…) et qu’on déclenche en fonction de cette logique l’exécution des caches.</p>
 <p>On peut également à partir de <code><a href="../reference/sourcoise_status.html">sourcoise_status()</a></code> accéder aux données en cache. Elles sont enregistrées en <code>.qs2</code> avec les ackage <a href="https://github.com/qsbase/qs2" class="external-link">qs2</a> et donc se chargent avec un <code><a href="https://rdrr.io/pkg/qs2/man/qs_read.html" class="external-link">qs2::qs_read()</a></code>.</p>
 <p>On peut également nettoyer complètement le cache (ce qui provoquera sa ré exécution) avec <code><a href="../reference/sourcoise_clear.html">sourcoise_clear()</a></code>.</p>
-</section><script id="quarto-html-after-body" type="application/javascript">
+</section></section></section><script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
