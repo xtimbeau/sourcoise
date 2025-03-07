@@ -5,14 +5,20 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Exec a script, like source, and cache results on disk • sourcoise</title>
+<title>Exec a script and cache results on disk • sourcoise</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Exec a script, like source, and cache results on disk">
-<meta name="description" content="provide a function that behave nearly as base::source() but provide a caching mechanism on disk. Allows to source() R scripts that gather data but can fail or consume to much time to respond even if nothing new is expected. Comes with a bunch of tools to execute periodically, when cache is invalid of force refresh of the cache.">
-<meta property="og:description" content="provide a function that behave nearly as base::source() but provide a caching mechanism on disk. Allows to source() R scripts that gather data but can fail or consume to much time to respond even if nothing new is expected. Comes with a bunch of tools to execute periodically, when cache is invalid of force refresh of the cache.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Exec a script and cache results on disk">
+<meta name="description" content="sourcoise provides a function that behave nearly as base::source() but implements a caching mechanism on disk. It allows to quasi source() R scripts that gather data but can fail or consume to much time to respond even if nothing new is expected. It comes with a bunch of tools to check and execute on demand or when cache is invalid the script.">
+<meta property="og:description" content="sourcoise provides a function that behave nearly as base::source() but implements a caching mechanism on disk. It allows to quasi source() R scripts that gather data but can fail or consume to much time to respond even if nothing new is expected. It comes with a bunch of tools to check and execute on demand or when cache is invalid the script.">
 <meta property="og:image" content="https://xtimbeau.github.io/sourcoise/logo.png">
 </head>
 <body>
@@ -34,6 +40,12 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="articles/sourcoise.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="articles/compared.html">Comparé à ...</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -66,6 +78,18 @@
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"xtimbeau/sourcoise"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="utilisation">utilisation<a class="anchor" aria-label="anchor" href="#utilisation"></a>
+</h2>
+<p>Pour alimenter un graphique ou un tableau en données, on met le code dans un script <code>r</code> (“mon_script.r”) en terminant le script par un <code>return(data_pour_le_graphique)</code>. Dans le <code>.qmd</code> ou <code>.rmd</code> (ou aussi un scirpt R) on a les instructions du graphique :</p>
+<pre class="qmd"><code>```{r}
+library(sourcoise)
+mes_datas &lt;- sourcoise("mon_script.r")
+ggplot(mes_datas) + instructions du graphique
+
+```</code></pre>
+<p>A la première exécution le script est exécuté, les appels suivants utiliseront le cache, sauf si le cache est invalidé.</p>
+</div>
+<div class="section level2">
 <h2 id="bénéfices">bénéfices<a class="anchor" aria-label="anchor" href="#b%C3%A9n%C3%A9fices"></a>
 </h2>
 <p>Les bénéfices sont nombreux :</p>
@@ -82,7 +106,8 @@
 </h2>
 <p>Seront bientôt implémentés :</p>
 <ul>
-<li><p>la possibiité de stocker les données cachées hors de <em>github</em> et d’utiliser <a href="https://pins.rstudio.com/" class="external-link">pins</a> pour les partager (mais au prix d’un accès plus lent peut être).</p></li>
+<li><p>la possibilité de stocker les données cachées hors du dossier de projet (et donc horsd de <em>github</em>) et d’utiliser <a href="https://pins.rstudio.com/" class="external-link">pins</a> pour le stcokage (mais peut être au prix d’un accès plus lent).</p></li>
+<li><p>un schéma pour déclarer les dépendances entre dess appels à <code><a href="reference/sourcoise.html">sourcoise()</a></code> et déclencher les exécutions en cascade.</p></li>
 <li><p>et éventuellement une interface <em>shiny</em> de mise à jour (<em>gui</em> pour <code><a href="reference/sourcoise_refresh.html">sourcoise_refresh()</a></code>)</p></li>
 </ul>
 </div>
