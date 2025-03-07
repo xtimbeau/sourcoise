@@ -69,7 +69,7 @@
 <p><a href="https://xtimbeau.github.io/sourcoise">sourcoise</a> est un package qui fournit des outils pour exécuter un script R et mettre en cache les résultats. Le but est de pouvoir exécuter très rapidement un code qui accède à des fichiers ou une API et qui, en l’absence de mises à jour, produit toujours le même résultat. Lorsque l’API est suceptible de bloquer (ou si on a pas de connection internet), cela évite de bloquer le rendu d’un document ou d’un site quarto.</p>
 <p>Accessoirement, cela oblige à isoler le code du script qui récupère les données dans un fichier afin d’améliorer la reproductibilité. <code><a href="reference/sourcoise.html">sourcoise()</a></code> peut être appelé dans un <code><a href="reference/sourcoise.html">sourcoise()</a></code> ce qui permet la modularité. Il fournit des outils pour vérifier le cache et le rafraichir à la demande.</p>
 <div class="section level2">
-<h2 id="installation">installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>Pour installer <a href="https://xtimbeau.github.io/sourcoise">sourcoise</a> il faut le faire depuis <em>github</em> :</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -79,9 +79,9 @@
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"xtimbeau/sourcoise"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="utilisation">utilisation<a class="anchor" aria-label="anchor" href="#utilisation"></a>
+<h2 id="utilisation">Utilisation<a class="anchor" aria-label="anchor" href="#utilisation"></a>
 </h2>
-<p>Pour alimenter un graphique ou un tableau en données, on met le code dans un script <code>r</code> (“mon_script.r”) en terminant le script par un <code>return(data_pour_le_graphique)</code>. Dans le <code>.qmd</code> ou <code>.rmd</code> (ou aussi un scirpt R) on a les instructions du graphique :</p>
+<p>Pour alimenter un graphique ou un tableau en données, on met le code dans un script <code>r</code> (<code>"mon_script.r"</code>) en terminant le script par un <code>return(data_pour_le_graphique)</code>. Dans le <code>.qmd</code> ou <code>.rmd</code> (ou aussi un scirpt R) on a les instructions du graphique :</p>
 <pre class="qmd"><code>```{r}
 library(sourcoise)
 mes_datas &lt;- sourcoise("mon_script.r")
@@ -91,7 +91,7 @@ ggplot(mes_datas) + instructions du graphique
 <p>A la première exécution le script est exécuté, les appels suivants utiliseront le cache, sauf si le cache est invalidé.</p>
 </div>
 <div class="section level2">
-<h2 id="bénéfices">bénéfices<a class="anchor" aria-label="anchor" href="#b%C3%A9n%C3%A9fices"></a>
+<h2 id="bénéfices">Bénéfices<a class="anchor" aria-label="anchor" href="#b%C3%A9n%C3%A9fices"></a>
 </h2>
 <p>Les bénéfices sont nombreux :</p>
 <ol style="list-style-type: decimal">
@@ -103,7 +103,7 @@ ggplot(mes_datas) + instructions du graphique
 </ol>
 </div>
 <div class="section level2">
-<h2 id="à-venir">à venir<a class="anchor" aria-label="anchor" href="#%C3%A0-venir"></a>
+<h2 id="a-venir">A venir<a class="anchor" aria-label="anchor" href="#a-venir"></a>
 </h2>
 <p>Seront bientôt implémentés :</p>
 <ul>
