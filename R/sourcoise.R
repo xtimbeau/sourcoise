@@ -1,11 +1,14 @@
-#' sources code and caches results
+#' sources R script and caches results on disk
 #'
-#' `sourcoise()` is used as a drop in replacement for `base::source()` but caches results on disk. Cache is persistant.
+#' `sourcoise()` is used as a drop in replacement for `base::source()` but caches results on disk. Cache is persistant over sessions.
 #'
-#'  However, there are some minor differences. First, the script called in `sourcoise()` must end by a `return()` or by an object returned.
-#'  Second, the script is always executed in a local environment, and the working directory is changed to be the one of the script.
-#'  Third, an heuristic is applied to find the script, evnt is the path given is incomplete. The closer to the working directory at the moment of the call will be prefered.
-#'  Fourth, in cas of an error is triggered by the script, `sourcoise()` does not fail and return the error, except if cached data is found and returned. In any case, the error is logged.
+#'  `sourcoise()` looks like `base::source()`. However, there are some minor differences.
+#'
+#'  First, the script called in `sourcoise()` must end by a `return()` or by an object returned. Assignment made in the script won't be kept as `sourcoise()` is executed locally. Only explicitly reruned object will be returned. So `soucoise()` is used by assigning its result to something (`aa <- sourcoise("mon_script.r)` or `sourcoise() |> ggplot() ...`). Unless specified otherwise with `wd` parameter, the working directory for the script execution is (temporarly) set to the dir in which is the script. That allows for simple access to companion files and permeit to move the script and companion files to another dir or project.
+#'
+#'  Second, an heuristic is applied to find the script, in the event the path given is incomplete. Whereas it is not advised and comes with a performance cost, this can be useful when there is a change in the structure of the project. The heuristic is simple, the script is searched inside the porject dir and among all hits the closest to the caller is returned.
+#'
+#'  Third, if an error is triggered by the script, `sourcoise()` does not fail and return the error and a NULL return. However, if there is a (invalid or valid) cache, the cached data is returned allowing for the script to continue. In that case the error is logged.
 #'
 #'  Cache is invalidated when :
 #'  1 -   a cache is not found
@@ -14,50 +17,39 @@
 #'  4 -   last execution occurred a certan time ago and is considered as experied
 #'  5 -   execution is forced
 #'
-#' Si le paramètre `src_in` est `"file"`, alors le source est cherché à partir du qmd (ou du wd si il n'y pas qmd) et les données sont stockées à ce niveau.
-#' Ce cas correspond donc à des dossiers qui ne partagent pas de code (i.e. le blog de l'OFCE), alors que l'autre cas correspond à des codes pouvant être partagés (la prévision)
+#' If `src_in="file"`, then script `path` is searched from the `.qmd` dir. If no `.qmd` esxits (or is not the caller) the the current work dir is used (which is the usual way `base::source` works).
+#' If `src_in="project"`, then script `path` is searched from the root dir of the project, being a Rproject or a quarto project, using the package `{rprojroot}`. This garantee to find the script without using current working directory and is a more robust way to proceed.
 #'
-#' Le code est execute (dans un environnement local) et le resultat est mis en cache. Il est important que le code se termine par un return(les_donnees).
-#' le code est exécuté avec un contrôle d'erreur, donc si il bloque, "NULL" est renvoyé, mais sans erreur ni arrêt.
-#' les appels suivants seront plus rapides et sans erreur (sauf si l'erreur n'est pas corrigée).
+#' Usually the fisrt call return and cache the results. Results can be aby R object and are serialized and saved using `qs2`. Subsequent calls, supposing none of cache invalidation are true, are then very quick. No logging is used, data is fecteched from the cache and that's it. For standard size data, used in a table or a graph (< 1Mb roughly), return timing is under 5ms.
 #'
-#' Une modification du code est détectée, invalide le cache et déclenche l'éxécution si sourcoise est exécutée.
+#' `lapse` parameter is used fo rinvalidation trigger 4. `lapse = "1 day"` ou `lapse="day"` for instance will trigger once a day the execution. `lapse = "3 days"` will do it every 72h. `hours`, `weeks`, `months`, `quarters` or `years` are understood time units. MOre complex calendar instructions could be added, but `sourcoise_refesh()` provides a solution more general and easy to adapt to any use case, as to my knowledge, there is no general mechanism to be warned of data updates.
 #'
-#' Suivant le paramètre lapse on peut déclencher une exécution périodique.
-#' Par exemple, pour ne pas rater une MAJ, on peut mettre `lapse = "1 day"` ou `"day"` et une fois par jour le code sera exécuté.
-#' Cela permet d'éviter une exécution à chaque rendu, mais permet de vérifier fréquemment la MAJ.
-#' On peut spécifier l'intervalle en heures (`hours`), en jours (`days`), en semaines (`weeks`), en mois (`months`) ou en trimestres (`quarters`).
+#' `track` is the trigger #3. It is simply a list of files (following path convention defined by `scr_in`, so either script dir of project dir as reference). If the files in the list are changed then the execution is triggered. It is done with a hash and it is difficult to have a croo plateform hash for excel files. Nevertheless, hash is done on text files with same results of different platforms.
 #'
-#' Des métadonnées peuvent être renvoyées (paramètre `metadata`) avec la date de la dernière exécution (`$date`), le temps d'exécution (`$timing`),
-#' la taille des données (`$size`), le chemin de la source (`$where`), le hash du source (`$hash_src`) et bien sûr les données (`$data`).
-#' Cela peut servir pour renseigner un graphique.
+#' If `metadata=TRUE`, a list is returned, with some metadatas. Main ones are `$data`, the data returned, `$date`, execution date, `$timing` execution timing, `$size` of the R object in memory, `$data_file` and `"data_date` documenting data file path and last modification date (see below), parameters of the call (`$track`, `$wd`, `$src_in`, `$args` and so on).
 #'
-#' Le paramètre `wd` perment de spécifier le répertoire d'exécution du source.
-#' Si il est mis à `"file"`, les appels à l'intérieur du code source, comme par exemple un save ou un load seront compris dans le répertoire où se trouve le fichier source.
-#' L'intérêt est que le code peut avoir des éléments persistants, locaux
-#' L'alternative est d'utiliser `wd="project"` auquel cas, le répertoire d'exécution sera independant de l'endroit où est appelé le code source.
-#' Les éléments persistants peuvent alors être dasn un endroit commun et le code peut appeler des éléments persistants d'autres codes sources.
-#' En le mettant à `qmd`l'exécution part du fichier qmd, ce qui est le comportement standard de `quarto`.
-#' Toute autre valeur pour wd laisse le working directory inchnagé et donc dépendant du contexte d'exécution. Pour ceux qui aiment l'incertitude.
+#' `force_exec` and `prevent_exec` are parameters that force the script execution (trigger #5) of prevent it (so cache is returned or NULL if no cache). Those 2 parameters can be set for one specific execution, but they are intendend to a global setting through the option `sourcoise.force_exec` or `sourcoise.prevent_exec`.
 #'
-#' En donnant des fichers à suivre par `track`, on peut déclencher l'exécution du source lorsque ces fichiers sont modifiés, c'est utile pour des fichiers sources sous excel (ou csv).
+#' If returned data after execution is not different than previously cached data, then no caching occurs in order to limit the disk use and to avoid keeping an histoiry of the same data files. This implies the possibility of a difference between last execution date and last data modification date.
 #'
-#' @param path (character) le chemin vers le code à exécuter (sans extension .r ou .R ou avec au choix), ce chemin doit être relatif au projet (voir détails)
-#' @param args (list) une liste d'arguments que l'on peut utliser dans source (args$xxx)
-#' @param track (list) une liste de fichiers (suivant la même règle que src pour les trouver) qui déclenchent l'exécution.
-#' @param lapse (character) peut être "never" (défaut) "x hours", "x days", "x weeks", "x months", "x quarters", "x years"
-#' @param force_exec (boléen) Si TRUE alors le code est exécuté.
-#' @param prevent_exec (boléen) Si TRUE alors le code n'est pas exécuté, ce flag est prioritaire sur les autres, sauf si il n'y a pas de données en cache
-#' @param metadata (boléen) Si TRUE (FALSE par défaut) la fonction retourne une liste avec des métadonnées et le champ data qui contient les données elles même
-#' @param wd (character) si 'project' assure que le wd est le root du project, si 'file' (défaut) c'est le fichier sourcé qui est le wd, si "qmd", c'est le qmd qui appelle
-#' @param src_in (character) si "project" cherche le source dans le projet puis les sous dossiers, si "file" cherche dans le dossier du qmd (ou le wd). Dans ce cas, les données sont stockées dans le dossier en question.
-#' @param exec_wd (character) NULL par défaut sauf usage particulier
-#' @param quiet (boléen) pas de messages
-#' @param root (character) force le root (usage non recommandé)
-#' @param nocache (boléen) n'enregistre pas le cache même si nécessaire
-#' @param log ("OFF" par défaut) niveau de cache (voir `logger::log_treshold()`)
-#' @param grow_cache (5 par défaut) stratégie de cache
-#' @param limit_mb (50 par défaut) limite le fichier de données à x mb (pour github). Si au dessus de la limite, **pas de cache**.
+#' Working with github : `sourcoise()` is designed to function with *github*. Cache information is specific to each user (avoiding conflicts) and cached data is named with the hash. Conflicts could occur in the rare case the same script is executed on different machines and that this script return each time a different result (such as a random generator).
+#'
+#' @param path (character) path of the script to execute (see details).
+#' @param args (list) list of args that can be used in the script (in the form `args$xxx`).
+#' @param track (list) list of files which wmodifications trigger cache invalidation and script execution .
+#' @param lapse (character) duration over which cache is invalidated. Could be `never` (default) `x hours`, `x days`, `x week`, `x months`, `x quarters`, `x years`.
+#' @param force_exec (boolean) execute code, disregarding cache valid or invalid.
+#' @param prevent_exec (boolean) prenvent execution, cache valid or not, returned previous cached data, possibly invalid.
+#' @param metadata (boolean) if TRUE `sourcoise()` returns a list with data is the `$data`  and various meta data (see details).
+#' @param wd (character) if `project` working directory for the execution of script will be the root of the project. If `file` then it will be the dir of the script (défaut) If `qmd`, then working dir will be the dir in which the calling `qmd` is. Current directory is restored after execution (successful or failed).
+#' @param src_in (character) if `project` search for source starting at the root of the project, si "file" cherche dans le dossier du qmd (ou le wd). Dans ce cas, les données sont stockées dans le dossier en question.
+#' @param exec_wd (character) force exec dir (expert use).
+#' @param quiet (boolean) silence execution.
+#' @param root (character) force root (expert use).
+#' @param nocache (boolean) no caching.
+#' @param log ("OFF" par défaut) log trheshold (see `logger::log_treshold()`).
+#' @param grow_cache (5 par défaut) cache limit in number of data file kept.
+#' @param limit_mb (50 par défaut) individual cache data files size on disk limit. If above **no caching**.
 #'
 #' @family sourcoise
 #' @return data (list ou ce que le code retourne)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/sourcoise.R
 \name{sourcoise}
 \alias{sourcoise}
-\title{sources code and caches results}
+\title{sources R script and caches results on disk}
 \usage{
 sourcoise(
   path,
@@ -24,49 +24,52 @@ sourcoise(
 )
 }
 \arguments{
-\item{path}{(character) le chemin vers le code à exécuter (sans extension .r ou .R ou avec au choix), ce chemin doit être relatif au projet (voir détails)}
+\item{path}{(character) path of the script to execute (see details).}
 
-\item{args}{(list) une liste d'arguments que l'on peut utliser dans source (args$xxx)}
+\item{args}{(list) list of args that can be used in the script (in the form \code{args$xxx}).}
 
-\item{track}{(list) une liste de fichiers (suivant la même règle que src pour les trouver) qui déclenchent l'exécution.}
+\item{track}{(list) list of files which wmodifications trigger cache invalidation and script execution .}
 
-\item{lapse}{(character) peut être "never" (défaut) "x hours", "x days", "x weeks", "x months", "x quarters", "x years"}
+\item{lapse}{(character) duration over which cache is invalidated. Could be \code{never} (default) \verb{x hours}, \verb{x days}, \verb{x week}, \verb{x months}, \verb{x quarters}, \verb{x years}.}
 
-\item{force_exec}{(boléen) Si TRUE alors le code est exécuté.}
+\item{force_exec}{(boolean) execute code, disregarding cache valid or invalid.}
 
-\item{prevent_exec}{(boléen) Si TRUE alors le code n'est pas exécuté, ce flag est prioritaire sur les autres, sauf si il n'y a pas de données en cache}
+\item{prevent_exec}{(boolean) prenvent execution, cache valid or not, returned previous cached data, possibly invalid.}
 
-\item{metadata}{(boléen) Si TRUE (FALSE par défaut) la fonction retourne une liste avec des métadonnées et le champ data qui contient les données elles même}
+\item{metadata}{(boolean) if TRUE \code{sourcoise()} returns a list with data is the \verb{$data}  and various meta data (see details).}
 
-\item{wd}{(character) si 'project' assure que le wd est le root du project, si 'file' (défaut) c'est le fichier sourcé qui est le wd, si "qmd", c'est le qmd qui appelle}
+\item{wd}{(character) if \code{project} working directory for the execution of script will be the root of the project. If \code{file} then it will be the dir of the script (défaut) If \code{qmd}, then working dir will be the dir in which the calling \code{qmd} is. Current directory is restored after execution (successful or failed).}
 
-\item{src_in}{(character) si "project" cherche le source dans le projet puis les sous dossiers, si "file" cherche dans le dossier du qmd (ou le wd). Dans ce cas, les données sont stockées dans le dossier en question.}
+\item{src_in}{(character) if \code{project} search for source starting at the root of the project, si "file" cherche dans le dossier du qmd (ou le wd). Dans ce cas, les données sont stockées dans le dossier en question.}
 
-\item{exec_wd}{(character) NULL par défaut sauf usage particulier}
+\item{exec_wd}{(character) force exec dir (expert use).}
 
-\item{root}{(character) force le root (usage non recommandé)}
+\item{root}{(character) force root (expert use).}
 
-\item{quiet}{(boléen) pas de messages}
+\item{quiet}{(boolean) silence execution.}
 
-\item{nocache}{(boléen) n'enregistre pas le cache même si nécessaire}
+\item{nocache}{(boolean) no caching.}
 
-\item{log}{("OFF" par défaut) niveau de cache (voir \code{logger::log_treshold()})}
+\item{log}{("OFF" par défaut) log trheshold (see \code{logger::log_treshold()}).}
 
-\item{grow_cache}{(5 par défaut) stratégie de cache}
+\item{grow_cache}{(5 par défaut) cache limit in number of data file kept.}
 
-\item{limit_mb}{(50 par défaut) limite le fichier de données à x mb (pour github). Si au dessus de la limite, \strong{pas de cache}.}
+\item{limit_mb}{(50 par défaut) individual cache data files size on disk limit. If above \strong{no caching}.}
 }
 \value{
 data (list ou ce que le code retourne)
 }
 \description{
-\code{sourcoise()} is used as a drop in replacement for \code{base::source()} but caches results on disk. Cache is persistant.
+\code{sourcoise()} is used as a drop in replacement for \code{base::source()} but caches results on disk. Cache is persistant over sessions.
 }
 \details{
-However, there are some minor differences. First, the script called in \code{sourcoise()} must end by a \code{return()} or by an object returned.
-Second, the script is always executed in a local environment, and the working directory is changed to be the one of the script.
-Third, an heuristic is applied to find the script, evnt is the path given is incomplete. The closer to the working directory at the moment of the call will be prefered.
-Fourth, in cas of an error is triggered by the script, \code{sourcoise()} does not fail and return the error, except if cached data is found and returned. In any case, the error is logged.
+\code{sourcoise()} looks like \code{base::source()}. However, there are some minor differences.
+
+First, the script called in \code{sourcoise()} must end by a \code{return()} or by an object returned. Assignment made in the script won't be kept as \code{sourcoise()} is executed locally. Only explicitly reruned object will be returned. So \code{soucoise()} is used by assigning its result to something (\verb{aa <- sourcoise("mon_script.r)} or \verb{sourcoise() |> ggplot() ...}). Unless specified otherwise with \code{wd} parameter, the working directory for the script execution is (temporarly) set to the dir in which is the script. That allows for simple access to companion files and permeit to move the script and companion files to another dir or project.
+
+Second, an heuristic is applied to find the script, in the event the path given is incomplete. Whereas it is not advised and comes with a performance cost, this can be useful when there is a change in the structure of the project. The heuristic is simple, the script is searched inside the porject dir and among all hits the closest to the caller is returned.
+
+Third, if an error is triggered by the script, \code{sourcoise()} does not fail and return the error and a NULL return. However, if there is a (invalid or valid) cache, the cached data is returned allowing for the script to continue. In that case the error is logged.
 
 Cache is invalidated when :
 1 -   a cache is not found
@@ -75,33 +78,20 @@ Cache is invalidated when :
 4 -   last execution occurred a certan time ago and is considered as experied
 5 -   execution is forced
 
-Si le paramètre \code{src_in} est \code{"file"}, alors le source est cherché à partir du qmd (ou du wd si il n'y pas qmd) et les données sont stockées à ce niveau.
-Ce cas correspond donc à des dossiers qui ne partagent pas de code (i.e. le blog de l'OFCE), alors que l'autre cas correspond à des codes pouvant être partagés (la prévision)
+If \code{src_in="file"}, then script \code{path} is searched from the \code{.qmd} dir. If no \code{.qmd} esxits (or is not the caller) the the current work dir is used (which is the usual way \code{base::source} works).
+If \code{src_in="project"}, then script \code{path} is searched from the root dir of the project, being a Rproject or a quarto project, using the package \code{{rprojroot}}. This garantee to find the script without using current working directory and is a more robust way to proceed.
 
-Le code est execute (dans un environnement local) et le resultat est mis en cache. Il est important que le code se termine par un return(les_donnees).
-le code est exécuté avec un contrôle d'erreur, donc si il bloque, "NULL" est renvoyé, mais sans erreur ni arrêt.
-les appels suivants seront plus rapides et sans erreur (sauf si l'erreur n'est pas corrigée).
+Usually the fisrt call return and cache the results. Results can be aby R object and are serialized and saved using \code{qs2}. Subsequent calls, supposing none of cache invalidation are true, are then very quick. No logging is used, data is fecteched from the cache and that's it. For standard size data, used in a table or a graph (< 1Mb roughly), return timing is under 5ms.
 
-Une modification du code est détectée, invalide le cache et déclenche l'éxécution si sourcoise est exécutée.
+\code{lapse} parameter is used fo rinvalidation trigger 4. \code{lapse = "1 day"} ou \code{lapse="day"} for instance will trigger once a day the execution. \code{lapse = "3 days"} will do it every 72h. \code{hours}, \code{weeks}, \code{months}, \code{quarters} or \code{years} are understood time units. MOre complex calendar instructions could be added, but \code{sourcoise_refesh()} provides a solution more general and easy to adapt to any use case, as to my knowledge, there is no general mechanism to be warned of data updates.
 
-Suivant le paramètre lapse on peut déclencher une exécution périodique.
-Par exemple, pour ne pas rater une MAJ, on peut mettre \code{lapse = "1 day"} ou \code{"day"} et une fois par jour le code sera exécuté.
-Cela permet d'éviter une exécution à chaque rendu, mais permet de vérifier fréquemment la MAJ.
-On peut spécifier l'intervalle en heures (\code{hours}), en jours (\code{days}), en semaines (\code{weeks}), en mois (\code{months}) ou en trimestres (\code{quarters}).
+\code{track} is the trigger #3. It is simply a list of files (following path convention defined by \code{scr_in}, so either script dir of project dir as reference). If the files in the list are changed then the execution is triggered. It is done with a hash and it is difficult to have a croo plateform hash for excel files. Nevertheless, hash is done on text files with same results of different platforms.
 
-Des métadonnées peuvent être renvoyées (paramètre \code{metadata}) avec la date de la dernière exécution (\verb{$date}), le temps d'exécution (\verb{$timing}),
-la taille des données (\verb{$size}), le chemin de la source (\verb{$where}), le hash du source (\verb{$hash_src}) et bien sûr les données (\verb{$data}).
-Cela peut servir pour renseigner un graphique.
+If \code{metadata=TRUE}, a list is returned, with some metadatas. Main ones are \verb{$data}, the data returned, \verb{$date}, execution date, \verb{$timing} execution timing, \verb{$size} of the R object in memory, \verb{$data_file} and \verb{"data_date} documenting data file path and last modification date (see below), parameters of the call (\verb{$track}, \verb{$wd}, \verb{$src_in}, \verb{$args} and so on).
 
-Le paramètre \code{wd} perment de spécifier le répertoire d'exécution du source.
-Si il est mis à \code{"file"}, les appels à l'intérieur du code source, comme par exemple un save ou un load seront compris dans le répertoire où se trouve le fichier source.
-L'intérêt est que le code peut avoir des éléments persistants, locaux
-L'alternative est d'utiliser \code{wd="project"} auquel cas, le répertoire d'exécution sera independant de l'endroit où est appelé le code source.
-Les éléments persistants peuvent alors être dasn un endroit commun et le code peut appeler des éléments persistants d'autres codes sources.
-En le mettant à \code{qmd}l'exécution part du fichier qmd, ce qui est le comportement standard de \code{quarto}.
-Toute autre valeur pour wd laisse le working directory inchnagé et donc dépendant du contexte d'exécution. Pour ceux qui aiment l'incertitude.
+\code{force_exec} and \code{prevent_exec} are parameters that force the script execution (trigger #5) of prevent it (so cache is returned or NULL if no cache). Those 2 parameters can be set for one specific execution, but they are intendend to a global setting through the option \code{sourcoise.force_exec} or \code{sourcoise.prevent_exec}.
 
-En donnant des fichers à suivre par \code{track}, on peut déclencher l'exécution du source lorsque ces fichiers sont modifiés, c'est utile pour des fichiers sources sous excel (ou csv).
+If returned data after execution is not different than previously cached data, then no caching occurs in order to limit the disk use and to avoid keeping an histoiry of the same data files. This implies the possibility of a difference between last execution date and last data modification date.
 }
 \seealso{
 Other sourcoise: 

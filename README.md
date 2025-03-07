@@ -15,90 +15,19 @@ devtools::install_gitub("xtimbeau/sourcoise")
 pak::pak("xtimbeau/sourcoise")
 ```
 
-## utilisation
+## bénéfices
 
-La structure est donc :
+Les bénéfices sont nombreux :
 
--   un projet R ou quarto.
+1.  un gain de temps lorsque l'exécution du code est longue (accès à une API, téléchargement de grosses données, traitements importants). La lecture d'un fichier excel peut aussi être assez longue. Le temps d'accès aux données en cache dépend de leur taille, mais même pour des données volumineuses (et il n'y a pas de raisons qu'elles le soient tant que ça), l'ordre de grandeur est de qualques millisecondes, grâce aux optimisations.
 
--   des qmd, appelant `sourcoise()` pour l'acquisition des données et produisant tableaux ou graphiques à partir de ces données.
+2.  le cache est transférable par github. Il se trouve dans un dossier (caché), mais enregistré dans le dossier de projet et *commité* par github. Le cache produit sur un poste est donc accessible par `pull` sur les autres postes.
 
--   des scripts `R`, dans le même dossier ou ailleurs, qui produisent les données à partir de calculs, d'interrogation de bases externes ou d'API. Des objets plus complexes peuvent être renvoyés, comme par exemple des listes d'objets, des graphiques, des tableaux, des fonctions fabriquant des tableaux ou des graphiques, etc...
+3.  si le code source déclenche une erreur, on peut passer outre : En cas de package non installé, données absentes (par exemple un chemin absolu dans le code), ou une API qui bloque (comme celle de l'OCDE) alors `sourcoise()` essaye de prendre la dernière exécution résussie. Bien que cela puisse être problématique, c'est-à-dire une erreur non signalée, cela a l'énorme avantage de ne pas bloquer le processus et de permettre de traiter l'erreur en parallèle.
 
--   lorsqu'un cache est disponible et valide (voir plus bas) il est utilisé et la fonction répond très rapidement suivant la taille des données (0.006 secondes pour des données de 2Mb).
+4.  `sourcoise()` cherche de façon astucieuse le fichier source dans le projet et exécute le code dans un environnement local, en changeant le répertoire de travail pour être celui où se trouve le code source. Cela permet d'appeler dans le code source (le script `r` `mon_script.r` passé en paramètre à `sourcoise("mon_script.r")`, des scripts `r`, des fichiers de données `.csv` ou `.xlsx` qui sont enregistré dans le même répertoire que le fichier `mon_script.r`. On peut donc réutiliser le code sans se soucier de modifier les chemins qui sont relatifs au dossier où se trouve `mon_script.r`.
 
--   tout cela est conçu pour fonctionner avec *github* et donc partager le cache entre utilisateurs d'un même dépot. On peut donc mettre à jour les données sur une machine et les utiliser sur une autre.
-
--   une dernière chose, `sourcoise()` est doté d'une heuristique maline trouve le fichier source même si il est caché (i.e. que le chemin est approximatif, ce qui déclenche une erreur normalement, mais là ça passe), ce qui augmente la portabilité des fichiers sources et facilite l'orgnisation d'un projet. Bien sûr, en cas d'ambiguité, `sourcoise()` prévient.
-
-## un exemple
-
-Par exemple, si le script `R` `prix_insee.r` utilise l'API de l'INSEE pour télécharger l'indice des prix à la consommation, et si il se termine par l'instruction `return(ipc)`, alors `sourcoise("prix_insee.r")` renvoie toujours les données correspondantes, et si elles sont en cache, le retour est très rapide et ne nécessite pas d'accès à internet.
-
-```r
-library(insee)
-library(tidyverse)
-
-ipchm <- get_idbank_list("IPCH-2015") |>
-     filter(COICOP2016=="00", FREQ=="M", NATURE=="INDICE") |> 
-     pull(idbank) |>
-     get_insee_idbank() |>
-     select(DATE, ipch = OBS_VALUE, IDBANK)
-
-ipch <- ipchm |>
-     mutate(DATE = floor_date(DATE, unit="quarter")) |>
-     group_by(DATE) |>
-     summarise(ipch = mean(ipch))
-
-ipcha <- ipch |> 
-     mutate(y = year(DATE)) |> 
-     group_by(y) |>
-     summarize(ipch = mean(ipch)) |> 
-     mutate(ipch = ipch / ipch[y == 2023])
-
-return(list(ipcha = ipcha, ipchm = ipchm, ipch = ipch))
-
-```
-
-Dans le `qmd` on a alors un chunk `r` :
-
-```r
-library(sourcoise)
-ipc <- sourcoise("prix_insee.r")
-ggplot(ipc$ipch) + ...
-```
-
-Le stockage des données a une faible empreinte disque (elles ne servent qu'à construire un graphique, il y a donc une série ou deux, trois dans cet exemple), ce qui ne pose pas de problème pour *github*. Si l'API de l'INSEE est en panne, alors le cache sera utilisé. On peut réutiliser cette instruction de nombreuses fois, puisqu'elle ne sera exécuté réellement qu'une fois et que les autres fois, c'est le cache qui est utilisé.
-
-`sourcoise()` exécute le script en local, ce qui limite les effets de bord.
-
-## par rapport à *memoise*
-
-`memoise::memoise()` propose une solution assez proche, avec la possibilité de rendre le cache persistant entre sessions.
-
-Mais `memoise()` répond au besoin de l'évaluation d'une fonction, qui pour un même jeu de paramètres renvoie toujours la même chose. Ce qui est la définition d'une fonction dans la paradigme fonctionnel sans effet de bord. Le cache permet alors d'échanger espace disque contre performance. 
-
-`sourcoise()` part d'une hypothèse différente. Le bout de code appelé ressemble à une fonction mais n'en est pas une : les mêmes arguments peuvent renvoyer une valeur différente. C'est le cas notamment lors de l'accès à une API à des données qui renvoie souvent la même chose, mais périodiquement propose une nouvelle version, avec un effet de bord. Le temps d'accès à l'API eut être long et évebntuellement l'accès hasardeux. Or les appels à l'API peuvent être dans un workflow typique quarto/R très fréquent (à chaque rendu par exemple), `sourcoise()` permet donc de mettre en cache et de déclencher une "vraie" exécution périodiquement mais pas tgrop souvent. Si l'appel à l'API est très long, le gain en performance peut être considérable et si l'API bloque parfois, alors `sourcoise()` permet de continuer le reste du flow sans interruption. L'exécution de l'API peut ainsi être asynchrone, dans un process différent ou sur une machine différente, la synchronisation étant assurée par 
-github ou ``{pins}`.
-
-Par rapport à `memoise::memoise()`, `sourcoise()` utilise systématiquement un cache sur disque, persistant, localisé dans le projet R ou quarto et destiné à être synchronisé par *github*. Il s'applique à un script et non à une fonction et utilise des règles d'invalidation du cache différentes :
-
--   le cache est conçu principalement pour être passé entre session. Il est utilisé lors du rendu d'un `.qmd` et il est transportable avec les fichiers associés.
--   le cache est invalidé si le script est modifié (similaire à l'invalidation par le corps de la fonction dans `memoise::memoise()`).
--   le cache est invalidé en fonction du delai entre deux exécutions. Il est possible de ré-exécuter le code si il n'a pas été exécuté depuis une heure, une journée, une semaine, etc...
--   le cache est invalidé si un ou plusieurs fichiers (définis au préalable) ont été modifiés. Cela sert en particulier à invalider le cache si un fichier de données (`.csv` ou `.xls`) a été modifié.
--   le cache est invalidé si les arguments passés à `sourcoise()` pour le script ont été modifiés (comme dans `memoise::memoise()`).
--   on peut également forcer l'invalidation du cache par un paramètre passé à la fonction, éventuellement un paramètre global ou en utilisant la fonction `sourcoise_refresh()`. Ce dernier point est une différence important par rapport à `memoise::memoise()` et permet une exécution régulière du rafraichissement du cache.
--   on peut *logger* les accès à `sourcoise()` ce qui permet de comprendre pourquoi le cache n'est pas invalidé et quels sont fichiers qui ont déclenché `sourcoise()`. Un dossier `.logs` est ajouté au dossier du projet.
--   on peut limiter la taille du cache, par le paramètre `grow_cache` qui contraint l'historique du cache et par `limit_mb` qui empêche de mettre en cache des données au delà d'une taille limite ; par défaut 50mb, pour ne pas fâcher *github*.
-
-## autres fonctionalités
-
-`sourcoise()` peut également invalider les *freeze* employés par quarto. Les qmd appelant le script sont enregistrés avec le cache et lorsque celui-ci est rafraichit, alors le `qmd` est *unfreezé*, ce qui assure que le qmd sera bien re rendu avec les données mises à jour.
-
-`sourcoise()` conserve l'histoirique des données téléchargées et permet donc théoriquement d'y acceder.
-
-`sourcoise()` utilise une heuristique pour trouver la racine du projet, et localiser le script R qui est appelé. cela permet la transportabilité des scripts à l'intérieur d'un projet.
+5.  cela fournit un embryon de reproductibilité en désignant le script qui fabrique les données.
 
 ## à venir
 
