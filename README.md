@@ -49,7 +49,7 @@ Les bénéfices sont nombreux :
 
 Seront bientôt implémentés :
 
--   la possibilité de stocker les données cachées hors du dossier de projet (et donc horsd de *github*) et d'utiliser `{pins}` pour le stcokage (mais peut être au prix d'un accès plus lent).
+-   la possibilité de stocker les données cachées hors du dossier de projet (et donc hors de *github*) et d'utiliser `{pins}` pour le stcokage (mais peut être au prix d'un accès plus lent).
 
 -   un schéma pour déclarer les dépendances entre dess appels à `sourcoise()` et déclencher les exécutions en cascade.
 

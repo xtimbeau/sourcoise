@@ -11,7 +11,7 @@ exec_source <- function(ctxt) {
   setwd(ctxt$exec_wd)
   start <- Sys.time()
   res <- safe_source(ctxt$src, args = ctxt$args)
-  timing <- difftime(Sys.time() , start, unit = "secs") |> as.numeric()
+  timing <- difftime(Sys.time() , start, units = "secs") |> as.numeric()
   setwd(current_wd)
   if(!is.null(res$error)) {
     return(

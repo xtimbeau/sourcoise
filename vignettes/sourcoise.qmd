@@ -15,22 +15,21 @@ message: false
 warning: false
 ---
 
-# Mettre en cache le résultat des calculs avec `sourcoise()`
-
+`sourcoise()` fournit une fonction qui se comporte presque comme `base::source()` en implémentant un mécanisme de cache sur disque. Cela permet de *sourcer* des scripts `r` qui récoltent des données, mais qui peuvent échouer (pas de connection internet, API qui ne répond pas, changement dans le format des données renvoyées) ou qui consomme trop de temps à l'exécution (calculs lourds, téléchargements lents), même si le retour est le même. le package inclu des outils pour la gestion du cache et des exécutions.
 
 ## Comment l'utiliser ?
 
-1 -   Mettre le code qui fabrique les données dans un script (`"ipch_PiM.r"`) et l'enregistrer dans le dossier où est le qmd. Dans cet exemple, le code `r` télécharge des données (assez volumineuses) sur Eurostat, les transforme et renvoie un tibble prêt pour le graphique. Le script doit se terminer par un `return` qui renvoie les données calculées ou téléchargées. Ce sont ces données qui sont mises en cache. Le temps d'exécution est de 11s et le script peut bloquer si l'API d'eurostat n'est pas accessible (ou si on a pas de connection internet).
+1.  Mettre le code qui fabrique les données dans un script (`"prix_insee.r"`) et l'enregistrer dans le dossier où est le qmd. Dans cet exemple, le code `r` télécharge des données (assez volumineuses) sur Eurostat, les transforme et renvoie un tibble prêt pour le graphique. Le script doit se terminer par un `return` qui renvoie les données calculées ou téléchargées. Ce sont ces données qui sont mises en cache. Le temps d'exécution est de 11s et le script peut bloquer si l'API d'eurostat n'est pas accessible (ou si on a pas de connection internet).
 
-```bash         
+``` bash
 ├── prix.qmd
 └── ipch
     └── prix_insee.R
 ```
 
-Le script `insee.r` comporte un `return()` à la fin :
+Le script `prix_insee.r` comporte un `return()` à la fin :
 
-```r
+``` r
 library(insee)
 library(tidyverse)
 
@@ -51,12 +50,13 @@ ipcha <- ipch |>
      summarize(ipch = mean(ipch)) |> 
      mutate(ipch = ipch / ipch[y == 2023])
 
+# le return final
 return(list(ipcha = ipcha, ipchm = ipchm, ipch = ipch))
 ```
 
-2. Dans `ipch.qmd` on met le chunk suivant (pas besoin de déclarer les libraries utilisées dans le script) :
+2.  Dans `ipch.qmd` on met le chunk suivant (pas besoin de déclarer les libraries utilisées dans le script) :
 
-```r
+``` r
 library(sourcoise)
 library(tidyverse)
 ipch_data <- sourcoise("ipch/prix_insee.R")
@@ -64,7 +64,6 @@ ipch_data <- sourcoise("ipch/prix_insee.R")
 ggplot(data = ipch_data$ipchm) + 
   aes(x = DATE, y = ipch ) +
   geom_line()
-
 ```
 
 L'utilisation de `sourcoise()` se fait comme celle de `base::source()` à l'assignement prêt. Le résultat est mis en cache et les exécution suivant prennent quelques millisecondes. Ces appels fonctionnent sans téléchargement et donc sasn erreur possible si le serveur d'Eurostat est hors ligne ou que l'on a plus d'internet.
@@ -79,15 +78,17 @@ On peut également forcer le déclenchement du script. Cela se fait par une opti
 
 Il est possible de bloquer l'exécution du code par une option (`prevent_exec`) qui peut être définie comme une option globale (par `options(ofce.sourcpose.prevent_exec=TRUE)`). Dans ce cas, aucun script ne sera exécuté, ce qui peut servir lorsqu'on veut faire un rendu du site sans prendre le risque d'une erreur d'API ou d'un blocage.
 
+L'exécution du code s'effectue en local (donc pas d'effet de bord das l'environnement qui appelle le script) et modifie le *working directory* pour qu'il soit celui du script appelé. Cela permet alors d'utiliser des chemins relatifs à ce dossier. il est possible de modifier ce comportement par une option.
+
 Il est possible de logger l'exécution de `sourcoise()` pour vérifier que tout s'est bien passé et de répérer les accès aux données.
 
-Une dernière chose, `sourcoise()` est doté d'une heuristique maline trouve le fichier source même si il est caché (i.e. que le chemin est approximatif, ce qui déclenche une erreur normalement, mais là ça passe), ce qui augmente la portabilité des fichiers sources et facilite l'orgnisation d'un projet. Bien sûr, en cas d'ambiguité, `sourcoise()` prévient.
+Une dernière chose : `sourcoise()` est doté d'une heuristique maline trouve le fichier source même si il est caché (i.e. que le chemin est approximatif, ce qui déclenche une erreur normalement, mais là ça passe), ce qui augmente la portabilité des fichiers sources et facilite l'orgnisation d'un projet. Bien sûr, en cas d'ambiguité, `sourcoise()` prévient.
 
 ## Performance
 
 L'exécution "vraie" du scirpt `r` (sur un MacOS M2) prend 34ms et alloue 200kb. Lorsque les données sont en cache, l'exécution est effectuée en moins de 5ms et l'allocation de mémoire est celle des données finales. Le temps d'exécution des données cachées ne dépend que de leur taille alors que le temsp d'exécution "vraie" dépend de la complexité des calculs et des volumes téléchargés par le script.
 
-```
+```         
 > bench::mark(cache = sourcoise("work/ipch/prix_insee.r"), no_cache = sourcoise("work/ipch/prix_insee.r", force_exec = TRUE))
 # A tibble: 2 × 13
   expression      min   median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time result       memory    
@@ -97,9 +98,9 @@ L'exécution "vraie" du scirpt `r` (sur un MacOS M2) prend 34ms et alloue 200kb.
 # ℹ 2 more variables: time <list>, gc <list>
 ```
 
-## Le workflow de sourcoise
+## Le *workflow* avec sourcoise
 
-Le cas central d'utilisation de sourcoise est dans un projet quarto. On  acuiert des données de diférentes sources, plus ou moins complexes, nécessitant plus ou moins de traitements. Ces donénes peuvent être mises à jour, mais la fréquence de mise à jour est bien plus basse que la fréquence de rendu du projet quarto. Dans les chunks on place les mises en forme de graphiques ou de tableaux, afin de pouvoir les corriger et de pouvoir conserver l'adaptation des rendus aux support lors du `render` du projet quarto. Les données sont fabriquées dans les scripts `r`, placés là où sont les `qmd` et appelés périodiquement ou manuellement pour garantir que l'on dispose de la version à jour.
+Le cas central d'utilisation de sourcoise est dans un projet quarto. On acuiert des données de diférentes sources, plus ou moins complexes, nécessitant plus ou moins de traitements. Ces donénes peuvent être mises à jour, mais la fréquence de mise à jour est bien plus basse que la fréquence de rendu du projet quarto. Dans les chunks on place les mises en forme de graphiques ou de tableaux, afin de pouvoir les corriger et de pouvoir conserver l'adaptation des rendus aux support lors du `render` du projet quarto. Les données sont fabriquées dans les scripts `r`, placés là où sont les `qmd` et appelés périodiquement ou manuellement pour garantir que l'on dispose de la version à jour.
 
 Ce projet quarto est partagé par github entre plusieurs utilisateurs et les données mises en cache sont commitées (et versionnées) par github. Cela permet de dissocier exécution des scripts (et vérification de leur bonne exécution) du rendu des graphiques ou tableaux faits à partir de ces données.
 
@@ -108,48 +109,3 @@ Ce projet quarto est partagé par github entre plusieurs utilisateurs et les don
 `sourcoise_refresh()` permet ainsi que rafraicher tout ou partie des données en cache en forçant l'exécution ou en laissant les schémas d'invalidation jouer automatiquement. lorsque les scripts sont exécutés par `sourcoise_refresh()` le log est activé par défaut. Comme les `qmd` appelants sont connus, `sourcoise_refresh()` peut *unfreezé* ou *uncaché* les `qmd`ou les chunks des `qmd`. C'est important dans le workflow, parce que lorsqu'on rafraichit les données, on veut que les chunks soient réévalués pour que les tableaux ou les graphiques soient refait à partir des nouvelles données. Or, si on utilise `freeze` quarto n'a pas de moyen de savoir que le `freeze` est périmé.
 
 Il est possible de sélectionner les données qui sont rafraichies. `sourcoise_refresh()` part du résulat de `sourcoise_status()` par défaut. Il est ainsi possible de faire une sélection des données en cache et de ne passer que celles là à `sourcoise_refresh()`. Avec un peu de programmation, on peut donc mettre en place un schéma qui régulièrement vérifie la validité des données (calendrier, API ou autre) et déclenche séelctivement la mise à jour. `sourcoise()` peut appeler d'autres `sourcoise()` mais pour le moment, il n'y a aucune prise en compte de cette hiérarchie.
-
-## Usage avancé
-
-### Passer des paramètres
-
-Il est possible de passer des paramètres avec `sourcoise()`, bien que ce soit plus pratique d'écrire une fonction. Les paramètres sont passés sous forme d'une liste (`list(param1="1")` par exemple) et sont disponibles dans le script (dans la variable `args`, donc pour avoir le paramètre `param1` il faut écrire `args$param1` dans le script. Changer les paramètres invalide le cache.
-
-Notez que le script est toujours exécuté en "local" ce qui veut dire que toute variable créée ou tout package ouvert à l'intérieur du script n'est pas renvoyé (comme dans une fonction, en fait).
-
-## Usage avancé : récupérer les métadonnées
-
-En utlisant l'option `metadata=TRUE` dans `sourcoise()` on peut récupérer des informations sur, par exmple, la date de téléchargement. C'est illustré sur quelques graphiques du cachier de graphique.
-
-En code cela donne le chunk ci dessous. Les données sont accessibles par `$data` et la date de téléchargement par `$date`. Cela permet de construire la note (noter que `glue::glue()` est appliqué aux textes passés à `ofce_caption()`).
-
-```r
-transactions <- sourcoise("immo/data_transaction.r", metadata=TRUE)
-
-trsc <- ggplot(transactions$data) + 
-  aes(x=date, y=t*1000) +
-  geom_line(alpha = 0.5, col = bluish) +
-  geom_point_interactive(aes(tooltip = tooltip, data_id = date),
-                         shape = 21, size = 1, stroke = 0.2, col = "white", 
-                         fill = bluish,
-                         hover_nearest = TRUE, show.legend = FALSE)+
-  theme_ofce() +
-  scale_y_log10(labels = scales::number_format(scale = 1/1000, suffix="k")) +
-  scalex +
-  ofce_caption(
-    source = "IGEDD d'après DGFiP (MEDOC) et bases notariale", 
-    dpt = transactions$data$date,
-    note = "Transactions cumulées sur 12 mois, dans l'ancien, maisons et appartements, échelle log, données téléchargées le {date_jour(transactions$date)}",
-    sub= "Nombre de transactions")
-
-```
-
-### Quelques opérations sur le cache
-
-Le package `{sourcoise}` fournit des outils pour s'occuper des caches. Le premier est `sourcoise_status()`. il scanne le répertoire et fournit la liste de tous les caches enregistrés et suivis. Il indique si les caches sont valides ou non et les principaux paramètres utilisés pour chaque script.
-
-`sourcoise_refresh()` rafraîchit (en le forçant) tous les caches. On peut passer à `sourcoise_refresh()` un `tibble` comme celui renvoyé par `sourcoise_status()` mais filtré pour ne rafraîchir que la liste voulue (attention passer toutes les colonnes sans modification). Cela sert lorsqu'on a un processus plus complexe d'invalidation du cache (en fonction d'un calendrier, en interrogeant une API, etc...) et qu'on déclenche en fonction de cette logique l'exécution des caches.
-
-On peut également à partir de `sourcoise_status()` accéder aux données en cache. Elles sont enregistrées en `.qs2` avec les ackage `{qs2}` et donc se chargent avec un `qs2::qs_read()`.
-
-On peut également nettoyer complètement le cache (ce qui provoquera sa ré exécution) avec `sourcoise_clear()`.

@@ -1,0 +1,68 @@
+---
+title: "Usages avancés"
+vignette: >
+  %\VignetteIndexEntry{advanced}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+
+format:
+  html:
+    code-fold: true
+    code-summary: "code"
+
+echo: true
+message: false
+warning: false
+---
+
+## Où sont les données cachées ?
+
+`sourcoise()` a deux modes d'éxécution. 
+
+1.   Soit au niveau projet et alors les données cachées le sont dans un dossier commun au projet, à la racine du projet. Le dossier dans ce cas s'appelle `.sourcoise`. La structure du dossier reproduit celle des scripts, avec des dossiers et sous dossiers. Au bout des chemins, il y a pour chaque script deux types de fichiers : un `json` qui contient toutes les métadonnées, est qui est spécifique à chqeu utilisateur. Ce fichier est créé et écrit à chaque fois que le script est exécuté. Il est indéxé par le rang de l'exécution. Le seond type de fichier contient les données et est au format `qs2` du package `{qs2}`. Ce format peut être directement lu depuis `r` si on le souhaite. Le nom du fichier de données est composé du nom du script et d'un hash sur les données en cache (le hash est calculé sur l'objet `r` en mémoire et donc ne dépend pas de la plateforme ni du format sur le disque). Le fichier de données n'est écrit que si les données changent. On peut donc avoir plusieurs `json` qui font référence aux mêmes données.
+
+2.   Dans le deuxième mode, les données sont stockées au même endroit que le script, toujours dans un dossier caché `.sourcoise`. On y retrouve les `json` et `qs2` suivant les mêmes règles que dans le cas précédent. Si il y a plusieurs scripts dans le même dossier, ils partagent le même `.sourcoise`.
+
+Les deux méthodes peuvent cohabiter, ce qui peut conduire à des doublons, qui ne seront pas automatiquement joints. Il est possible d'effacer tous les `.sourcoise` par la commande `sourcoise_reset()` et de fixer l'option 1 ou 2 par `options(sourcoise.src_in = "projet")` (option 1.) ou `options(sourcoise.src_in = "file")` (option 2.).
+
+## Passer des paramètres au script
+
+Il est possible de passer des paramètres avec `sourcoise()`, bien que ce soit plus pratique d'écrire une fonction. Les paramètres sont passés sous forme d'une liste (`list(param1="1")` par exemple) et sont disponibles dans le script (dans la variable `args`, donc pour avoir le paramètre `param1` il faut écrire `args$param1` dans le script. Changer les paramètres invalide le cache.
+
+Notez que le script est toujours exécuté en "local" ce qui veut dire que toute variable créée ou tout package ouvert à l'intérieur du script n'est pas renvoyé (comme dans une fonction, en fait).
+
+## Récupérer les métadonnées
+
+En utlisant l'option `metadata=TRUE` dans `sourcoise()` on peut récupérer des informations sur, par exmple, la date de téléchargement. C'est illustré sur quelques graphiques du cachier de graphique.
+
+En code cela donne le chunk ci dessous. Les données sont accessibles par `$data` et la date de téléchargement par `$date`. Cela permet de construire la note (noter que `glue::glue()` est appliqué aux textes passés à `ofce_caption()`).
+
+``` r
+transactions <- sourcoise("immo/data_transaction.r", metadata=TRUE)
+
+trsc <- ggplot(transactions$data) + 
+  aes(x=date, y=t*1000) +
+  geom_line(alpha = 0.5, col = bluish) +
+  geom_point_interactive(aes(tooltip = tooltip, data_id = date),
+                         shape = 21, size = 1, stroke = 0.2, col = "white", 
+                         fill = bluish,
+                         hover_nearest = TRUE, show.legend = FALSE)+
+  theme_ofce() +
+  scale_y_log10(labels = scales::number_format(scale = 1/1000, suffix="k")) +
+  scalex +
+  ofce_caption(
+    source = "IGEDD d'après DGFiP (MEDOC) et bases notariale", 
+    dpt = transactions$data$date,
+    note = "Transactions cumulées sur 12 mois, dans l'ancien, maisons et appartements, échelle log, données téléchargées le {date_jour(transactions$date)}",
+    sub= "Nombre de transactions")
+```
+
+## Quelques opérations sur le cache
+
+Le package `{sourcoise}` fournit des outils pour s'occuper des caches. Le premier est `sourcoise_status()`. il scanne le répertoire et fournit la liste de tous les caches enregistrés et suivis. Il indique si les caches sont valides ou non et les principaux paramètres utilisés pour chaque script.
+
+`sourcoise_refresh()` rafraîchit (en le forçant) tous les caches. On peut passer à `sourcoise_refresh()` un `tibble` comme celui renvoyé par `sourcoise_status()` mais filtré pour ne rafraîchir que la liste voulue (attention passer toutes les colonnes sans modification). Cela sert lorsqu'on a un processus plus complexe d'invalidation du cache (en fonction d'un calendrier, en interrogeant une API, etc...) et qu'on déclenche en fonction de cette logique l'exécution des caches.
+
+On peut également à partir de `sourcoise_status()` accéder aux données en cache. Elles sont enregistrées en `.qs2` avec les ackage `{qs2}` et donc se chargent avec un `qs2::qs_read()`.
+
+On peut également nettoyer complètement le cache (ce qui provoquera sa ré exécution) avec `sourcoise_clear()`.
