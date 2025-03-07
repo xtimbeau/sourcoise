@@ -83,6 +83,13 @@ Il est possible de logger l'exécution de `sourcoise()` pour vérifier que tout 
 
 Une dernière chose, `sourcoise()` est doté d'une heuristique maline trouve le fichier source même si il est caché (i.e. que le chemin est approximatif, ce qui déclenche une erreur normalement, mais là ça passe), ce qui augmente la portabilité des fichiers sources et facilite l'orgnisation d'un projet. Bien sûr, en cas d'ambiguité, `sourcoise()` prévient.
 
+## performance
+
+```{r}
+
+```
+
+
 ## Le workflow de sourcoise
 
 Le cas central d'utilisation de sourcoise est dans un projet quarto. On  acuiert des données de diférentes sources, plus ou moins complexes, nécessitant plus ou moins de traitements. Ces donénes peuvent être mises à jour, mais la fréquence de mise à jour est bien plus basse que la fréquence de rendu du projet quarto. Dans les chunks on place les mises en forme de graphiques ou de tableaux, afin de pouvoir les corriger et de pouvoir conserver l'adaptation des rendus aux support lors du `render` du projet quarto. Les données sont fabriquées dans les scripts `r`, placés là où sont les `qmd` et appelés périodiquement ou manuellement pour garantir que l'on dispose de la version à jour.
