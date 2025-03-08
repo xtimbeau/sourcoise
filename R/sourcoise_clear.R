@@ -1,11 +1,13 @@
-#' Vide le cache
+#' CLeans cache
+#'
+#' removes every json and qs2 files found by `sourcoise_status()` unless a specfiic tibble (filtered from `sourcoise_status()`) is passed as an argument.
 #'
 #' @param what (--) a tibble such as the one obtained by `sourcoise_status()`, possibly filtered
-#' @param root pour forcer le root (non recommandé)
+#' @param root to force root, not recommanded (expert use)
 #'
 #' @family sourcoise
 #'
-#' @return la liste des fichiers supprimés
+#' @return list of cleared files
 #' @export
 
 sourcoise_clear <- function(
@@ -26,9 +28,11 @@ sourcoise_clear <- function(
   })
 }
 
-#' Efface les .sourcoise
+#' Reset sourcoise
 #'
-#' @param root pour forcer le root (non recommandé)
+#' Removes all `.sourcoise` folders found under the project root.
+#'
+#' @param root to force root (expert use)
 #'
 #' @family sourcoise
 #'

@@ -6,5 +6,4 @@
 ^pkgdown$
 ^\.github$
 work
-docs
-.sourcoise
+\.sourcoise

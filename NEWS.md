@@ -1,3 +1,11 @@
+# sourcoise 0.3.2
+
+## Correction de bugs
+
+* retourne un cache invalide si l'éxécution a échouée.
+* n'exécute plus deux fois le source lorsque l'éxécution échoue.
+* meilleurs messages d'erreur ou de succès
+
 # sourcoise 0.3.1
 
 ## Correction de bugs

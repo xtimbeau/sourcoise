@@ -2,7 +2,7 @@
 % Please edit documentation in R/sourcoise_clear.R
 \name{sourcoise_clear}
 \alias{sourcoise_clear}
-\title{Vide le cache}
+\title{CLeans cache}
 \usage{
 sourcoise_clear(
   what = sourcoise_status(root = root, prune = FALSE),
@@ -12,13 +12,13 @@ sourcoise_clear(
 \arguments{
 \item{what}{(--) a tibble such as the one obtained by \code{sourcoise_status()}, possibly filtered}
 
-\item{root}{pour forcer le root (non recommandé)}
+\item{root}{to force root, not recommanded (expert use)}
 }
 \value{
-la liste des fichiers supprimés
+list of cleared files
 }
 \description{
-Vide le cache
+removes every json and qs2 files found by \code{sourcoise_status()} unless a specfiic tibble (filtered from \code{sourcoise_status()}) is passed as an argument.
 }
 \seealso{
 Other sourcoise: 
