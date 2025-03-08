@@ -1,6 +1,6 @@
 #' Vide le cache
 #'
-#' @param what (--) un tibble issu de source_data, éventuellement filtré
+#' @param what (--) a tibble such as the one obtained by `sourcoise_status()`, possibly filtered
 #' @param root pour forcer le root (non recommandé)
 #'
 #' @family sourcoise
