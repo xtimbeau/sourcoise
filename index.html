@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="index.html">sourcoise</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,7 +67,7 @@
 </h1>
 </div>
 <p><a href="https://xtimbeau.github.io/sourcoise">sourcoise</a> est un package qui fournit des outils pour exécuter un script R et mettre en cache les résultats. Le but est de pouvoir exécuter très rapidement un code qui accède à des fichiers ou une API et qui, en l’absence de mises à jour, produit toujours le même résultat. Lorsque l’API est suceptible de bloquer (ou si on a pas de connection internet), cela évite de bloquer le rendu d’un document ou d’un site quarto.</p>
-<p>Accessoirement, cela oblige à isoler le code du script qui récupère les données dans un fichier afin d’améliorer la reproductibilité. <code>sourcoise()</code> peut être appelé dans un <code>sourcoise()</code> ce qui permet la modularité. Il fournit des outils pour vérifier le cache et le rafraichir à la demande.</p>
+<p>Accessoirement, cela oblige à isoler le code du script qui récupère les données dans un fichier afin d’améliorer la reproductibilité. <code><a href="reference/sourcoise.html">sourcoise()</a></code> peut être appelé dans un <code><a href="reference/sourcoise.html">sourcoise()</a></code> ce qui permet la modularité. Il fournit des outils pour vérifier le cache et le rafraichir à la demande.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -97,8 +97,8 @@ ggplot(mes_datas) + instructions du graphique
 <ol style="list-style-type: decimal">
 <li><p>un gain de temps lorsque l’exécution du code est longue (accès à une API, téléchargement de grosses données, traitements importants). La lecture d’un fichier excel peut aussi être assez longue. Le temps d’accès aux données en cache dépend de leur taille, mais même pour des données volumineuses (et il n’y a pas de raisons qu’elles le soient tant que ça), l’ordre de grandeur est de qualques millisecondes, grâce aux optimisations.</p></li>
 <li><p>le cache est transférable par github. Il se trouve dans un dossier (caché), mais enregistré dans le dossier de projet et <em>commité</em> par github. Le cache produit sur un poste est donc accessible par <code>pull</code> sur les autres postes.</p></li>
-<li><p>si le code source déclenche une erreur, on peut passer outre : En cas de package non installé, données absentes (par exemple un chemin absolu dans le code), ou une API qui bloque (comme celle de l’OCDE) alors <code>sourcoise()</code> essaye de prendre la dernière exécution résussie. Bien que cela puisse être problématique, c’est-à-dire une erreur non signalée, cela a l’énorme avantage de ne pas bloquer le processus et de permettre de traiter l’erreur en parallèle.</p></li>
-<li><p><code>sourcoise()</code> cherche de façon astucieuse le fichier source dans le projet et exécute le code dans un environnement local, en changeant le répertoire de travail pour être celui où se trouve le code source. Cela permet d’appeler dans le code source (le script <code>r</code> <code>mon_script.r</code> passé en paramètre à <code>sourcoise("mon_script.r")</code>, des scripts <code>r</code>, des fichiers de données <code>.csv</code> ou <code>.xlsx</code> qui sont enregistré dans le même répertoire que le fichier <code>mon_script.r</code>. On peut donc réutiliser le code sans se soucier de modifier les chemins qui sont relatifs au dossier où se trouve <code>mon_script.r</code>.</p></li>
+<li><p>si le code source déclenche une erreur, on peut passer outre : En cas de package non installé, données absentes (par exemple un chemin absolu dans le code), ou une API qui bloque (comme celle de l’OCDE) alors <code><a href="reference/sourcoise.html">sourcoise()</a></code> essaye de prendre la dernière exécution résussie. Bien que cela puisse être problématique, c’est-à-dire une erreur non signalée, cela a l’énorme avantage de ne pas bloquer le processus et de permettre de traiter l’erreur en parallèle.</p></li>
+<li><p><code><a href="reference/sourcoise.html">sourcoise()</a></code> cherche de façon astucieuse le fichier source dans le projet et exécute le code dans un environnement local, en changeant le répertoire de travail pour être celui où se trouve le code source. Cela permet d’appeler dans le code source (le script <code>r</code> <code>mon_script.r</code> passé en paramètre à <code>sourcoise("mon_script.r")</code>, des scripts <code>r</code>, des fichiers de données <code>.csv</code> ou <code>.xlsx</code> qui sont enregistré dans le même répertoire que le fichier <code>mon_script.r</code>. On peut donc réutiliser le code sans se soucier de modifier les chemins qui sont relatifs au dossier où se trouve <code>mon_script.r</code>.</p></li>
 <li><p>cela fournit un embryon de reproductibilité en désignant le script qui fabrique les données.</p></li>
 </ol>
 </div>
@@ -108,8 +108,8 @@ ggplot(mes_datas) + instructions du graphique
 <p>Seront bientôt implémentés :</p>
 <ul>
 <li><p>la possibilité de stocker les données cachées hors du dossier de projet (et donc hors de <em>github</em>) et d’utiliser <a href="https://pins.rstudio.com/" class="external-link">pins</a> pour le stcokage (mais peut être au prix d’un accès plus lent).</p></li>
-<li><p>un schéma pour déclarer les dépendances entre dess appels à <code>sourcoise()</code> et déclencher les exécutions en cascade.</p></li>
-<li><p>et éventuellement une interface <em>shiny</em> de mise à jour (<em>gui</em> pour <code>sourcoise_refresh()</code>)</p></li>
+<li><p>un schéma pour déclarer les dépendances entre dess appels à <code><a href="reference/sourcoise.html">sourcoise()</a></code> et déclencher les exécutions en cascade.</p></li>
+<li><p>et éventuellement une interface <em>shiny</em> de mise à jour (<em>gui</em> pour <code><a href="reference/sourcoise_refresh.html">sourcoise_refresh()</a></code>)</p></li>
 </ul>
 </div>
 </div>
