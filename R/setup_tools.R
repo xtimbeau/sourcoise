@@ -1,8 +1,7 @@
 # calcule les différents chemins et trouve les fichiers/répertoire dont on a besoin
 
 setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
-                          lapse, nocache, limit_mb, grow_cache, quiet=TRUE) {
-
+                          lapse, nocache, limit_mb, grow_cache, log, quiet=TRUE) {
   ctxt <- list()
 
   if(is.null(track))
@@ -30,6 +29,8 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
     ctxt$root <- try_find_root(root, src_in)
   else
     ctxt$root <- fs::path_abs(root)
+
+  ctxt <- startup_log(log, ctxt)
 
   ctxt$uid <- digest::digest(ctxt$root, algo = "crc32")
 
@@ -72,6 +73,12 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
     ctxt$qmd_file <- NULL
   }
 
+  if(!is.null(ctxt$qmd_file))
+    logger::log_info("qmd file : {ctxt[['qmd_file']]}")
+  logger::log_info("source file : {ctxt[['src']]}")
+  logger::log_debug("root : {ctxt[['root']]}")
+  logger::log_debug("cache : {ctxt[['full_cache_rep']]}")
+
   ctxt$exec_wd <- exec_wd
   if(is.null(exec_wd)) {
     ctxt$exec_wd <- getwd()
@@ -88,6 +95,7 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
       }
     }
   }
+  logger::log_debug("wd : {ctxt[['exec_wd']]}")
 
   ctxt <- ctxt |>
     hash_context()
@@ -129,9 +137,16 @@ startup_log <- function(log, ctxt) {
     log <- "OFF"
   log_dir <- fs::path_join(c(ctxt$root,".sourcoise", "logs"))
   logger::log_threshold(log)
+
+  if(!ctxt$quiet)
+    logger::log_appender(logger::appender_stdout)
+
   if(log == "OFF") {
+    if(!ctxt$quiet)
+      logger::log_threshold("INFO")
     return(ctxt)
   }
+
   if(!fs::dir_exists(log_dir))
     fs::dir_create(log_dir)
   log_fn <- fs::path_join(c(log_dir, stringr::str_c("sourcoise_", lubridate::today() |> as.character()))) |>
@@ -139,14 +154,7 @@ startup_log <- function(log, ctxt) {
 
   logger::log_appender(logger::appender_file(log_fn))
 
-  if(!is.null(ctxt)) {
-    if(!is.null(ctxt$qmd_file))
-      logger::log_info("qmd file : {ctxt[['qmd_file']]}")
-    logger::log_info("source file : {ctxt[['src']]}")
-    logger::log_debug("root : {ctxt[['root']]}")
-    logger::log_debug("cache : {ctxt[['full_cache_rep']]}")
-    ctxt$log_file <- fs::path_rel(log_fn, getwd() |> fs::path_abs())
-  }
+  ctxt$log_file <- fs::path_rel(log_fn, getwd() |> fs::path_abs())
 
   return(ctxt)
 }

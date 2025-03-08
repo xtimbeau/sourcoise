@@ -23,8 +23,7 @@ warning: false
 
 ``` bash
 ├── prix.qmd
-└── ipch
-    └── prix_insee.R
+└── prix_insee.R
 ```
 
 Le script `prix_insee.r` comporte un `return()` à la fin :
@@ -59,7 +58,7 @@ return(list(ipcha = ipcha, ipchm = ipchm, ipch = ipch))
 ``` r
 library(sourcoise)
 library(tidyverse)
-ipch_data <- sourcoise("ipch/prix_insee.R")
+ipch_data <- sourcoise("prix_insee.R")
 
 ggplot(data = ipch_data$ipchm) + 
   aes(x = DATE, y = ipch ) +
@@ -89,7 +88,7 @@ Une dernière chose : `sourcoise()` est doté d'une heuristique maline trouve le
 L'exécution "vraie" du scirpt `r` (sur un MacOS M2) prend 34ms et alloue 200kb. Lorsque les données sont en cache, l'exécution est effectuée en moins de 5ms et l'allocation de mémoire est celle des données finales. Le temps d'exécution des données cachées ne dépend que de leur taille alors que le temsp d'exécution "vraie" dépend de la complexité des calculs et des volumes téléchargés par le script.
 
 ```         
-> bench::mark(cache = sourcoise("work/ipch/prix_insee.r"), no_cache = sourcoise("work/ipch/prix_insee.r", force_exec = TRUE))
+> bench::mark(cache = sourcoise("ipch/prix_insee.r"), no_cache = sourcoise("ipch/prix_insee.r", force_exec = TRUE))
 # A tibble: 2 × 13
   expression      min   median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time result       memory    
   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl> <int> <dbl>   <bch:tm> <list>       <list>    

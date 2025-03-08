@@ -3,7 +3,12 @@ remove_ext <- function(name) {
 }
 
 find_src <- function(root, name) {
-  path <- fs::path_join(c(root, name)) |> fs::path_norm()
+  if(fs::is_absolute_path(name)) {
+    logger::log_warn("Source script path is absolute, that is not recommanded")
+    path <- name
+  }
+  else
+    path <- fs::path_join(c(root, name)) |> fs::path_norm()
   fn <- stringr::str_c(path, ".r")
   if(fs::file_exists(fn)) return(fn)
   fn <- stringr::str_c(path, ".R")

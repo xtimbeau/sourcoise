@@ -1,0 +1,17 @@
+---
+title: "ipch"
+format: html
+editor: visual
+---
+
+```{r}
+library(sourcoise)
+library(tidyverse)
+ipch_data <- sourcoise("ipch/prix_insee.R")
+
+ggplot(data = ipch_data$ipchm) + 
+  aes(x = DATE, y = ipch ) +
+  geom_line()
+
+```
+
