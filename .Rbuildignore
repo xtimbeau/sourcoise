@@ -7,3 +7,5 @@
 ^\.github$
 work
 \.sourcoise
+vignettes/\.quarto
+^cran-comments\.md$

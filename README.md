@@ -6,7 +6,13 @@ Accessoirement, cela oblige à isoler le code du script qui récupère les donn�
 
 ## Installation
 
-Pour installer `{sourcoise}` il faut le faire depuis *github* :
+`{sourcoise}` s'installe à partir de CRAN :
+
+```r
+install.packages("sourcoise")
+```
+
+La version de développement s'installe depuis *github* : 
 
 ```r
 devtools::install_gitub("xtimbeau/sourcoise")

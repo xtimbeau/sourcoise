@@ -33,9 +33,18 @@
 #' @param clean (boolean) (defaut `FALSE`) check if some data files have not json referring to them and cleans if any.
 #' @family sourcoise
 #'
+#' @importFrom rlang .data
 #' @return tibble of cached files
 #' @export
-#'
+#' @examples
+#' fs::file_copy(
+#'    fs::path_package("sourcoise", "ipch", "prix_insee.r"),
+#'    "/tmp/prix_insee.r",
+#'    overwrite = TRUE)
+#' # Force execution (root is set explicitly here, it is normally deduced from project)
+#' data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE)
+#' # status returns the cache status
+#' sourcoise_status(root = "/tmp")
 
 sourcoise_status <- function(
     quiet = TRUE,
@@ -82,8 +91,7 @@ sourcoise_status <- function(
           args_hash = dd$args_hash,
           data_hash = dd$data_hash)
       })
-    }) |>
-      dplyr::arrange(src, dplyr::desc(date))
+    })
 
     if(clean) {
       qs2_jsoned <- purrr::pmap_chr(cached, \(root, json_file, data_file, ...) {
@@ -94,13 +102,18 @@ sourcoise_status <- function(
       qs2_orphed <- setdiff(qs2 |> purrr::list_c(), qs2_jsoned)
       purrr::walk(qs2_orphed, fs::file_delete)
     }
-    if(prune)
+
+    if(nrow(cached)>0) {
       cached <- cached |>
-        dplyr::group_by(src) |>
-        dplyr::filter(date == max(date)) |>
-        dplyr::ungroup()
-    return(cached)
-  } else {
+        dplyr::arrange(.data$src, dplyr::desc(.data$date))
+
+      if(prune)
+        cached <- cached |>
+          dplyr::group_by(.data$src) |>
+          dplyr::filter(.data$date == max(.data$date)) |>
+          dplyr::ungroup()
+      return(cached)
+    }
     if(!quiet)
       cli::cli_alert_info("No cache data")
     return(tibble::tibble())

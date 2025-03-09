@@ -54,7 +54,15 @@
 #' @family sourcoise
 #' @return data (list ou ce que le code retourne)
 #' @export
-#'
+#' @examples
+#' fs::file_copy(
+#'    fs::path_package("sourcoise", "ipch", "prix_insee.r"),
+#'    "/tmp/prix_insee.r",
+#'    overwrite = TRUE)
+#' # Force execution (root is set explicitly here, it is normally deduced from project)
+#' data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE)
+#' # The second time cache is used
+#' data <- sourcoise("prix_insee.r", root = "/tmp/")
 
 sourcoise <- function(
     path,
@@ -161,3 +169,4 @@ sourcoise <- function(
     return(return_data$data)
   }
 }
+

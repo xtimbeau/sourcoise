@@ -1,11 +1,12 @@
+#' @importFrom rlang .data
 cache_data <- function(data, ctxt) {
   pat <- stringr::str_c(ctxt$name, "_([a-f0-9]{8})-([0-9]+)\\.json")
   files <- tibble::tibble()
 
   if(fs::dir_exists(ctxt$full_cache_rep)) {
     files <- fs::dir_info(path = ctxt$full_cache_rep, regexp = pat) |>
-      dplyr::mutate(uid = stringr::str_extract(path, pat, group=1),
-                    cc = stringr::str_extract(path, pat, group=2) |> as.numeric())
+      dplyr::mutate(uid = stringr::str_extract(.data$path, pat, group=1),
+                    cc = stringr::str_extract(.data$path, pat, group=2) |> as.numeric())
   }
   cc <- 1
   exists <- FALSE
@@ -19,11 +20,11 @@ cache_data <- function(data, ctxt) {
         mdata <- read_mdata(.x)
         tibble::tibble(path = .x, data_hash = mdata$data_hash, data_file = mdata$data_file)
       }) |>
-      dplyr::filter(data_hash == new_data_hash)
+      dplyr::filter(.data$data_hash == new_data_hash)
     if(nrow(hashes)>0) {
       exists_data_file <- hashes |>
         dplyr::slice(1) |>
-        dplyr::pull(data_file) |>
+        dplyr::pull(.data$data_file) |>
         fs::path_file()
 
       exists_data_file <- fs::path_join(c(ctxt$full_cache_rep, exists_data_file))
@@ -71,6 +72,7 @@ cache_data <- function(data, ctxt) {
   return(data)
 }
 
+#' @importFrom rlang .data
 prune_cache <- function(ctxt) {
   if(is.infinite(ctxt$grow_cache))
     return(NULL)
@@ -78,17 +80,19 @@ prune_cache <- function(ctxt) {
 
   pairs <- purrr::imap_dfr(
     md,
-    ~tibble(data_file = .x$data_file, json_file = .y, date = .x$date) )
+    ~tibble::tibble(data_file = .x$data_file, json_file = .y, date = .x$date) )
 
   datas <- unique(pairs$data_file)
   jsons <- unique(pairs$json_file)
 
   pairs <- pairs |>
-    group_by(data_file) |>
-    arrange(desc(date)) |>
-    summarize(date = first(date), json_file = first(json_file)) |>
-    arrange(desc(date)) |>
-    slice_head(n=ctxt$grow_cache)
+    dplyr::group_by(.data$data_file) |>
+    dplyr::arrange(dplyr::desc(.data$date)) |>
+    dplyr::summarize(
+      date = dplyr::first(.data$date),
+      json_file = dplyr::first(.data$json_file)) |>
+    dplyr::arrange(dplyr::desc(.data$date)) |>
+    dplyr::slice_head(n=ctxt$grow_cache)
   jsons_out <- setdiff(jsons, pairs$json_file)
   datas_out <- setdiff(datas, pairs$data_file)
 

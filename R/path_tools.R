@@ -51,7 +51,7 @@ try_find_root <- function(root=NULL, src_in = getOption("sourcoise.src_in"), qui
 
 find_project_root <- function(project_path = NULL, doc_path = NULL) {
   if(is.null(doc_path)) {
-    if(Sys.getenv("QUARTO_DOCUMENT_PATH") != "")
+    if(Sys.getenv("QUARTO_DOCUMENT_PATH") != "" | quarto::is_using_quarto())
       doc_path <- Sys.getenv("QUARTO_DOCUMENT_PATH") |> fs::path_abs() |> fs::path_norm()
     else
       doc_path <- getwd() |> fs::path_abs() |> fs::path_norm()

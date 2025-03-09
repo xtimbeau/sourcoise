@@ -13,9 +13,19 @@
 #'
 #' @family sourcoise
 #'
+#' @importFrom rlang .data
 #' @return a list of r scripts (characters) executed, with timing and success
 #' @export
-#'
+#' @examples
+#' fs::file_copy(
+#'   fs::path_package("sourcoise", "ipch", "prix_insee.r"),
+#'   "/tmp/prix_insee.r",
+#'   overwrite = TRUE)
+#' # Force execution (root is set explicitly here, it is normally deduced from project)
+#' data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE)
+#' # we then refresh all caches
+#' sourcoise_refresh(root = "/tmp")
+
 sourcoise_refresh <- function(
     what = NULL,
     force_exec = TRUE,
@@ -33,8 +43,8 @@ sourcoise_refresh <- function(
 
   if(!force_exec)
     what <- what |>
-      dplyr::group_by(src) |>
-      dplyr::filter(!any(valid)) |>
+      dplyr::group_by(.data$src) |>
+      dplyr::filter(!any(.data$valid)) |>
       dplyr::ungroup()
 
   if(nrow(what)==0)
@@ -42,8 +52,8 @@ sourcoise_refresh <- function(
 
   # on en garde qu'un
   what <- what |>
-    dplyr::group_by(src) |>
-    dplyr::arrange(dplyr::desc(date)) |>
+    dplyr::group_by(.data$src) |>
+    dplyr::arrange(dplyr::desc(.data$date)) |>
     dplyr::slice(1) |>
     dplyr::ungroup()
 

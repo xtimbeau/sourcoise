@@ -38,6 +38,16 @@ a list of r scripts (characters) executed, with timing and success
 \description{
 Refresh cache by executing sources selected
 }
+\examples{
+fs::file_copy(
+  fs::path_package("sourcoise", "ipch", "prix_insee.r"),
+  "/tmp/prix_insee.r",
+  overwrite = TRUE)
+# Force execution (root is set explicitly here, it is normally deduced from project)
+data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE)
+# we then refresh all caches
+sourcoise_refresh(root = "/tmp")
+}
 \seealso{
 Other sourcoise: 
 \code{\link{sourcoise}()},
