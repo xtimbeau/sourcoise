@@ -133,7 +133,7 @@ pick_gooddata <- function(good_datas, ctxt) {
   }
 
   good_good_data$ok <- "cache"
-  good_good_data$data <- read_data_from_cache_nm(fnd)
+  good_good_data$data <- read_data_from_cache(fnd)
 
   return(good_good_data)
 }
