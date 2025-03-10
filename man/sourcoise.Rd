@@ -115,8 +115,8 @@ data <- sourcoise("prix_insee.R", root = dir)
 dir <- tempdir()
 fs::file_copy(
    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
-  dir,
-  overwrite = TRUE)
+   dir,
+   overwrite = TRUE)
 bench::mark(
  forced = data <- sourcoise("prix_insee.r", root = dir, force_exec = TRUE),
  cached = data <- sourcoise("prix_insee.r", root = dir),
