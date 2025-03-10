@@ -1,7 +1,7 @@
 # calcule les différents chemins et trouve les fichiers/répertoire dont on a besoin
 
 setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
-                          lapse, nocache, limit_mb, grow_cache, log, quiet=TRUE) {
+                          lapse, nocache, limit_mb, grow_cache, log, inform=FALSE, quiet=TRUE) {
   ctxt <- list()
 
   if(is.null(track))
@@ -16,6 +16,7 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
 
   ctxt$lapse <- lapse
   ctxt$quiet <- quiet
+  ctxt$inform <- inform
   ctxt$wd <- wd
   ctxt$src_in <- src_in
   ctxt$nocache <- nocache

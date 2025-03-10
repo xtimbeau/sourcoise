@@ -2,7 +2,7 @@
 % Please edit documentation in R/sourcoise_clear.R
 \name{sourcoise_clear}
 \alias{sourcoise_clear}
-\title{CLeans cache}
+\title{Cleans cache}
 \usage{
 sourcoise_clear(
   what = sourcoise_status(root = root, prune = FALSE),
@@ -12,24 +12,26 @@ sourcoise_clear(
 \arguments{
 \item{what}{(--) a tibble such as the one obtained by \code{sourcoise_status()}, possibly filtered}
 
-\item{root}{to force root, not recommanded (expert use)}
+\item{root}{to force root, not recommended (expert use)}
 }
 \value{
 list of cleared files
 }
 \description{
-removes every json and qs2 files found by \code{sourcoise_status()} unless a specfiic tibble (filtered from \code{sourcoise_status()}) is passed as an argument.
+removes every json and qs2 files found by \code{sourcoise_status()} unless a specific tibble (filtered from \code{sourcoise_status()}) is passed as an argument.
 }
 \examples{
-  fs::file_copy(
-    fs::path_package("sourcoise", "ipch", "prix_insee.r"),
+\dontshow{if (rlang::is_installed("insee")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+fs::file_copy(
+    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
     "/tmp/prix_insee.r",
     overwrite = TRUE)
-  # Force execution (root is set explicitly here, it is normally deduced from project)
-  data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE)
-  # we then clear all caches
-  sourcoise_clear(root = "/tmp")
-  sourcoise_status(root = "/tmp")
+# Force execution (root is set explicitly here, it is normally deduced from project)
+data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE)
+# we then clear all caches
+sourcoise_clear(root = "/tmp")
+sourcoise_status(root = "/tmp")
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 Other sourcoise: 

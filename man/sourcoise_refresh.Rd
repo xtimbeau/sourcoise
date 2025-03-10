@@ -24,7 +24,7 @@ sourcoise_refresh(
 
 \item{quiet}{(boolean) (default \code{FALSE}) no message if TRUE}
 
-\item{init_fn}{(function) (default \code{NULL}) execute a function before sourcing to allow intialisations}
+\item{init_fn}{(function) (default \code{NULL}) execute a function before sourcing to allow initialization}
 
 \item{root}{(default \code{NULL}) force root to be set, instead of letting the function finding the root, for advanced uses}
 
@@ -39,14 +39,16 @@ a list of r scripts (characters) executed, with timing and success
 Refresh cache by executing sources selected
 }
 \examples{
-   fs::file_copy(
-   fs::path_package("sourcoise", "ipch", "prix_insee.r"),
+\dontshow{if (rlang::is_installed("insee")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+fs::file_copy(
+   fs::path_package("sourcoise", "ipch", "prix_insee.R"),
    "/tmp/prix_insee.r",
    overwrite = TRUE)
-  # Force execution (root is set explicitly here, it is normally deduced from project)
-  data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE)
-  # we then refresh all caches
-  sourcoise_refresh(root = "/tmp")
+# Force execution (root is set explicitly here, it is normally deduced from project)
+data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE)
+# we then refresh all caches
+sourcoise_refresh(root = "/tmp")
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 Other sourcoise: 

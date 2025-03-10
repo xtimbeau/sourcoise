@@ -44,7 +44,8 @@
 #' @param wd (character) if `project` working directory for the execution of script will be the root of the project. If `file` then it will be the dir of the script (défaut) If `qmd`, then working dir will be the dir in which the calling `qmd` is. Current directory is restored after execution (successful or failed).
 #' @param src_in (character) if `project` searches for source starting at the root of the project, if "file" searches in qmd dir. If "wd", then in working directory. Cache folder (`.sourcoise`) is stored there.
 #' @param exec_wd (character) force exec dir (expert use).
-#' @param quiet (boolean) silence execution.
+#' @param quiet (boolean) mute messages and warnings from script execution.
+#' @param inform (boolean) Display logs on console, even if logging is disabled with threshold level "INFO".
 #' @param root (character) force root (expert use).
 #' @param nocache (boolean) no caching.
 #' @param log ("OFF" par défaut) log threshold (see `logger::log_treshold()`).
@@ -54,17 +55,24 @@
 #' @family sourcoise
 #' @return data (list ou ce que le code retourne)
 #' @export
-#' @examples
-#'
-#'   fs::file_copy(
-#'      fs::path_package("sourcoise", "ipch", "prix_insee.R"),
-#'     "/tmp/prix_insee.R",
-#'     overwrite = TRUE)
-#'   # Force execution (root is set explicitly here, it is normally deduced from project)
-#'   data <- sourcoise("prix_insee.R", root = "/tmp/", force_exec = TRUE)
-#'   # The second time cache is used
-#'   data <- sourcoise("prix_insee.R", root = "/tmp/")
-#'
+#' @examplesIf rlang::is_installed("insee")
+#' fs::file_copy(
+#'    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
+#'   "/tmp/prix_insee.r",
+#'   overwrite = TRUE)
+#' # Force execution (root is set explicitly here, it is normally deduced from project)
+#' data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE)
+#' # The second time cache is used
+#' data <- sourcoise("prix_insee.r", root = "/tmp/")
+#' @examplesIf rlang::is_installed(c("insee", "bench"))
+#' # Performance and mem test
+#' fs::file_copy(
+#'    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
+#'   "/tmp/prix_insee.r",
+#'   overwrite = TRUE)
+#' bench::mark(
+#'  forced = data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE),
+#'  cached = data <- sourcoise("prix_insee.r", root = "/tmp/"))
 
 sourcoise <- function(
     path,
@@ -80,6 +88,7 @@ sourcoise <- function(
     root = NULL,
     quiet = TRUE,
     nocache = FALSE,
+    inform = FALSE,
     log = getOption("sourcoise.log"),
     grow_cache = getOption("sourcoise.grow_cache"),
     limit_mb = getOption("sourcoise.limit_mb")) {
@@ -97,6 +106,7 @@ sourcoise <- function(
     grow_cache = grow_cache,
     limit_mb = limit_mb,
     log = log,
+    inform = inform,
     quiet = quiet)
 
   if(is.null(ctxt)) {

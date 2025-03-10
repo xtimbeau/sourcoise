@@ -1,3 +1,7 @@
+# sourcoise 0.4.0
+
+* CRAN version
+
 # sourcoise 0.3.3
 
 ## Correction de bugs

@@ -1,9 +1,15 @@
 exec_source <- function(ctxt) {
   safe_source <- purrr::safely(\(src, args) {
     args <- args
-    res <- suppressMessages(
-      suppressWarnings( base::source(src, local=TRUE) ) )
-    res
+    if(ctxt$inform)
+      res <- base::source(src, local=TRUE)
+    else
+      (res <- base::source(src, local=TRUE)) |>
+      utils::capture.output(file = nullfile(), type = "output") |>
+      utils::capture.output(file = nullfile(), type = "message") |>
+      suppressMessages() |>
+      suppressWarnings()
+    return(res)
   })
 
   current_wd <- getwd()

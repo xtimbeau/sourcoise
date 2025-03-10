@@ -13,12 +13,14 @@ sourcoise_reset(root = NULL)
 Removes all \code{.sourcoise} folders found under the project root.
 }
 \examples{
-  fs::file_copy(
-    fs::path_package("sourcoise", "ipch", "prix_insee.r"),
-    "/tmp/prix_insee.r",
-    overwrite = TRUE)
-  data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE)
-  sourcoise_reset(root = "/tmp/")
+\dontshow{if (rlang::is_installed("insee")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+fs::file_copy(
+   fs::path_package("sourcoise", "ipch", "prix_insee.R"),
+   "/tmp/prix_insee.r",
+   overwrite = TRUE)
+data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE)
+sourcoise_reset(root = "/tmp/")
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 Other sourcoise: 

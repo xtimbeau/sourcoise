@@ -18,6 +18,7 @@ sourcoise(
   root = NULL,
   quiet = TRUE,
   nocache = FALSE,
+  inform = FALSE,
   log = getOption("sourcoise.log"),
   grow_cache = getOption("sourcoise.grow_cache"),
   limit_mb = getOption("sourcoise.limit_mb")
@@ -28,29 +29,31 @@ sourcoise(
 
 \item{args}{(list) list of args that can be used in the script (in the form \code{args$xxx}).}
 
-\item{track}{(list) list of files which wmodifications trigger cache invalidation and script execution .}
+\item{track}{(list) list of files which modification triggers cache invalidation and script execution .}
 
 \item{lapse}{(character) duration over which cache is invalidated. Could be \code{never} (default) \verb{x hours}, \verb{x days}, \verb{x week}, \verb{x months}, \verb{x quarters}, \verb{x years}.}
 
 \item{force_exec}{(boolean) execute code, disregarding cache valid or invalid.}
 
-\item{prevent_exec}{(boolean) prenvent execution, cache valid or not, returned previous cached data, possibly invalid.}
+\item{prevent_exec}{(boolean) prevent execution, cache valid or not, returned previous cached data, possibly invalid.}
 
 \item{metadata}{(boolean) if TRUE \code{sourcoise()} returns a list with data is the \verb{$data}  and various meta data (see details).}
 
 \item{wd}{(character) if \code{project} working directory for the execution of script will be the root of the project. If \code{file} then it will be the dir of the script (défaut) If \code{qmd}, then working dir will be the dir in which the calling \code{qmd} is. Current directory is restored after execution (successful or failed).}
 
-\item{src_in}{(character) if \code{project} search for source starting at the root of the project, si "file" cherche dans le dossier du qmd (ou le wd). Dans ce cas, les données sont stockées dans le dossier en question.}
+\item{src_in}{(character) if \code{project} searches for source starting at the root of the project, if "file" searches in qmd dir. If "wd", then in working directory. Cache folder (\code{.sourcoise}) is stored there.}
 
 \item{exec_wd}{(character) force exec dir (expert use).}
 
 \item{root}{(character) force root (expert use).}
 
-\item{quiet}{(boolean) silence execution.}
+\item{quiet}{(boolean) mute messages and warnings from script execution.}
 
 \item{nocache}{(boolean) no caching.}
 
-\item{log}{("OFF" par défaut) log trheshold (see \code{logger::log_treshold()}).}
+\item{inform}{(boolean) Display logs on console, even if logging is disabled with threshold level "INFO".}
+
+\item{log}{("OFF" par défaut) log threshold (see \code{logger::log_treshold()}).}
 
 \item{grow_cache}{(5 par défaut) cache limit in number of data file kept.}
 
@@ -65,7 +68,7 @@ data (list ou ce que le code retourne)
 \details{
 \code{sourcoise()} looks like \code{base::source()}. However, there are some minor differences.
 
-First, the script called in \code{sourcoise()} must end by a \code{return()} or by an object returned. Assignment made in the script won't be kept as \code{sourcoise()} is executed locally. Only explicitly reruned object will be returned. So \code{soucoise()} is used by assigning its result to something (\verb{aa <- sourcoise("mon_script.r)} or \verb{sourcoise() |> ggplot() ...}). Unless specified otherwise with \code{wd} parameter, the working directory for the script execution is (temporarly) set to the dir in which is the script. That allows for simple access to companion files and permeit to move the script and companion files to another dir or project.
+First, the script called in \code{sourcoise()} must end by a \code{return()} or by an object returned. Assignment made in the script won't be kept as \code{sourcoise()} is executed locally. Only explicitly reruned object will be returned. So \code{soucoise()} is used by assigning its result to something (\verb{aa <- sourcoise("mon_script.r)} or \verb{sourcoise() |> ggplot() ...}). Unless specified otherwise with \code{wd} parameter, the working directory for the script execution is (temporarly) set to the dir in which is the script. That allows for simple access to companion files and permit to move the script and companion files to another dir or project.
 
 Second, an heuristic is applied to find the script, in the event the path given is incomplete. Whereas it is not advised and comes with a performance cost, this can be useful when there is a change in the structure of the project. The heuristic is simple, the script is searched inside the porject dir and among all hits the closest to the caller is returned.
 
@@ -75,15 +78,15 @@ Cache is invalidated when :
 1 -   a cache is not found
 2 -   the script has been modified
 3 -   tracked files have been modified
-4 -   last execution occurred a certan time ago and is considered as experied
+4 -   last execution occurred a certain time ago and is considered as expired
 5 -   execution is forced
 
 If \code{src_in="file"}, then script \code{path} is searched from the \code{.qmd} dir. If no \code{.qmd} esxits (or is not the caller) the the current work dir is used (which is the usual way \code{base::source} works).
-If \code{src_in="project"}, then script \code{path} is searched from the root dir of the project, being a Rproject or a quarto project, using the package \code{{rprojroot}}. This garantee to find the script without using current working directory and is a more robust way to proceed.
+If \code{src_in="project"}, then script \code{path} is searched from the root dir of the project, being a Rproject or a quarto project, using the package \code{{rprojroot}}. This guarantees to find the script without using current working directory and is a more robust way to proceed.
 
 Usually the fisrt call return and cache the results. Results can be aby R object and are serialized and saved using \code{qs2}. Subsequent calls, supposing none of cache invalidation are true, are then very quick. No logging is used, data is fecteched from the cache and that's it. For standard size data, used in a table or a graph (< 1Mb roughly), return timing is under 5ms.
 
-\code{lapse} parameter is used fo rinvalidation trigger 4. \code{lapse = "1 day"} ou \code{lapse="day"} for instance will trigger once a day the execution. \code{lapse = "3 days"} will do it every 72h. \code{hours}, \code{weeks}, \code{months}, \code{quarters} or \code{years} are understood time units. MOre complex calendar instructions could be added, but \code{sourcoise_refesh()} provides a solution more general and easy to adapt to any use case, as to my knowledge, there is no general mechanism to be warned of data updates.
+\code{lapse} parameter is used for invalidation trigger 4. \code{lapse = "1 day"} ou \code{lapse="day"} for instance will trigger once a day the execution. \code{lapse = "3 days"} will do it every 72h. \code{hours}, \code{weeks}, \code{months}, \code{quarters} or \code{years} are understood time units. MOre complex calendar instructions could be added, but \code{sourcoise_refesh()} provides a solution more general and easy to adapt to any use case, as to my knowledge, there is no general mechanism to be warned of data updates.
 
 \code{track} is the trigger #3. It is simply a list of files (following path convention defined by \code{scr_in}, so either script dir of project dir as reference). If the files in the list are changed then the execution is triggered. It is done with a hash and it is difficult to have a croo plateform hash for excel files. Nevertheless, hash is done on text files with same results of different platforms.
 
@@ -96,16 +99,26 @@ If returned data after execution is not different than previously cached data, t
 Working with github : \code{sourcoise()} is designed to function with \emph{github}. Cache information is specific to each user (avoiding conflicts) and cached data is named with the hash. Conflicts could occur in the rare case the same script is executed on different machines and that this script return each time a different result (such as a random generator).
 }
 \examples{
-
-  fs::file_copy(
-     fs::path_package("sourcoise", "ipch", "prix_insee.R"),
-    "/tmp/prix_insee.R",
-    overwrite = TRUE)
-  # Force execution (root is set explicitly here, it is normally deduced from project)
-  data <- sourcoise("prix_insee.R", root = "/tmp/", force_exec = TRUE)
-  # The second time cache is used
-  data <- sourcoise("prix_insee.R", root = "/tmp/")
-
+\dontshow{if (rlang::is_installed("insee")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+fs::file_copy(
+   fs::path_package("sourcoise", "ipch", "prix_insee.R"),
+  "/tmp/prix_insee.r",
+  overwrite = TRUE)
+# Force execution (root is set explicitly here, it is normally deduced from project)
+data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE)
+# The second time cache is used
+data <- sourcoise("prix_insee.r", root = "/tmp/")
+\dontshow{\}) # examplesIf}
+\dontshow{if (rlang::is_installed(c("insee", "bench"))) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+# Performance and mem test
+fs::file_copy(
+   fs::path_package("sourcoise", "ipch", "prix_insee.R"),
+  "/tmp/prix_insee.r",
+  overwrite = TRUE)
+bench::mark(
+ forced = data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE),
+ cached = data <- sourcoise("prix_insee.r", root = "/tmp/"))
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 Other sourcoise: 
