@@ -6,7 +6,7 @@
 #' @param force_exec (boolean) (default `FALSE`) if `TRUE` code is executed, no matter what is cached
 #' @param unfreeze (boolean) (default `TRUE`) when possible, unfreeze and uncache .qmd files in a quarto project when data used by those .qmd has been refreshed
 #' @param quiet (boolean) (default `FALSE`) no message if TRUE
-#' @param init_fn (function) (default `NULL`) execute a function before sourcing to allow intialisations
+#' @param init_fn (function) (default `NULL`) execute a function before sourcing to allow initialization
 #' @param root (default `NULL`) force root to be set, instead of letting the function finding the root, for advanced uses
 #' @param log (character) (default `"INFO"`) log levels as in `logger::log_threshold()` (c("OFF", "INFO", ...)), comes with a small performance cost
 #' @param .progress (boolean) (default `TRUE`) displays a progression bar based on previous execution timings

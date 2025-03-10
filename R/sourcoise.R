@@ -4,7 +4,7 @@
 #'
 #'  `sourcoise()` looks like `base::source()`. However, there are some minor differences.
 #'
-#'  First, the script called in `sourcoise()` must end by a `return()` or by an object returned. Assignment made in the script won't be kept as `sourcoise()` is executed locally. Only explicitly reruned object will be returned. So `soucoise()` is used by assigning its result to something (`aa <- sourcoise("mon_script.r)` or `sourcoise() |> ggplot() ...`). Unless specified otherwise with `wd` parameter, the working directory for the script execution is (temporarly) set to the dir in which is the script. That allows for simple access to companion files and permeit to move the script and companion files to another dir or project.
+#'  First, the script called in `sourcoise()` must end by a `return()` or by an object returned. Assignment made in the script won't be kept as `sourcoise()` is executed locally. Only explicitly reruned object will be returned. So `soucoise()` is used by assigning its result to something (`aa <- sourcoise("mon_script.r)` or `sourcoise() |> ggplot() ...`). Unless specified otherwise with `wd` parameter, the working directory for the script execution is (temporarly) set to the dir in which is the script. That allows for simple access to companion files and permit to move the script and companion files to another dir or project.
 #'
 #'  Second, an heuristic is applied to find the script, in the event the path given is incomplete. Whereas it is not advised and comes with a performance cost, this can be useful when there is a change in the structure of the project. The heuristic is simple, the script is searched inside the porject dir and among all hits the closest to the caller is returned.
 #'
@@ -14,15 +14,15 @@
 #'  1 -   a cache is not found
 #'  2 -   the script has been modified
 #'  3 -   tracked files have been modified
-#'  4 -   last execution occurred a certan time ago and is considered as experied
+#'  4 -   last execution occurred a certain time ago and is considered as expired
 #'  5 -   execution is forced
 #'
 #' If `src_in="file"`, then script `path` is searched from the `.qmd` dir. If no `.qmd` esxits (or is not the caller) the the current work dir is used (which is the usual way `base::source` works).
-#' If `src_in="project"`, then script `path` is searched from the root dir of the project, being a Rproject or a quarto project, using the package `{rprojroot}`. This garantee to find the script without using current working directory and is a more robust way to proceed.
+#' If `src_in="project"`, then script `path` is searched from the root dir of the project, being a Rproject or a quarto project, using the package `{rprojroot}`. This guarantees to find the script without using current working directory and is a more robust way to proceed.
 #'
 #' Usually the fisrt call return and cache the results. Results can be aby R object and are serialized and saved using `qs2`. Subsequent calls, supposing none of cache invalidation are true, are then very quick. No logging is used, data is fecteched from the cache and that's it. For standard size data, used in a table or a graph (< 1Mb roughly), return timing is under 5ms.
 #'
-#' `lapse` parameter is used fo rinvalidation trigger 4. `lapse = "1 day"` ou `lapse="day"` for instance will trigger once a day the execution. `lapse = "3 days"` will do it every 72h. `hours`, `weeks`, `months`, `quarters` or `years` are understood time units. MOre complex calendar instructions could be added, but `sourcoise_refesh()` provides a solution more general and easy to adapt to any use case, as to my knowledge, there is no general mechanism to be warned of data updates.
+#' `lapse` parameter is used for invalidation trigger 4. `lapse = "1 day"` ou `lapse="day"` for instance will trigger once a day the execution. `lapse = "3 days"` will do it every 72h. `hours`, `weeks`, `months`, `quarters` or `years` are understood time units. MOre complex calendar instructions could be added, but `sourcoise_refesh()` provides a solution more general and easy to adapt to any use case, as to my knowledge, there is no general mechanism to be warned of data updates.
 #'
 #' `track` is the trigger #3. It is simply a list of files (following path convention defined by `scr_in`, so either script dir of project dir as reference). If the files in the list are changed then the execution is triggered. It is done with a hash and it is difficult to have a croo plateform hash for excel files. Nevertheless, hash is done on text files with same results of different platforms.
 #'
@@ -36,18 +36,18 @@
 #'
 #' @param path (character) path of the script to execute (see details).
 #' @param args (list) list of args that can be used in the script (in the form `args$xxx`).
-#' @param track (list) list of files which wmodifications trigger cache invalidation and script execution .
+#' @param track (list) list of files which modification triggers cache invalidation and script execution .
 #' @param lapse (character) duration over which cache is invalidated. Could be `never` (default) `x hours`, `x days`, `x week`, `x months`, `x quarters`, `x years`.
 #' @param force_exec (boolean) execute code, disregarding cache valid or invalid.
-#' @param prevent_exec (boolean) prenvent execution, cache valid or not, returned previous cached data, possibly invalid.
+#' @param prevent_exec (boolean) prevent execution, cache valid or not, returned previous cached data, possibly invalid.
 #' @param metadata (boolean) if TRUE `sourcoise()` returns a list with data is the `$data`  and various meta data (see details).
 #' @param wd (character) if `project` working directory for the execution of script will be the root of the project. If `file` then it will be the dir of the script (défaut) If `qmd`, then working dir will be the dir in which the calling `qmd` is. Current directory is restored after execution (successful or failed).
-#' @param src_in (character) if `project` search for source starting at the root of the project, si "file" cherche dans le dossier du qmd (ou le wd). Dans ce cas, les données sont stockées dans le dossier en question.
+#' @param src_in (character) if `project` searches for source starting at the root of the project, if "file" searches in qmd dir. If "wd", then in working directory. Cache folder (`.sourcoise`) is stored there.
 #' @param exec_wd (character) force exec dir (expert use).
 #' @param quiet (boolean) silence execution.
 #' @param root (character) force root (expert use).
 #' @param nocache (boolean) no caching.
-#' @param log ("OFF" par défaut) log trheshold (see `logger::log_treshold()`).
+#' @param log ("OFF" par défaut) log threshold (see `logger::log_treshold()`).
 #' @param grow_cache (5 par défaut) cache limit in number of data file kept.
 #' @param limit_mb (50 par défaut) individual cache data files size on disk limit. If above **no caching**.
 #'

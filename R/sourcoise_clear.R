@@ -1,9 +1,9 @@
-#' CLeans cache
+#' Cleans cache
 #'
-#' removes every json and qs2 files found by `sourcoise_status()` unless a specfiic tibble (filtered from `sourcoise_status()`) is passed as an argument.
+#' removes every json and qs2 files found by `sourcoise_status()` unless a specific tibble (filtered from `sourcoise_status()`) is passed as an argument.
 #'
 #' @param what (--) a tibble such as the one obtained by `sourcoise_status()`, possibly filtered
-#' @param root to force root, not recommanded (expert use)
+#' @param root to force root, not recommended (expert use)
 #'
 #' @family sourcoise
 #'
