@@ -39,10 +39,11 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
     ctxt[["src"]] <- try_find_src(ctxt$root, ctxt$name)
     if(length(ctxt[["src"]])==0)
       return(NULL)
-    if(length(ctxt[["src"]])>1) {
-      cli::cli_alert_warning("More than one ({length(ctxt['src']])}) sources detected.")
-      l_src <- purrr::map(ctxt[["src"]], stringr::str_length) # ce critère est curieux
+    n_src <- length(ctxt[["src"]])
+    if(n_src>1) {
+      l_src <- purrr::map(ctxt[["src"]], ~stringr::str_count(.x |> fs::path_rel(getwd()), "/"))
       ctxt[["src"]] <- ctxt[["src"]][[which.min(l_src)]]
+      cli::cli_alert_warning("{n_src} sources detected, choosing {ctxt[['src']]}, the closest to wd.")
     }
   }
 

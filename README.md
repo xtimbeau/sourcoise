@@ -1,18 +1,18 @@
 # sourcoise <a href="https://xtimbeau.github.io/sourcoise/"><img src="man/figures/logo.png" align="right" height="102" alt="sourcoise website" /></a>
 
-`{sourcoise}` est un package qui fournit des outils pour exécuter un script R et mettre en cache les résultats. Le but est de pouvoir exécuter très rapidement un code qui accède à des fichiers ou une API et qui, en l'absence de mises à jour, produit toujours le même résultat. Lorsque l'API est suceptible de bloquer (ou si on a pas de connection internet), cela évite de bloquer le rendu d'un document ou d'un site quarto.
+`{sourcoise}` is a package that provides tools for running an R script and caching the results. The aim is to be able to very quickly execute code that accesses files or an API and which, in the absence of updates, always produces the same result. When the API is likely to block (or if you don't have an internet connection), this avoids blocking the rendering of a document or a quarto site.
 
-Accessoirement, cela oblige à isoler le code du script qui récupère les données dans un fichier afin d'améliorer la reproductibilité. `sourcoise()` peut être appelé dans un `sourcoise()` ce qui permet la modularité. Il fournit des outils pour vérifier le cache et le rafraichir à la demande.
+It also means that the script code that retrieves the data from a file has to be isolated to improve reproducibility. `sourcoise()` can be called in a `sourcoise()` which allows modularity. It provides tools for checking the cache and refreshing it on demand.
 
 ## Installation
 
-`{sourcoise}` s'installe à partir de CRAN :
+`{sourcoise}` can be installed from CRAN:
 
 ```r
 install.packages("sourcoise")
 ```
 
-La version de développement s'installe depuis *github* : 
+The development version can be installed from *github*:
 
 ```r
 devtools::install_gitub("xtimbeau/sourcoise")
@@ -21,42 +21,48 @@ devtools::install_gitub("xtimbeau/sourcoise")
 pak::pak("xtimbeau/sourcoise")
 ```
 
-## Utilisation
+## Use
 
-Pour alimenter un graphique ou un tableau en données, on met le code dans un script `r` (`"mon_script.r"`) en terminant le script par un `return(data_pour_le_graphique)`. 
-Dans le `.qmd` ou `.rmd` (ou aussi un scirpt R) on a les instructions du graphique :
+To populate a graph or table with data, put the code in a script `r` (`"mon_script.r"`), ending the script with a `return(data_pour_le_graphique)`.
+In the `.qmd` or `.rmd` (or also an `R` script) we have the instructions for the graph in a `r` code chunk:
 
 ````qmd
 ```{r}
+library(tidyverse)
 library(sourcoise)
+
 mes_datas <- sourcoise("mon_script.r")
-ggplot(mes_datas) + instructions du graphique
+ggplot(mes_datas) + <<graph code>>
 
 ```
 ````
 
-A la première exécution le script est exécuté, les appels suivants utiliseront le cache, sauf si le cache est invalidé.
+The first time the script is run, subsequent calls will use the cache, unless the cache is invalidated.
 
-## Bénéfices
+## Benefits
 
-Les bénéfices sont nombreux :
+There are many benefits:
 
-1.  un gain de temps lorsque l'exécution du code est longue (accès à une API, téléchargement de grosses données, traitements importants). La lecture d'un fichier excel peut aussi être assez longue. Le temps d'accès aux données en cache dépend de leur taille, mais même pour des données volumineuses (et il n'y a pas de raisons qu'elles le soient tant que ça), l'ordre de grandeur est de qualques millisecondes, grâce aux optimisations.
+1. time savings when code execution takes a long time (accessing an API, downloading large amounts of data, major processing). Reading an excel file can also take a long time. The time taken to access cached data depends on its size, but even for large data (and there's no reason why it should be that large), the order of magnitude is a few milliseconds, thanks to optimization.
 
-2.  le cache est transférable par github. Il se trouve dans un dossier (caché), mais enregistré dans le dossier de projet et *commité* par github. Le cache produit sur un poste est donc accessible par `pull` sur les autres postes.
+2. the cache is transferable via *github*. It's in a (hidden) folder, but saved in the project folder and *committed* by github. The cache produced on a workstation can therefore be accessed via `pull` on other workstations, without the need to reexecute the code.
 
-3.  si le code source déclenche une erreur, on peut passer outre : En cas de package non installé, données absentes (par exemple un chemin absolu dans le code), ou une API qui bloque (comme celle de l'OCDE) alors `sourcoise()` essaye de prendre la dernière exécution résussie. Bien que cela puisse être problématique, c'est-à-dire une erreur non signalée, cela a l'énorme avantage de ne pas bloquer le processus et de permettre de traiter l'erreur en parallèle.
+3. if the source code triggers an error, you can override it: In the case of a package that is not installed, missing data (for example, an absolute path in the code), or an API that blocks (such as that of the OECD), then `sourcoise()` tries to take the result of the last successful execution (if cached). Although this can be problematic, i.e. an unreported error, it has the enormous advantage of not blocking the process and allowing the error to be handled in parallel.
 
-4.  `sourcoise()` cherche de façon astucieuse le fichier source dans le projet et exécute le code dans un environnement local, en changeant le répertoire de travail pour être celui où se trouve le code source. Cela permet d'appeler dans le code source (le script `r` `mon_script.r` passé en paramètre à `sourcoise("mon_script.r")`, des scripts `r`, des fichiers de données `.csv` ou `.xlsx` qui sont enregistré dans le même répertoire que le fichier `mon_script.r`. On peut donc réutiliser le code sans se soucier de modifier les chemins qui sont relatifs au dossier où se trouve `mon_script.r`.
+4. `sourcoise()` cleverly searches for the source file in the project and executes the code in a local environment, changing the working directory to the one where the source code is located. This makes it possible to call the source code (the script `r` `mon_script.r` passed as a parameter to `sourcoise("mon_script.r")` scripts `r` data files `.csv` or `.xlsx` which are saved in the same directory as the `mon_script.r`. You can therefore reuse the code without having to worry about modifying the paths, which are relative to the folder where `mon_script.r` is.
 
-5.  cela fournit un embryon de reproductibilité en désignant le script qui fabrique les données.
+5. This provides an embryo of reproducibility by designating the script that produces the data and thus allowing to complement the code chunk with a reference to reproduce it.
 
-## A venir
+## Coming soon
 
-Seront bientôt implémentés :
+Coming soon:
 
--   la possibilité de stocker les données cachées hors du dossier de projet (et donc hors de *github*) et d'utiliser `{pins}` pour le stcokage (mais peut être au prix d'un accès plus lent).
+- the ability to store hidden data outside of the project folder (and therefore outside of *github*) and to use `{pins}` for stcokage (but perhaps at the cost of slower access).
 
--   un schéma pour déclarer les dépendances entre dess appels à `sourcoise()` et déclencher les exécutions en cascade.
+- a schema for declaring dependencies between calls to `sourcoise()` calls and trigger cascade executions.
 
--   et éventuellement une interface *shiny* de mise à jour (*gui* pour `sourcoise_refresh()`)
+- a in-mem cache mechanism (trhough `{memoise}` ?) to further accelerate access (although the performance gain is not necesserly needed).
+
+- and possibly a *shiny* update interface (*gui* for `sourcoise_refresh()`)
+
+
