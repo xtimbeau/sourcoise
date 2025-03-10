@@ -15,7 +15,7 @@ Description: sourcoise provides a function that behave nearly as base::source() 
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-URL: https://xtimbeau.github.io/sourcoise, https://xtimbeau.github.io/sourcoise/
+URL: https://xtimbeau.github.io/sourcoise, https://xtimbeau.github.io/sourcoise/, https://github.com/xtimbeau/sourcoise
 Imports:
   fs,
   qs2, 
@@ -46,3 +46,4 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 SystemRequirements: Quarto command line tools
     (https://github.com/quarto-dev/quarto-cli).
+BugReports: https://github.com/xtimbeau/sourcoise/issues
