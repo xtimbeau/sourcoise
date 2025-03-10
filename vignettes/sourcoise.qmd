@@ -101,13 +101,12 @@ mark(cache = sourcoise("prix_insee.r", root="/tmp"),
             direct = data)
 #>   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
 #> # A tibble: 3 × 6
-#>   expression      min   median   `itr/sec` mem_alloc `gc/sec`
-#>   <bch:expr> <bch:tm> <bch:tm>       <dbl> <bch:byt>    <dbl>
-#> 1 cache        18.2ms   18.6ms        53.0   170.9KB     2.41
-#> 2 no_cache     70.4ms     72ms        13.9    25.7MB    10.4 
-#> 3 direct            0      1ns 515331023.         0B     0
+#>   expression      min   median    `itr/sec` mem_alloc `gc/sec`
+#>   <bch:expr> <bch:tm> <bch:tm>        <dbl> <bch:byt>    <dbl>
+#> 1 cache        5.61ms   5.75ms        171.    171.5KB     9.92
+#> 2 no_cache    31.62ms  35.45ms         28.0    25.6MB    11.2 
+#> 3 direct            0      1ns 1370228815.         0B     0
 ```
-
 <sup>Created on 2025-03-10 with [reprex v2.1.1](https://reprex.tidyverse.org)</sup>
 
 ## Le *workflow* avec sourcoise
