@@ -72,7 +72,8 @@
 #'   overwrite = TRUE)
 #' bench::mark(
 #'  forced = data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE),
-#'  cached = data <- sourcoise("prix_insee.r", root = "/tmp/"))
+#'  cached = data <- sourcoise("prix_insee.r", root = "/tmp/"),
+#'  max_iterations = 10)
 
 sourcoise <- function(
     path,

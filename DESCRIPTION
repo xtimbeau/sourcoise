@@ -1,6 +1,6 @@
 Package: sourcoise
 Type: Package
-Title: Source a script and cache the results on disk
+Title: Source a Script and Cache
 Version: 0.4.0
 Authors@R: c(
     person(
@@ -9,13 +9,15 @@ Authors@R: c(
       role = c("aut", "cre", "cph")
     )
   )
-Description: sourcoise provides a function that behave nearly as base::source() but implements a caching mechanism on disk, project based.
+Description: Provides a function that behave nearly as base::source() but implements a caching mechanism on disk, project based.
     It allows to quasi source() R scripts that gather data but can fail or consume to much time to respond even if nothing new is expected.
     It comes with tools to check and execute on demand or when cache is invalid the script.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-URL: https://xtimbeau.github.io/sourcoise, https://xtimbeau.github.io/sourcoise/, https://github.com/xtimbeau/sourcoise
+URL: https://xtimbeau.github.io/sourcoise/, https://github.com/xtimbeau/sourcoise
+Depends:
+  R (>=4.1.0)
 Imports:
   fs,
   qs2, 
