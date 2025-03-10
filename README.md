@@ -1,4 +1,9 @@
-# sourcoise <a href="https://xtimbeau.github.io/sourcoise/"><img src="man/figures/logo.png" align="right" height="102" alt="sourcoise website" /></a>
+# sourcoise: source and cache <a href="https://xtimbeau.github.io/sourcoise/"><img src="man/figures/logo.png" align="right" height="102" alt="sourcoise website" /></a>
+
+<!-- badges: start -->
+[![CRAN status](https://www.r-pkg.org/badges/version/sourcoise)](https://CRAN.R-project.org/package=sourcoise)
+<!-- badges: end -->
+
 
 `{sourcoise}` is a package that provides tools for running an R script and caching the results. The aim is to be able to very quickly execute code that accesses files or an API and which, in the absence of updates, always produces the same result. When the API is likely to block (or if you don't have an internet connection), this avoids blocking the rendering of a document or a quarto site.
 
@@ -17,7 +22,7 @@ The development version can be installed from *github*:
 ```r
 devtools::install_gitub("xtimbeau/sourcoise")
 
-# alternativement
+# or (if pak is installed)
 pak::pak("xtimbeau/sourcoise")
 ```
 

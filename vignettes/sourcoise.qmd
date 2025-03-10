@@ -1,5 +1,5 @@
 ---
-title: "sourcoise() : plus rapide, plus sûr"
+title: "sourcoise : sourcer et mettre en cache"
 vignette: >
   %\VignetteIndexEntry{sourcoise}
   %\VignetteEngine{quarto::html}

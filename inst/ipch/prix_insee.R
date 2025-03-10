@@ -1,5 +1,5 @@
 library(insee)
-library(tidyverse)
+library(dplyr)
 
 ipchm <- get_idbank_list("IPCH-2015") |>
   filter(COICOP2016=="00", FREQ=="M", NATURE=="INDICE") |>
@@ -8,12 +8,12 @@ ipchm <- get_idbank_list("IPCH-2015") |>
   select(DATE, ipch = OBS_VALUE, IDBANK)
 
 ipch <- ipchm |>
-  mutate(DATE = floor_date(DATE, unit="quarter")) |>
+  mutate(DATE = lubridate::floor_date(DATE, unit="quarter")) |>
   group_by(DATE) |>
   summarise(ipch = mean(ipch))
 
 ipcha <- ipch |>
-  mutate(y = year(DATE)) |>
+  mutate(y = lubridate::year(DATE)) |>
   group_by(y) |>
   summarize(ipch = mean(ipch)) |>
   mutate(ipch = ipch / ipch[y == 2023])

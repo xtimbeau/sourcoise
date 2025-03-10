@@ -4,47 +4,47 @@
 #' and return a tibble with this data.
 #'
 #' Data returned is:
-#' `src`: path to the source file (r script)
-#' `date`: last execution date
-#' `valid`: is cache valid ?
-#' `uid`: id of user
-#' `index`: index of cache
-#' `timing`: last execution timing
-#' `size`: size of the R object(s) returned
-#' `lapse`: periodic refresh trigger
-#' `wd`: wd setting for execution of r script
-#' `args`: arguments passed to R script
-#' `json_file`: path to the file keeping cache information
-#' `qmd_file`: list of path to qmd files calling this script (relevant only for quarto projects)
-#' `src_in`: localisaiton of cache option
-#' `data_file`: path to data cached
-#' `data_date`: date and time of last save of data
-#' `log_file`: path to log file, if logging activated
-#' `root`: path to the project root, used as reference for all paths
-#' `scr_hash`: hash of the source file
-#' `track_hash`: hash of the tracked files, if any
-#' `track`: list of files tracked
-#' `args_hash`: hash of arguments
-#' `data_hahs`: hahs of data cached
+#' -  `src`: path to the source file (r script)
+#' -  `date`: last execution date
+#' -  `valid`: is cache valid ?
+#' -  `uid`: id of user
+#' -  `index`: index of cache
+#' -  `timing`: last execution timing
+#' -  `size`: size of the R object(s) returned
+#' -  `lapse`: periodic refresh trigger
+#' -  `wd`: wd setting for execution of r script
+#' -  `args`: arguments passed to R script
+#' -  `json_file`: path to the file keeping cache information
+#' -  `qmd_file`: list of path to qmd files calling this script (relevant only for quarto projects)
+#' -  `src_in`: localisaiton of cache option
+#' -  `data_file`: path to data cached
+#' -  `data_date`: date and time of last save of data
+#' -  `log_file`: path to log file, if logging activated
+#' -  `root`: path to the project root, used as reference for all paths
+#' -  `scr_hash`: hash of the source file
+#' -  `track_hash`: hash of the tracked files, if any
+#' -  `track`: list of files tracked
+#' -  `args_hash`: hash of arguments
+#' -  `data_hash`: hash of data cached
 #'
-#' @param quiet (boolean) default `TRUE` no messages during execution
+#' @param quiet (boolean) (default `TRUE`) no messages during execution
 #' @param root (string) (default `NULL`) force root to a defined path, advanced and not recommanded use
-#' @param prune (boolean) (default `TRUE`) clean up status to display only last relevant caches. Does not clean cache files.
-#' @param clean (boolean) (defaut `FALSE`) check if some data files have not json referring to them and cleans if any.
+#' @param prune (boolean) (default `TRUE`) clean up status to display only on relevant cache. However, does not clean other cache files.
+#' @param clean (boolean) (default `FALSE`) check if some data files have not json referring to them and cleans if any.
 #' @family sourcoise
 #'
 #' @importFrom rlang .data
 #' @return tibble of cached files
 #' @export
 #' @examples
-#' fs::file_copy(
-#'    fs::path_package("sourcoise", "ipch", "prix_insee.r"),
-#'    "/tmp/prix_insee.r",
-#'    overwrite = TRUE)
-#' # Force execution (root is set explicitly here, it is normally deduced from project)
-#' data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE)
-#' # status returns the cache status
-#' sourcoise_status(root = "/tmp")
+#'   fs::file_copy(
+#'       fs::path_package("sourcoise", "ipch", "prix_insee.r"),
+#'       "/tmp/prix_insee.r",
+#'       overwrite = TRUE)
+#'   # Force execution (root is set explicitly here, it is normally deduced from project)
+#'   data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE)
+#'   # status returns the cache status
+#'   sourcoise_status(root = "/tmp")
 
 sourcoise_status <- function(
     quiet = TRUE,

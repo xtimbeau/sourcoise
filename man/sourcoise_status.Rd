@@ -7,13 +7,13 @@
 sourcoise_status(quiet = TRUE, root = NULL, prune = TRUE, clean = FALSE)
 }
 \arguments{
-\item{quiet}{(boolean) default \code{TRUE} no messages during execution}
+\item{quiet}{(boolean) (default \code{TRUE}) no messages during execution}
 
 \item{root}{(string) (default \code{NULL}) force root to a defined path, advanced and not recommanded use}
 
-\item{prune}{(boolean) (default \code{TRUE}) clean up status to display only last relevant caches. Does not clean cache files.}
+\item{prune}{(boolean) (default \code{TRUE}) clean up status to display only on relevant cache. However, does not clean other cache files.}
 
-\item{clean}{(boolean) (defaut \code{FALSE}) check if some data files have not json referring to them and cleans if any.}
+\item{clean}{(boolean) (default \code{FALSE}) check if some data files have not json referring to them and cleans if any.}
 }
 \value{
 tibble of cached files
@@ -24,38 +24,40 @@ and return a tibble with this data.
 }
 \details{
 Data returned is:
-\code{src}: path to the source file (r script)
-\code{date}: last execution date
-\code{valid}: is cache valid ?
-\code{uid}: id of user
-\code{index}: index of cache
-\code{timing}: last execution timing
-\code{size}: size of the R object(s) returned
-\code{lapse}: periodic refresh trigger
-\code{wd}: wd setting for execution of r script
-\code{args}: arguments passed to R script
-\code{json_file}: path to the file keeping cache information
-\code{qmd_file}: list of path to qmd files calling this script (relevant only for quarto projects)
-\code{src_in}: localisaiton of cache option
-\code{data_file}: path to data cached
-\code{data_date}: date and time of last save of data
-\code{log_file}: path to log file, if logging activated
-\code{root}: path to the project root, used as reference for all paths
-\code{scr_hash}: hash of the source file
-\code{track_hash}: hash of the tracked files, if any
-\code{track}: list of files tracked
-\code{args_hash}: hash of arguments
-\code{data_hahs}: hahs of data cached
+\itemize{
+\item \code{src}: path to the source file (r script)
+\item \code{date}: last execution date
+\item \code{valid}: is cache valid ?
+\item \code{uid}: id of user
+\item \code{index}: index of cache
+\item \code{timing}: last execution timing
+\item \code{size}: size of the R object(s) returned
+\item \code{lapse}: periodic refresh trigger
+\item \code{wd}: wd setting for execution of r script
+\item \code{args}: arguments passed to R script
+\item \code{json_file}: path to the file keeping cache information
+\item \code{qmd_file}: list of path to qmd files calling this script (relevant only for quarto projects)
+\item \code{src_in}: localisaiton of cache option
+\item \code{data_file}: path to data cached
+\item \code{data_date}: date and time of last save of data
+\item \code{log_file}: path to log file, if logging activated
+\item \code{root}: path to the project root, used as reference for all paths
+\item \code{scr_hash}: hash of the source file
+\item \code{track_hash}: hash of the tracked files, if any
+\item \code{track}: list of files tracked
+\item \code{args_hash}: hash of arguments
+\item \code{data_hash}: hash of data cached
+}
 }
 \examples{
-fs::file_copy(
-   fs::path_package("sourcoise", "ipch", "prix_insee.r"),
-   "/tmp/prix_insee.r",
-   overwrite = TRUE)
-# Force execution (root is set explicitly here, it is normally deduced from project)
-data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE)
-# status returns the cache status
-sourcoise_status(root = "/tmp")
+  fs::file_copy(
+      fs::path_package("sourcoise", "ipch", "prix_insee.r"),
+      "/tmp/prix_insee.r",
+      overwrite = TRUE)
+  # Force execution (root is set explicitly here, it is normally deduced from project)
+  data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE)
+  # status returns the cache status
+  sourcoise_status(root = "/tmp")
 }
 \seealso{
 Other sourcoise: 
