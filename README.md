@@ -55,13 +55,9 @@ There are many benefits:
 
 ## Coming soon
 
-Coming soon:
-
 - the ability to store hidden data outside of the project folder (and therefore outside of *github*) and to use `{pins}` for stcokage (but perhaps at the cost of slower access).
 
 - a schema for declaring dependencies between calls to `sourcoise()` calls and trigger cascade executions.
-
-- a in-mem cache mechanism (trhough `{memoise}` ?) to further accelerate access (although the performance gain is not necesserly needed).
 
 - and possibly a *shiny* update interface (*gui* for `sourcoise_refresh()`)
 

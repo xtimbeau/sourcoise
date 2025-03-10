@@ -133,10 +133,14 @@ pick_gooddata <- function(good_datas, ctxt) {
   }
 
   good_good_data$ok <- "cache"
-  good_good_data$data <- qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
+  good_good_data$data <- read_data_from_cache_nm(fnd)
 
   return(good_good_data)
 }
 
+read_data_from_cache_nm <- function(fnd) {
+  qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
+}
 
+read_data_from_cache <- memoise::memoise(read_data_from_cache_nm)
 

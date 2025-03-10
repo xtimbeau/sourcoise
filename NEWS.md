@@ -1,3 +1,13 @@
+# sourcoise 0.3.3
+
+## Correction de bugs
+
+* traite correctement les sources multiples et trouve le plus proche mieux
+
+### Ajouts
+
+* utilise `{memoise}` pour cacher en mémoire les données sur disque
+
 # sourcoise 0.3.2
 
 ## Correction de bugs

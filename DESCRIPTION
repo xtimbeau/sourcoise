@@ -1,7 +1,7 @@
 Package: sourcoise
 Type: Package
 Title: Exec a script and cache results on disk
-Version: 0.3.2
+Version: 0.3.3
 Authors@R: c(
     person(
       "Xavier", "Timbeau",
@@ -33,7 +33,8 @@ Imports:
   rlang,
   scales,
   logger,
-  quarto
+  quarto, 
+  memoise
 Suggests:
   knitr
 VignetteBuilder:
