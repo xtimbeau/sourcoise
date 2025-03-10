@@ -1,4 +1,4 @@
-# sourcoise: source and cache <a href="https://xtimbeau.github.io/sourcoise/"><img src="man/figures/logo.png" align="right" height="102" alt="sourcoise website" /></a>
+# sourcoise: <em>source and cache</em> <a href="https://xtimbeau.github.io/sourcoise/"><img src="man/figures/logo.png" align="right" height="102" alt="sourcoise website" /></a>
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/sourcoise)](https://CRAN.R-project.org/package=sourcoise)

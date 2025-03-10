@@ -1,5 +1,5 @@
 ---
-title: "sourcoise : sourcer et mettre en cache"
+title: "sourcoise : *sourcer et mettre en cache*"
 vignette: >
   %\VignetteIndexEntry{sourcoise}
   %\VignetteEngine{quarto::html}
@@ -85,7 +85,7 @@ Une dernière chose : `sourcoise()` est doté d'une heuristique maline trouve le
 
 ## Performance
 
-L'exécution "vraie" du scirpt `r` (sur un Macbook Air M2) prend 34ms et alloue 200kb. Lorsque les données sont en cache, l'exécution est effectuée en moins de 5ms et l'allocation de mémoire est celle des données finales. Le temps d'exécution des données cachées ne dépend que de leur taille alors que le temsp d'exécution "vraie" dépend de la complexité des calculs et des volumes téléchargés par le script. L'acces direct est bine sûr plus rapide, mais sans invalidation de cache !
+L'exécution "vraie" du scirpt `r` (sur un Macbook Air M2) prend 34ms et alloue 200kb. Lorsque les données sont en cache, l'exécution est effectuée en moins de 5ms et l'allocation de mémoire est celle des données finales. Le temps d'exécution des données cachées ne dépend que de leur taille alors que le temsp d'exécution "vraie" dépend de la complexité des calculs et des volumes téléchargés par le script. L'acces direct est bien sûr (infiniment) plus rapide, mais sans invalidation de cache !
 
 ``` r
 library(bench)
