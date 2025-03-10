@@ -66,14 +66,15 @@
 #' data <- sourcoise("prix_insee.r", root = "/tmp/")
 #' @examplesIf rlang::is_installed(c("insee", "bench"))
 #' # Performance and mem test
+#' fs::dir_create("/tmp/test")
 #' fs::file_copy(
 #'    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
-#'   "/tmp/prix_insee.r",
+#'   "/tmp/test/prix_insee.r",
 #'   overwrite = TRUE)
 #' bench::mark(
-#'  forced = data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE),
-#'  cached = data <- sourcoise("prix_insee.r", root = "/tmp/"),
-#'  max_iterations = 10)
+#'  forced = data <- sourcoise("prix_insee.r", root = "/tmp/test", force_exec = TRUE),
+#'  cached = data <- sourcoise("prix_insee.r", root = "/tmp/test"),
+#'  max_iterations = 5)
 
 sourcoise <- function(
     path,
