@@ -98,13 +98,13 @@ Working with github : \code{sourcoise()} is designed to function with \emph{gith
 \examples{
 
   fs::file_copy(
-     fs::path_package("sourcoise", "ipch", "prix_insee.r"),
-    "/tmp/prix_insee.r",
+     fs::path_package("sourcoise", "ipch", "prix_insee.R"),
+    "/tmp/prix_insee.R",
     overwrite = TRUE)
   # Force execution (root is set explicitly here, it is normally deduced from project)
-  data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE)
+  data <- sourcoise("prix_insee.R", root = "/tmp/", force_exec = TRUE)
   # The second time cache is used
-  data <- sourcoise("prix_insee.r", root = "/tmp/")
+  data <- sourcoise("prix_insee.R", root = "/tmp/")
 
 }
 \seealso{
