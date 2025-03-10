@@ -53,6 +53,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/xtimbeau/sourcoise/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -66,7 +67,7 @@
 
 
 
-
+      <small class="dont-index">Source: <a href="https://github.com/xtimbeau/sourcoise/blob/main/vignettes/advanced.qmd" class="external-link"><code>vignettes/advanced.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
     </div>
 
@@ -111,7 +112,7 @@
 <span>    sub<span class="op">=</span> <span class="st">"Nombre de transactions"</span><span class="op">)</span></span></code></pre></div>
 </section><section class="level2"><h2 id="quelques-opérations-sur-le-cache">Quelques opérations sur le cache<a class="anchor" aria-label="anchor" href="#quelques-op%C3%A9rations-sur-le-cache"></a>
 </h2>
-<p>Le package <a href="https://xtimbeau.github.io/sourcoise">sourcoise</a> fournit des outils pour s’occuper des caches. Le premier est <code><a href="../reference/sourcoise_status.html">sourcoise_status()</a></code>. il scanne le répertoire et fournit la liste de tous les caches enregistrés et suivis. Il indique si les caches sont valides ou non et les principaux paramètres utilisés pour chaque script.</p>
+<p>Le package <a href="https://xtimbeau.github.io/sourcoise/">sourcoise</a> fournit des outils pour s’occuper des caches. Le premier est <code><a href="../reference/sourcoise_status.html">sourcoise_status()</a></code>. il scanne le répertoire et fournit la liste de tous les caches enregistrés et suivis. Il indique si les caches sont valides ou non et les principaux paramètres utilisés pour chaque script.</p>
 <p><code><a href="../reference/sourcoise_refresh.html">sourcoise_refresh()</a></code> rafraîchit (en le forçant) tous les caches. On peut passer à <code><a href="../reference/sourcoise_refresh.html">sourcoise_refresh()</a></code> un <code>tibble</code> comme celui renvoyé par <code><a href="../reference/sourcoise_status.html">sourcoise_status()</a></code> mais filtré pour ne rafraîchir que la liste voulue (attention passer toutes les colonnes sans modification). Cela sert lorsqu’on a un processus plus complexe d’invalidation du cache (en fonction d’un calendrier, en interrogeant une API, etc…) et qu’on déclenche en fonction de cette logique l’exécution des caches.</p>
 <p>On peut également à partir de <code><a href="../reference/sourcoise_status.html">sourcoise_status()</a></code> accéder aux données en cache. Elles sont enregistrées en <code>.qs2</code> avec les ackage <a href="https://github.com/qsbase/qs2" class="external-link">qs2</a> et donc se chargent avec un <code><a href="https://rdrr.io/pkg/qs2/man/qs_read.html" class="external-link">qs2::qs_read()</a></code>.</p>
 <p>On peut également nettoyer complètement le cache (ce qui provoquera sa ré exécution) avec <code><a href="../reference/sourcoise_clear.html">sourcoise_clear()</a></code>.</p>

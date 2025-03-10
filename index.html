@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Source a script and cache the results on disk • sourcoise</title>
+<title>Source a Script and Cache • sourcoise</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
@@ -16,9 +16,9 @@
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Source a script and cache the results on disk">
-<meta name="description" content="sourcoise provides a function that behave nearly as base::source() but implements a caching mechanism on disk, project based. It allows to quasi source() R scripts that gather data but can fail or consume to much time to respond even if nothing new is expected. It comes with tools to check and execute on demand or when cache is invalid the script.">
-<meta property="og:description" content="sourcoise provides a function that behave nearly as base::source() but implements a caching mechanism on disk, project based. It allows to quasi source() R scripts that gather data but can fail or consume to much time to respond even if nothing new is expected. It comes with tools to check and execute on demand or when cache is invalid the script.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Source a Script and Cache">
+<meta name="description" content="Provides a function that behave nearly as base::source() but implements a caching mechanism on disk, project based. It allows to quasi source() R scripts that gather data but can fail or consume to much time to respond even if nothing new is expected. It comes with tools to check and execute on demand or when cache is invalid the script.">
+<meta property="og:description" content="Provides a function that behave nearly as base::source() but implements a caching mechanism on disk, project based. It allows to quasi source() R scripts that gather data but can fail or consume to much time to respond even if nothing new is expected. It comes with tools to check and execute on demand or when cache is invalid the script.">
 <meta property="og:image" content="https://xtimbeau.github.io/sourcoise/logo.png">
 </head>
 <body>
@@ -53,6 +53,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/xtimbeau/sourcoise/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -68,12 +69,12 @@
 </div>
 <!-- badges: start -->
 
-<p><a href="https://xtimbeau.github.io/sourcoise">sourcoise</a> is a package that provides tools for running an R script and caching the results. The aim is to be able to very quickly execute code that accesses files or an API and which, in the absence of updates, always produces the same result. When the API is likely to block (or if you don’t have an internet connection), this avoids blocking the rendering of a document or a quarto site.</p>
+<p><a href="https://xtimbeau.github.io/sourcoise/">sourcoise</a> is a package that provides tools for running an R script and caching the results. The aim is to be able to very quickly execute code that accesses files or an API and which, in the absence of updates, always produces the same result. When the API is likely to block (or if you don’t have an internet connection), this avoids blocking the rendering of a document or a quarto site.</p>
 <p>It also means that the script code that retrieves the data from a file has to be isolated to improve reproducibility. <code><a href="reference/sourcoise.html">sourcoise()</a></code> can be called in a <code><a href="reference/sourcoise.html">sourcoise()</a></code> which allows modularity. It provides tools for checking the cache and refreshing it on demand.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p><a href="https://xtimbeau.github.io/sourcoise">sourcoise</a> can be installed from CRAN:</p>
+<p><a href="https://xtimbeau.github.io/sourcoise/">sourcoise</a> can be installed from CRAN:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"sourcoise"</span><span class="op">)</span></span></code></pre></div>
 <p>The development version can be installed from <em>github</em>:</p>
@@ -119,7 +120,15 @@ ggplot(mes_datas) + &lt;&lt;graph code&gt;&gt;
 </ul>
 </div>
 </div>
-  </main><aside class="col-md-3"><div class="license">
+  </main><aside class="col-md-3"><div class="links">
+<h2 data-toc-skip>Links</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/xtimbeau/sourcoise/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/xtimbeau/sourcoise/issues" class="external-link">Report a bug</a></li>
+</ul>
+</div>
+
+<div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
