@@ -10,16 +10,16 @@
 #' @return list of cleared files
 #' @export
 #' @examplesIf rlang::is_installed("insee")
-#' fs::dir_create("/tmp/test")
+#' dir <- tempdir()
 #' fs::file_copy(
 #'     fs::path_package("sourcoise", "ipch", "prix_insee.R"),
-#'     "/tmp/test/prix_insee.r",
+#'     dir,
 #'     overwrite = TRUE)
 #' # Force execution (root is set explicitly here, it is normally deduced from project)
-#' data <- sourcoise("prix_insee.r", root = "/tmp/test", force_exec = TRUE)
+#' data <- sourcoise("prix_insee.R", root = dir, force_exec = TRUE)
 #' # we then clear all caches
-#' sourcoise_clear(root = "/tmp/test")
-#' sourcoise_status(root = "/tmp/test")
+#' sourcoise_clear(root = dir)
+#' sourcoise_status(root = dir)
 
 sourcoise_clear <- function(
     what = sourcoise_status(root=root, prune=FALSE),
@@ -50,13 +50,13 @@ sourcoise_clear <- function(
 #' @return NULL
 #' @export
 #' @examplesIf rlang::is_installed("insee")
-#' fs::dir_create("/tmp/test")
+#' dir <- tempdir()
 #' fs::file_copy(
 #'    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
-#'    "/tmp/test/prix_insee.r",
+#'    dir,
 #'    overwrite = TRUE)
-#' data <- sourcoise("prix_insee.r", root = "/tmp/test", force_exec = TRUE)
-#' sourcoise_reset(root = "/tmp/test")
+#' data <- sourcoise("prix_insee.R", root = dir, force_exec = TRUE)
+#' sourcoise_reset(root = dir)
 
 sourcoise_reset <- function(
     root = NULL) {

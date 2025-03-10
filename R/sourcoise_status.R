@@ -37,14 +37,15 @@
 #' @return tibble of cached files
 #' @export
 #' @examplesIf rlang::is_installed("insee")
+#' dir <- tempdir()
 #' fs::file_copy(
 #'     fs::path_package("sourcoise", "ipch", "prix_insee.R"),
-#'     "/tmp/prix_insee.r",
+#'     dir,
 #'     overwrite = TRUE)
 #' # Force execution (root is set explicitly here, it is normally deduced from project)
-#' data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE)
+#' data <- sourcoise("prix_insee.R", root = dir, force_exec = TRUE)
 #' # status returns the cache status
-#' sourcoise_status(root = "/tmp")
+#' sourcoise_status(root = dir)
 
 sourcoise_status <- function(
     quiet = TRUE,

@@ -26,7 +26,6 @@ Imports:
   digest,
   dplyr,
   lubridate,
-  tibble,
   jsonlite,
   lobstr,
   stringr,
