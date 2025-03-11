@@ -33,7 +33,7 @@
 #' @param clean (boolean) (default `FALSE`) check if some data files have not json referring to them and cleans if any.
 #' @family sourcoise
 #'
-#' @importFrom rlang .data
+#' @importFrom rlang .data %||%
 #' @return tibble of cached files
 #' @export
 #' @examplesIf rlang::is_installed("insee")

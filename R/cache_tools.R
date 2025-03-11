@@ -105,7 +105,7 @@ prune_cache <- function(ctxt) {
 }
 
 # pick les meilleures données en cache
-
+#' @importFrom rlang %||%
 pick_gooddata <- function(good_datas, ctxt) {
   dates <- purrr::map(good_datas, "date") |>
     unlist() |>
