@@ -1,4 +1,4 @@
-#' Cleans cache
+#' Cleans sourcoise cache
 #'
 #' removes every json and qs2 files found by `sourcoise_status()` unless a specific tibble (filtered from `sourcoise_status()`) is passed as an argument.
 #'
@@ -7,7 +7,7 @@
 #'
 #' @family sourcoise
 #'
-#' @return list of cleared files
+#' @return list of cleared files, plus a side-effect as specified cache files are deleted (no undo possible)
 #' @export
 #' @examplesIf rlang::is_installed("insee")
 #' fs::file_copy(
@@ -38,7 +38,7 @@ sourcoise_clear <- function(
   })
 }
 
-#' Reset sourcoise
+#' Resets sourcoise
 #'
 #' Removes all `.sourcoise` folders found under the project root.
 #'
@@ -46,7 +46,7 @@ sourcoise_clear <- function(
 #'
 #' @family sourcoise
 #'
-#' @return NULL
+#' @return No return, effect is through removal of .sourcoise folders (this is a side effect, no undo possible)
 #' @export
 #' @examplesIf rlang::is_installed("insee")
 #' fs::file_copy(

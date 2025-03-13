@@ -3,6 +3,9 @@
 #' Given the current project, `soucoise_status()` collects all information about cache (could be project level, file level)
 #' and return a tibble with this data.
 #'
+#' `sourcoise_status()` reflects what is on the disk (and results indeed from a scan of all cached files and their metadatas).
+#' So modifying the result of `sourcoise_status()` can produce complex bugs when it is passed to `sourcoise_refresh()` or `sourcoise_clean()`.
+#'
 #' Data returned is:
 #' -  `src`: path to the source file (r script)
 #' -  `date`: last execution date
@@ -34,7 +37,7 @@
 #' @family sourcoise
 #'
 #' @importFrom rlang .data
-#' @return tibble of cached files
+#' @return tibble of cached files (see details for structure)
 #' @export
 #' @examplesIf rlang::is_installed("insee")
 #' fs::file_copy(
