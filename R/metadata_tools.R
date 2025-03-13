@@ -1,4 +1,5 @@
 valid_meta4meta <- function(meta, root) {
+  cache_dir <- fs::path_dir(meta$file)
   src_hash <- hash_file(fs::path_join(c(root, meta$src)))
   track_hash <- 0
 
@@ -15,7 +16,7 @@ valid_meta4meta <- function(meta, root) {
   meme_null <- function(x, n, def = 0) ifelse(is.null(x[[n]]), def, x[[n]])
   meta$valid_src <- meme_null(meta,"src_hash")==src_hash
   meta$valid_track <- setequal(meta$track_hash, track_hash)
-  meta$data_exists <- fs::file_exists(fs::path_join(c(root, meta$data_file)))
+  meta$data_exists <- fs::file_exists(fs::path_join(c(cache_dir, meta$data_file)))
   if(meta$lapse != "never") {
     alapse <- what_lapse(meta$lapse)
     meta$valid_lapse <- lubridate::now() - lubridate::as_datetime(meta[["date"]]) <= alapse
