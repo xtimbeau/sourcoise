@@ -2,12 +2,15 @@
 % Please edit documentation in R/sourcoise_clear.R
 \name{sourcoise_reset}
 \alias{sourcoise_reset}
-\title{Reset sourcoise}
+\title{Resets sourcoise}
 \usage{
 sourcoise_reset(root = NULL)
 }
 \arguments{
 \item{root}{to force root (expert use)}
+}
+\value{
+No return, effect is through removal of .sourcoise folders (this is a side effect, no undo possible)
 }
 \description{
 Removes all \code{.sourcoise} folders found under the project root.

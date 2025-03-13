@@ -2,7 +2,7 @@
 % Please edit documentation in R/sourcoise_refresh.R
 \name{sourcoise_refresh}
 \alias{sourcoise_refresh}
-\title{Refresh cache by executing sources selected}
+\title{Refresh sourcoise cache by executing sources selected}
 \usage{
 sourcoise_refresh(
   what = NULL,
@@ -33,10 +33,27 @@ sourcoise_refresh(
 \item{.progress}{(boolean) (default \code{TRUE}) displays a progression bar based on previous execution timings}
 }
 \value{
-a list of r scripts (characters) executed, with timing and success
+a list of r scripts (characters) executed, with timing and success and a side effect on caches
 }
 \description{
-Refresh cache by executing sources selected
+All scripts (passed to \code{sourcoise_refresh()}) are executed with logging enabled.
+}
+\details{
+The function returns the list of script executed but its main effect is a side-effect as scripts are executed and caches updates accordingly.
+Note also that log files reflect execution and track possible errors.
+Because of logging the execution comes with a loss in performance, which is not an issue if scripts are long to execute.
+
+It is possible to execute \code{sourcoise_refresh()} without execution forcing (\code{force_exec=FALSE}) or with it.
+Forced execution means that the script is executed even if the cache is valid.
+In the case of non forced execution, execution is triggered by other cache invalidation tests (change in source file, lapse or tacked files).
+
+When scripts are linked to qmds (i.e. when run in a quarto project), it is possible to unfreeeze and uncache those qmds with the option \code{unfreeze=TRUE}.
+This allows to refresh the cahe and then render the qmds using the new data.
+
+It is possible to pass to refresh a function that will be executed before every script. This allows to load packages and declare global variables that can be used in each script.
+If packages are loaded inside the script, then this is not needed.
+
+Parameters registered ins \code{sourcoise_status()} such as \code{wd} or \code{args} are used to execute the script.
 }
 \examples{
 \dontshow{if (rlang::is_installed("insee")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

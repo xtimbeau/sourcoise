@@ -16,13 +16,16 @@ sourcoise_status(quiet = TRUE, root = NULL, prune = TRUE, clean = FALSE)
 \item{clean}{(boolean) (default \code{FALSE}) check if some data files have not json referring to them and cleans if any.}
 }
 \value{
-tibble of cached files
+tibble of cached files (see details for structure)
 }
 \description{
 Given the current project, \code{soucoise_status()} collects all information about cache (could be project level, file level)
 and return a tibble with this data.
 }
 \details{
+\code{sourcoise_status()} reflects what is on the disk (and results indeed from a scan of all cached files and their metadatas).
+So modifying the result of \code{sourcoise_status()} can produce complex bugs when it is passed to \code{sourcoise_refresh()} or \code{sourcoise_clean()}.
+
 Data returned is:
 \itemize{
 \item \code{src}: path to the source file (r script)
