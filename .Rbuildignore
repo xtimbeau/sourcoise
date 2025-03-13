@@ -9,3 +9,4 @@ work
 \.sourcoise
 vignettes/\.quarto
 ^cran-comments\.md$
+^CRAN-SUBMISSION$

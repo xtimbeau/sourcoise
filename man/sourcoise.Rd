@@ -100,24 +100,27 @@ Working with github : \code{sourcoise()} is designed to function with \emph{gith
 }
 \examples{
 \dontshow{if (rlang::is_installed("insee")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+dir <- tempdir()
 fs::file_copy(
    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
-  "/tmp/prix_insee.r",
+  dir,
   overwrite = TRUE)
 # Force execution (root is set explicitly here, it is normally deduced from project)
-data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE)
+data <- sourcoise("prix_insee.R", root = dir, force_exec = TRUE)
 # The second time cache is used
-data <- sourcoise("prix_insee.r", root = "/tmp/")
+data <- sourcoise("prix_insee.R", root = dir)
 \dontshow{\}) # examplesIf}
 \dontshow{if (rlang::is_installed(c("insee", "bench"))) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # Performance and mem test
+dir <- tempdir()
 fs::file_copy(
    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
-  "/tmp/prix_insee.r",
-  overwrite = TRUE)
+   dir,
+   overwrite = TRUE)
 bench::mark(
- forced = data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE),
- cached = data <- sourcoise("prix_insee.r", root = "/tmp/"))
+ forced = data <- sourcoise("prix_insee.r", root = dir, force_exec = TRUE),
+ cached = data <- sourcoise("prix_insee.r", root = dir),
+ max_iterations = 5)
 \dontshow{\}) # examplesIf}
 }
 \seealso{

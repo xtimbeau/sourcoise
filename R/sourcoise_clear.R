@@ -10,15 +10,16 @@
 #' @return list of cleared files, plus a side-effect as specified cache files are deleted (no undo possible)
 #' @export
 #' @examplesIf rlang::is_installed("insee")
+#' dir <- tempdir()
 #' fs::file_copy(
 #'     fs::path_package("sourcoise", "ipch", "prix_insee.R"),
-#'     "/tmp/prix_insee.r",
+#'     dir,
 #'     overwrite = TRUE)
 #' # Force execution (root is set explicitly here, it is normally deduced from project)
-#' data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE)
+#' data <- sourcoise("prix_insee.R", root = dir, force_exec = TRUE)
 #' # we then clear all caches
-#' sourcoise_clear(root = "/tmp")
-#' sourcoise_status(root = "/tmp")
+#' sourcoise_clear(root = dir)
+#' sourcoise_status(root = dir)
 
 sourcoise_clear <- function(
     what = sourcoise_status(root=root, prune=FALSE),
@@ -49,12 +50,13 @@ sourcoise_clear <- function(
 #' @return No return, effect is through removal of .sourcoise folders (this is a side effect, no undo possible)
 #' @export
 #' @examplesIf rlang::is_installed("insee")
+#' dir <- tempdir()
 #' fs::file_copy(
 #'    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
-#'    "/tmp/prix_insee.r",
+#'    dir,
 #'    overwrite = TRUE)
-#' data <- sourcoise("prix_insee.r", root = "/tmp/", force_exec = TRUE)
-#' sourcoise_reset(root = "/tmp/")
+#' data <- sourcoise("prix_insee.R", root = dir, force_exec = TRUE)
+#' sourcoise_reset(root = dir)
 
 sourcoise_reset <- function(
     root = NULL) {

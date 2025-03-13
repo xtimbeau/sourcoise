@@ -2,6 +2,7 @@
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/sourcoise)](https://CRAN.R-project.org/package=sourcoise)
+[![R-CMD-check](https://github.com/xtimbeau/sourcoise/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/xtimbeau/sourcoise/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 

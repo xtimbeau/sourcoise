@@ -1,3 +1,5 @@
+# sourcoise 0.5.0
+
 # sourcoise 0.4.0
 
 * CRAN version
