@@ -63,8 +63,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header">
-<img src="logo.png" class="logo" alt=""><h1 id="sourcoise-source-and-cache-">sourcoise: <em>source and cache</em> 
-<a class="anchor" aria-label="anchor" href="#sourcoise-source-and-cache-"></a>
+<img src="logo.png" class="logo" alt=""><h1 id="sourcoise--source-and-cache">sourcoise : Source and Cache<a class="anchor" aria-label="anchor" href="#sourcoise--source-and-cache"></a>
 </h1>
 </div>
 <!-- badges: start -->
@@ -88,7 +87,7 @@
 <h2 id="use">Use<a class="anchor" aria-label="anchor" href="#use"></a>
 </h2>
 <p>To populate a graph or table with data, put the code in a script <code>r</code> (<code>"mon_script.r"</code>), ending the script with a <code>return(data_pour_le_graphique)</code>. In the <code>.qmd</code> or <code>.rmd</code> (or also an <code>R</code> script) we have the instructions for the graph in a <code>r</code> code chunk:</p>
-<pre class="qmd"><code>```{r}
+<pre class="qmd"><code>```r
 library(tidyverse)
 library(sourcoise)
 
@@ -123,6 +122,7 @@ ggplot(mes_datas) + &lt;&lt;graph code&gt;&gt;
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=sourcoise" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/xtimbeau/sourcoise/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/xtimbeau/sourcoise/issues" class="external-link">Report a bug</a></li>
 </ul>
@@ -155,6 +155,7 @@ ggplot(mes_datas) + &lt;&lt;graph code&gt;&gt;
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://CRAN.R-project.org/package=sourcoise" class="external-link"><img src="https://www.r-pkg.org/badges/version/sourcoise" alt="CRAN status"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#stable" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle: stable"></a></li>
 <li><a href="https://github.com/xtimbeau/sourcoise/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/xtimbeau/sourcoise/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 </ul>
 </div>
