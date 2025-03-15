@@ -18,7 +18,7 @@ find_src <- function(root, name) {
 
 try_find_src <- function(root, name) {
   pat <- glue::glue("{name}\\.[Rr]$")
-  ff <- fs::dir_ls(path = root, regexp=pat, recurse=TRUE)
+  ff <- fs::dir_ls(path = root, regexp=pat, recurse=TRUE, ignore.case = TRUE)
   ff |> purrr::discard(~ stringr::str_detect(.x, "/_"))
 }
 

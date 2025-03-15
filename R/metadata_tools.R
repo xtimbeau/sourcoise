@@ -73,10 +73,10 @@ get_datas <- function(name, data_rep) {
 }
 
 get_mdatas <- function(name, data_rep) {
-  pat <- stringr::str_c(name, "_([a-f0-9]){8}-([0-9]+).json")
+  pat <- stringr::str_c( name, "_([a-f0-9]){8}-([0-9]+).json")
   files <- list()
   if(fs::dir_exists(data_rep))
-    files <- fs::dir_ls(path = data_rep, regexp = pat, fail=FALSE)
+    files <- fs::dir_ls(path = data_rep, regexp = pat, fail=FALSE, ignore.case = TRUE)
   purrr::map(files, read_mdata)
 }
 
@@ -91,7 +91,7 @@ get_ddatas <- function(name, data_rep) {
   pat <- stringr::str_c(name, "_([a-f0-9]){8}-([0-9]+).qs2")
   files <- list()
   if(fs::dir_exists(data_rep))
-    files <- fs::dir_ls(path = data_rep, regexp = pat, fail=FALSE)
+    files <- fs::dir_ls(path = data_rep, regexp = pat, fail=FALSE, ignore.case=TRUE)
   res <- purrr::map(files, ~ qs2::qs_read(.x, nthreads = getOption("sourcoise.nthreads")))
   names(res) <- files
   res

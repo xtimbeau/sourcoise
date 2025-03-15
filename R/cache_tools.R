@@ -84,7 +84,6 @@ prune_cache <- function(ctxt) {
 
   datas <- unique(pairs$data_file)
   jsons <- unique(pairs$json_file)
-
   pairs <- pairs |>
     dplyr::group_by(.data$data_file) |>
     dplyr::arrange(dplyr::desc(.data$date)) |>
@@ -129,6 +128,7 @@ pick_gooddata <- function(good_datas, ctxt) {
     newmdata$qmd_file <- ctxt$new_qmds
     newmdata$track <- ctxt$track
     newmdata$src_in <- ctxt$src_in
+    newmdata$log_file <- ctxt$log_file
     jsonlite::write_json(newmdata, path = fnm)
   }
 
