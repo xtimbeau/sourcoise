@@ -36,7 +36,7 @@ and return a tibble with this data."><meta property="og:image" content="https://
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Cache status of sourcoise</h1>
-      <small class="dont-index">Source: <a href="https://github.com/xtimbeau/sourcoise/blob/main/R/sourcoise_status.R" class="external-link"><code>R/sourcoise_status.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/xtimbeau/sourcoise/blob/v0.5.0/R/sourcoise_status.R" class="external-link"><code>R/sourcoise_status.R</code></a></small>
       <div class="d-none name"><code>sourcoise_status.Rd</code></div>
     </div>
 
@@ -72,13 +72,11 @@ and return a tibble with this data.</p>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>tibble of cached files (see details for structure)</p>
+    <p>tibble of cached files</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p><code>sourcoise_status()</code> reflects what is on the disk (and results indeed from a scan of all cached files and their metadatas).
-So modifying the result of <code>sourcoise_status()</code> can produce complex bugs when it is passed to <code><a href="sourcoise_refresh.html">sourcoise_refresh()</a></code> or <code>sourcoise_clean()</code>.</p>
-<p>Data returned is:</p><ul><li><p><code>src</code>: path to the source file (r script)</p></li>
+    <p>Data returned is:</p><ul><li><p><code>src</code>: path to the source file (r script)</p></li>
 <li><p><code>date</code>: last execution date</p></li>
 <li><p><code>valid</code>: is cache valid ?</p></li>
 <li><p><code>uid</code>: id of user</p></li>
@@ -124,7 +122,7 @@ So modifying the result of <code>sourcoise_status()</code> can produce complex b
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 21</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   src      date                valid uid   index timing size  lapse wd    args  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> prix_in… 2025-03-13 <span style="color: #949494;">14:31:59</span> TRUE  c211…     1 0.054<span style="text-decoration: underline;">9</span> 14 kB never file  <span style="color: #949494;">&lt;NULL&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> prix_in… 2025-03-15 <span style="color: #949494;">17:05:18</span> FALSE b124…     1 0.050<span style="text-decoration: underline;">9</span> 14 kB never file  <span style="color: #949494;">&lt;NULL&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 11 more variables: json_file &lt;fs::path&gt;, qmd_file &lt;list&gt;, src_in &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   data_file &lt;chr&gt;, data_date &lt;chr&gt;, log_file &lt;chr&gt;, root &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   src_hash &lt;chr&gt;, track_hash &lt;list&gt;, track &lt;list&gt;, data_hash &lt;chr&gt;</span></span>
