@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">sourcoise</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -118,6 +118,7 @@
 <li><p>on peut également forcer l’invalidation du cache par un paramètre passé à la fonction, éventuellement un paramètre global ou en utilisant la fonction <code><a href="../reference/sourcoise_refresh.html">sourcoise_refresh()</a></code>. Ce dernier point est une différence important par rapport à <code><a href="https://memoise.r-lib.org/reference/memoise.html" class="external-link">memoise::memoise()</a></code> et permet une exécution régulière du rafraichissement du cache indépendamment de l’endroit où est appelé le script.</p></li>
 <li><p>on peut logger les accès à sourcoise() ce qui permet de comprendre pourquoi le cache n’est pas invalidé et quels sont fichiers qui ont déclenché sourcoise(). Un dossier <code>logs</code> est ajouté au dossier <code>.sourcoise</code>.</p></li>
 <li><p>on peut limiter la taille du cache, par le paramètre grow_cache qui contraint l’historique du cache et par limit_mb qui empêche de mettre en cache des données au delà d’une taille limite ; par défaut 50mb, pour ne pas fâcher github.</p></li>
+<li><p><code><a href="../reference/sourcoise.html">sourcoise()</a></code> utilise en fait <a href="https://memoise.r-lib.org" class="external-link">memoise</a> pour ne pas charger 2 fois les données à partir du disque. Le gain est marginal pour de petites données mais peut jouer lorsque les données sont volumineuses (divise par 100 l’accès pour des données de 50Mb, par 10 pour des données de 5Mb, par 2 pour 500kb).</p></li>
 </ul></section><script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
