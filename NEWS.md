@@ -1,4 +1,15 @@
+# sourcoise (development version)
+
+## Correction de bugs
+
+* enregistre correctement le champ date (quand cache est retourné)
+* `ignore.case` dans les recherches de fichiers
+* enregistre correctement le chemin du log si le cache est invalide
+* les arguments sont employés (par un hash) pour différencier les caches, ce qui permet de les utiliser sans problème.
+
 # sourcoise 0.5.0
+
+* CRAN version
 
 # sourcoise 0.4.0
 

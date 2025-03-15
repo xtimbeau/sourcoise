@@ -87,6 +87,7 @@ sourcoise_status <- function(
           src_in = dd$src_in,
           data_file = dd$data_file,
           data_date = dd$data_date,
+          file_size = scales::label_bytes()(dd$file_size),
           log_file = dd$log_file %||% "",
           root =  a_root,
           src_hash = dd$src_hash,

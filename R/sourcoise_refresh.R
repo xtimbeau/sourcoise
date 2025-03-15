@@ -143,10 +143,10 @@ sourcoise_refresh <- function(
     cli::cli_process_done(id = idpgr)
 
   res <- purrr::transpose(res)
-
   dt <- difftime(Sys.time(), refresh_start, units = "secs") |> as.numeric() |> round()
+  tsize <- res$size |> unlist() |>  sum()
   if(!quiet)
-    cli::cli_alert_info("Total refresh in {dt} seconds")
+    cli::cli_alert_info("Total refresh in {dt} seconds for {scales::label_bytes()(tsize)} of data")
 
   invisible(res)
 }
