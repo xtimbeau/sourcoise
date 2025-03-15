@@ -21,8 +21,9 @@ rendering of a document or a quarto site.
 
 It also means that the script code that retrieves the data from a file
 has to be isolated to improve reproducibility. `sourcoise()` can be
-called in a `sourcoise()` which allows modularity. It provides tools for
-checking the cache and refreshing it on demand.
+called in a `sourcoise()` which allows modularity. It provides tools,
+for checking the cache, `sourcoise_status()`, and refreshing it,
+`sourcoise_refresh()`, on demand.
 
 ## Installation
 
@@ -61,6 +62,12 @@ ggplot(mes_datas) + <<graph code>>
 
 The first time the script is run, subsequent calls will use the cache,
 unless the cache is invalidated.
+
+To check the status of cache, just call `sourcoise_status()`. It will
+scan your project and collect info about your cached data. To refresh
+everything, call `sourcoise_refresh()`, it will execute all scripts and
+refresh data in the cache. Options are available to filter what really
+need to be refreshed.
 
 ## Benefits
 
