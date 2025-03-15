@@ -18,7 +18,12 @@ cache_data <- function(data, ctxt) {
     hashes <- purrr::map_dfr(
       files$path, ~{
         mdata <- read_mdata(.x)
-        tibble::tibble(path = .x, data_hash = mdata$data_hash, data_file = mdata$data_file)
+        tibble::tibble(
+          path = .x,
+          data_hash = mdata$data_hash,
+          data_file = mdata$data_file,
+          data_date = mdata$data_date,
+          file_size = mdata$file_size)
       }) |>
       dplyr::filter(.data$data_hash == new_data_hash)
     if(nrow(hashes)>0) {
@@ -29,7 +34,9 @@ cache_data <- function(data, ctxt) {
 
       exists_data_file <- fs::path_join(c(ctxt$full_cache_rep, exists_data_file))
       exists <- fs::file_exists(exists_data_file)
-      file_size <- fs::file_info(exists_data_file)$size
+      finfo <- fs::file_info(exists_data_file)
+      exists_file_size <- finfo$size
+      exists_data_date <- finfo$modification_time
     }
     cc <- max(files$cc, na.rm = TRUE) + 1
   }
@@ -62,9 +69,11 @@ cache_data <- function(data, ctxt) {
         fs::file_delete(fnd)
         logger::log_warn("cached data not saved because ({scales::label_bytes()(file_size)} is over the {ctxt$limit_md} Mb limit.")
       }
-    } else
+    } else {
       fnd <- exists_data_file
-
+      les_metas$file_size <- exists_file_size
+      les_metas$data_date <- exists_data_date
+}
     les_metas$data_file <- data$data_file <- fs::path_file(fnd)
     jsonlite::write_json(les_metas, path = fnm)
     prune_cache(ctxt)

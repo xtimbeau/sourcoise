@@ -26,11 +26,11 @@
 #'
 #' `track` is the trigger #3. It is simply a list of files (following path convention defined by `scr_in`, so either script dir of project dir as reference). If the files in the list are changed then the execution is triggered. It is done with a hash and it is difficult to have a croo plateform hash for excel files. Nevertheless, hash is done on text files with same results of different platforms.
 #'
-#' If `metadata=TRUE`, a list is returned, with some metadatas. Main ones are `$data`, the data returned, `$date`, execution date, `$timing` execution timing, `$size` of the R object in memory, `$data_file` and `"data_date` documenting data file path and last modification date (see below), parameters of the call (`$track`, `$wd`, `$src_in`, `$args` and so on).
+#' If `metadata=TRUE`, a list is returned, with some metadatas. Main ones are `$data`, the data returned, `$date`, execution date, `$timing` execution timing, `$size` of the R object in memory, `$data_file`, `$data_date` and  `$file_size` documenting data file path, date size on disk and last modification date, parameters of the call (`$track`, `$wd`, `$src_in`, `$args` and so on).
 #'
 #' `force_exec` and `prevent_exec` are parameters that force the script execution (trigger #5) of prevent it (so cache is returned or NULL if no cache). Those 2 parameters can be set for one specific execution, but they are intendend to a global setting through the option `sourcoise.force_exec` or `sourcoise.prevent_exec`.
 #'
-#' If returned data after execution is not different than previously cached data, then no caching occurs in order to limit the disk use and to avoid keeping an histoiry of the same data files. This implies the possibility of a difference between last execution date and last data modification date.
+#' If returned data after execution is not different than previously cached data, then no caching occurs in order to limit the disk use and to avoid keeping an history of the same data files. This implies the possibility of a difference between last execution date and last data modification date. If you are insterested in the moment data was changed, then `$data_date` is to be preferred.
 #'
 #' Working with github : `sourcoise()` is designed to function with *github*. Cache information is specific to each user (avoiding conflicts) and cached data is named with the hash. Conflicts could occur in the rare case the same script is executed on different machines and that this script return each time a different result (such as a random generator).
 #'
