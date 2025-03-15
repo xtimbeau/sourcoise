@@ -1,6 +1,6 @@
 #' @importFrom rlang .data
 cache_data <- function(data, ctxt) {
-  pat <- stringr::str_c(ctxt$name, "_([a-f0-9]{8})-([0-9]+)\\.json")
+  pat <- stringr::str_c(ctxt$basename, "_([a-f0-9]{8})-([0-9]+)\\.json")
   files <- tibble::tibble()
 
   if(fs::dir_exists(ctxt$full_cache_rep)) {
@@ -73,7 +73,7 @@ cache_data <- function(data, ctxt) {
       fnd <- exists_data_file
       les_metas$file_size <- exists_file_size
       les_metas$data_date <- exists_data_date
-}
+    }
     les_metas$data_file <- data$data_file <- fs::path_file(fnd)
     jsonlite::write_json(les_metas, path = fnm)
     prune_cache(ctxt)
@@ -142,7 +142,10 @@ pick_gooddata <- function(good_datas, ctxt) {
   }
 
   good_good_data$ok <- "cache"
-  good_good_data$data <- read_data_from_cache(fnd)
+  if(getOption("sourcoise.memoize"))
+    good_good_data$data <- read_data_from_cache(fnd)
+  else
+    good_good_data$data <-   qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
 
   return(good_good_data)
 }

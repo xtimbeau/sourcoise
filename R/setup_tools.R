@@ -9,10 +9,14 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
   else
     ctxt$track <- track
 
-  if(is.null(args))
+  if(is.null(args)) {
     ctxt$args <- list()
-  else
+    ctxt$argid <- ""
+  }
+  else {
     ctxt$args <- args
+    ctxt$argid <- digest::digest(args, algo = "crc32")
+  }
 
   ctxt$lapse <- lapse
   ctxt$quiet <- quiet
@@ -48,7 +52,8 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
     }
   }
 
-  ctxt$basename <- fs::path_file(ctxt$name)
+  ctxt$basename <- fs::path_file(ctxt$name) |>
+    stringr::str_c(ctxt$argid, sep = "-")
   ctxt$relname <- fs::path_rel(ctxt$src, ctxt$root)
   ctxt$reldirname <- fs::path_dir(ctxt$relname)
 

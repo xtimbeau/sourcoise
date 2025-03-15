@@ -72,3 +72,5 @@ Par rapport à `memoise::memoise()`, `sourcoise()` utilise systématiquement un 
 -   on peut logger les accès à sourcoise() ce qui permet de comprendre pourquoi le cache n'est pas invalidé et quels sont fichiers qui ont déclenché sourcoise(). Un dossier `logs` est ajouté au dossier `.sourcoise`.
 
 -   on peut limiter la taille du cache, par le paramètre grow_cache qui contraint l'historique du cache et par limit_mb qui empêche de mettre en cache des données au delà d'une taille limite ; par défaut 50mb, pour ne pas fâcher github.
+
+-   `sourcoise()` utilise en fait `{memoise}` pour ne pas charger 2 fois les données à partir du disque. Le gain est marginal pour de petites données mais peut jouer lorsque les données sont volumineuses (divise par 100 l'accès pour des données de 50Mb, par 10 pour des données de 5Mb, par 2 pour 500kb).
