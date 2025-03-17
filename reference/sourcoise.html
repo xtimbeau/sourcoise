@@ -61,7 +61,8 @@
 <span>  inform <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  log <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"sourcoise.log"</span><span class="op">)</span>,</span>
 <span>  grow_cache <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"sourcoise.grow_cache"</span><span class="op">)</span>,</span>
-<span>  limit_mb <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"sourcoise.limit_mb"</span><span class="op">)</span></span>
+<span>  limit_mb <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"sourcoise.limit_mb"</span><span class="op">)</span>,</span>
+<span>  priority <span class="op">=</span> <span class="fl">10</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -126,15 +127,19 @@
 
 
 <dt id="arg-log">log<a class="anchor" aria-label="anchor" href="#arg-log"></a></dt>
-<dd><p>("OFF" par défaut) log threshold (see <code>logger::log_treshold()</code>).</p></dd>
+<dd><p>(default "OFF") log threshold (see <code>logger::log_treshold()</code>).</p></dd>
 
 
 <dt id="arg-grow-cache">grow_cache<a class="anchor" aria-label="anchor" href="#arg-grow-cache"></a></dt>
-<dd><p>(5 par défaut) cache limit in number of data file kept.</p></dd>
+<dd><p>(integer) (default 5 par défaut) cache limit in number of data file kept.</p></dd>
 
 
 <dt id="arg-limit-mb">limit_mb<a class="anchor" aria-label="anchor" href="#arg-limit-mb"></a></dt>
-<dd><p>(50 par défaut) individual cache data files size on disk limit. If above <strong>no caching</strong>.</p></dd>
+<dd><p>(integer) (default 50) individual cache data files size on disk limit. If above <strong>no caching</strong>.</p></dd>
+
+
+<dt id="arg-priority">priority<a class="anchor" aria-label="anchor" href="#arg-priority"></a></dt>
+<dd><p>(integer) (default 10) can be used as a way to control the order of execution when refreshing data (see <code><a href="sourcoise_refresh.html">sourcoise_refresh()</a></code>)</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -196,8 +201,8 @@ If <code>src_in="project"</code>, then script <code>path</code> is searched from
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 13</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   expression     min  median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:t&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:t&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> forced     82.26ms 83.69ms      10.7    1.94MB        0     5     0      467ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> cached      9.46ms  9.51ms     104.   258.38KB        0     5     0       48ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> forced     80.66ms 84.45ms      10.6    1.91MB        0     5     0      473ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> cached      9.73ms  9.81ms     101.   259.12KB        0     5     0     49.7ms</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more variables: result &lt;list&gt;, memory &lt;list&gt;, time &lt;list&gt;, gc &lt;list&gt;</span></span>
 </code></pre></div>
     </div>
