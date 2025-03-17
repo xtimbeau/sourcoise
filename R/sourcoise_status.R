@@ -113,7 +113,6 @@ sourcoise_status <- function(
       qs2_orphed <- setdiff(qs2 |> purrr::list_c(), qs2_jsoned)
       purrr::walk(qs2_orphed, fs::file_delete)
     }
-
     if(nrow(cached)>0) {
       cached <- cached |>
         dplyr::arrange(.data$src, dplyr::desc(.data$date))
@@ -123,10 +122,11 @@ sourcoise_status <- function(
           dplyr::group_by(.data$src) |>
           dplyr::filter(.data$date == max(.data$date)) |>
           dplyr::ungroup()
+
       return(cached)
     }
-    if(!quiet)
-      cli::cli_alert_info("No cache data")
-    return(tibble::tibble())
   }
+  if(!quiet)
+    cli::cli_alert_info("No cache data")
+  return(tibble::tibble())
 }

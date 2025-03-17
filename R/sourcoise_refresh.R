@@ -69,7 +69,7 @@ sourcoise_refresh <- function(
       dplyr::ungroup()
 
   if(nrow(what)==0)
-    return(list())
+    return(invisible(list()))
 
   # on en garde qu'un et on trie dans l'ordre des priorités
   what <- what |>
@@ -80,7 +80,7 @@ sourcoise_refresh <- function(
     dplyr::arrange(dplyr::desc(priority))
 
   if(nrow(what)==0)
-    return(list())
+    return(invisible(list()))
 
   if(!is.null(init_fn) && rlang::is_function(init_fn)) {
     init_fn()

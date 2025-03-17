@@ -134,7 +134,7 @@ sourcoise <- function(
     if(our_data$ok=="exec") {
       our_data <- cache_data(our_data, ctxt)
       logger::log_success(
-        "Successful forced execution in {round(our_data$timing, 2)} sec. ({scales::label_bytes()(our_data$size)})")
+        "{ctxt$relname} (forced) in {round(our_data$timing, 2)} sec. ({scales::label_bytes()(our_data$size)})")
       if(metadata) {
         return(our_data)
       } else {
@@ -157,7 +157,7 @@ sourcoise <- function(
     if(our_data$ok=="exec") {
       our_data <- cache_data(our_data, ctxt)
       logger::log_success(
-        "Successful execution (no cache found) in {round(our_data$timing, 1)} sec. ({scales::label_bytes()(our_data$size)})")
+        "{ctxt$relname} (exex. no cache found) in {round(our_data$timing, 2)} sec. ({scales::label_bytes()(our_data$size)})")
       if(metadata) {
         return(our_data)
       } else {
@@ -165,21 +165,21 @@ sourcoise <- function(
       }
     } else {
       if(length(ctxt$meta_datas)==0) {
-        msg <- "Failed execution of {ctxt$src}, No cache: \n{our_data$error$message}"
+        msg <- "{ctxt$relname} failed, no cache: \n{our_data$error$message}"
         if(ctxt$quiet)
           cli::cli_alert_danger(msg)
         logger::log_error(msg)
         return(our_data)
       }
       return_data <- pick_gooddata(ctxt$meta_datas, ctxt)
-      msg <- "Execution failed, returning invalid cache ({scales::label_bytes()(return_data$size)})"
+      msg <- "{ctxt$relname} failed, returning invalid cache ({scales::label_bytes()(return_data$size)})"
       if(ctxt$quiet)
         cli::cli_alert_danger(msg)
       logger::log_warn(msg)
     }
   } else {
     return_data <- pick_gooddata(good_datas, ctxt)
-    logger::log_success("Valid cache ({scales::label_bytes()(return_data$size)})")
+    logger::log_success("{ctxt$relname} valid cache ({scales::label_bytes()(return_data$size)})")
   }
 
   if(metadata) {

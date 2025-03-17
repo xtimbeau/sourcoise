@@ -82,10 +82,10 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
   }
 
   if(!is.null(ctxt$qmd_file))
-    logger::log_info("qmd file : {ctxt[['qmd_file']]}")
-  logger::log_info("source file : {ctxt[['src']]}")
-  logger::log_debug("root : {ctxt[['root']]}")
-  logger::log_debug("cache : {ctxt[['full_cache_rep']]}")
+    logger::log_debug("qmd: {ctxt[['qmd_file']]}")
+  logger::log_debug("source: {ctxt[['src']]}")
+  logger::log_debug("root: {ctxt[['root']]}")
+  logger::log_debug("cache: {ctxt[['full_cache_rep']]}")
 
   ctxt$exec_wd <- exec_wd
   if(is.null(exec_wd)) {
@@ -103,7 +103,7 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
       }
     }
   }
-  logger::log_debug("wd : {ctxt[['exec_wd']]}")
+  logger::log_debug("wd: {ctxt[['exec_wd']]}")
 
   ctxt <- ctxt |>
     hash_context()
