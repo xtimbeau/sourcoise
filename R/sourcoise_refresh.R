@@ -79,7 +79,7 @@ sourcoise_refresh <- function(
   if(nrow(what)==0)
     return(list())
 
-  if(!is.null(init_fn)) {
+  if(!is.null(init_fn) && rlang::is_function(init_fn)) {
     init_fn()
   }
 
@@ -99,7 +99,6 @@ sourcoise_refresh <- function(
       exec_wd <- fs::path_join(c(root, fs::path_dir(src))) |> fs::path_norm()
     if(wd=="qmd")
       exec_wd <- fs::path_join(c(root, fs::path_dir(qmd_file[[1]]))) |> fs::path_norm()
-browser()
     src_data <- sourcoise(
       path = src,
       force_exec = force_exec,

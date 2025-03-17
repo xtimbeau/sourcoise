@@ -129,6 +129,7 @@ hash_context <- function(ctxt) {
   }
 
   ctxt$meta_datas <- get_mdatas(ctxt$basename, ctxt$full_cache_rep)
+
   ctxt$qmds <- purrr::map(ctxt$meta_datas, "qmd_file") |>
     purrr::list_flatten() |>
     purrr::discard(is.null) |>

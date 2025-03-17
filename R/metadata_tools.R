@@ -73,11 +73,21 @@ get_datas <- function(name, data_rep) {
 }
 
 get_mdatas <- function(name, data_rep) {
-  pat <- stringr::str_c( name, "_([a-f0-9]){8}-([0-9]+).json")
+  name_allid <- stringr::str_remove(name, "-([a-f0-9]){8}")
+  pat <- stringr::str_c(name_allid, "-([a-f0-9]{8})_([a-f0-9]{8})-([0-9]+).json")
   files <- list()
   if(fs::dir_exists(data_rep))
     files <- fs::dir_ls(path = data_rep, regexp = pat, fail=FALSE, ignore.case = TRUE)
   purrr::map(files, read_mdata)
+
+  # mdatas <- RcppSimdJson::fload(files)
+  # if(length(files)==1)
+  #   mdatas <- list(mdatas)
+  # names(mdatas) <- files
+  # purrr::imap(mdatas, ~{
+  #   r <- .x
+  #   r$file <- .y
+  #   r})
 }
 
 read_mdata <- function(path) {

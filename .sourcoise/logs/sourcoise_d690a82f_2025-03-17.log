@@ -1,5 +1,0 @@
-INFO [2025-03-17 10:33:03] source file : C:/Users/timbe/github/sourcoise/work/prix_insee.r
-SUCCESS [2025-03-17 10:33:03] Successful forced execution in 0.07 sec. (14 kB)
-INFO [2025-03-17 10:33:03] source file : C:/Users/timbe/github/sourcoise/work/synthetic.r
-ERROR [2025-03-17 10:33:03] Failed execution of C:/Users/timbe/github/sourcoise/work/synthetic.r, No cache: 
-$ operator is invalid for atomic vectors
