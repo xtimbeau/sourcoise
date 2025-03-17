@@ -35,9 +35,9 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
   else
     ctxt$root <- fs::path_abs(root)
 
-  ctxt <- startup_log(log, ctxt)
-
   ctxt$uid <- digest::digest(ctxt$root, algo = "crc32")
+
+  ctxt <- startup_log(log, ctxt)
 
   ctxt[["src"]] <- find_src(ctxt$root, ctxt$name)
   if(is.null(ctxt[["src"]])) {
@@ -156,7 +156,7 @@ startup_log <- function(log, ctxt) {
 
   if(!fs::dir_exists(log_dir))
     fs::dir_create(log_dir)
-  log_fn <- fs::path_join(c(log_dir, stringr::str_c("sourcoise_", lubridate::today() |> as.character()))) |>
+  log_fn <- fs::path_join(c(log_dir, stringr::str_c(ctxt$uid, "_", lubridate::today() |> as.character()))) |>
     fs::path_ext_set("log")
 
   logger::log_appender(logger::appender_file(log_fn))

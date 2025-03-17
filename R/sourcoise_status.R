@@ -71,6 +71,11 @@ sourcoise_status <- function(
       purrr::map_dfr(jsons[[a_root]], ~{
         dd <- read_mdata(.x)
         valid <- valid_meta4meta(dd, root = a_root)
+        if(is.null(dd$log_file)||length(dd$log_file)==0)
+          log_file <- ""
+        else
+          log_file <- dd$log_file
+
         tibble::tibble(
           src = tolower(dd$src),
           date = lubridate::as_datetime(dd$date),
@@ -88,7 +93,7 @@ sourcoise_status <- function(
           data_file = dd$data_file,
           data_date = dd$data_date,
           file_size = scales::label_bytes()(dd$file_size),
-          log_file = dd$log_file %||% "",
+          log_file = log_file,
           root =  a_root,
           src_hash = dd$src_hash,
           track_hash = list(dd$track_hash),

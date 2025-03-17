@@ -6,6 +6,7 @@
 * `ignore.case` dans les recherches de fichiers
 * enregistre correctement le chemin du log si le cache est invalide
 * les arguments sont employés (par un hash) pour différencier les caches, ce qui permet de les utiliser sans problème.
+* le log est spécifique à chaque utilisateur
 
 # sourcoise 0.5.0
 

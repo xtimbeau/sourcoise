@@ -81,8 +81,7 @@ get_mdatas <- function(name, data_rep) {
 }
 
 read_mdata <- function(path) {
-  l <- jsonlite::read_json(path) |>
-    purrr::map( ~if(length(.x)>1) purrr::list_flatten(.x) else unlist(.x) )
+  l <- jsonlite::read_json(path, simplifyVector = TRUE)
   l$file <- path
   l
 }
