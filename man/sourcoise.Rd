@@ -21,7 +21,8 @@ sourcoise(
   inform = FALSE,
   log = getOption("sourcoise.log"),
   grow_cache = getOption("sourcoise.grow_cache"),
-  limit_mb = getOption("sourcoise.limit_mb")
+  limit_mb = getOption("sourcoise.limit_mb"),
+  priority = 10
 )
 }
 \arguments{
@@ -53,11 +54,13 @@ sourcoise(
 
 \item{inform}{(boolean) Display logs on console, even if logging is disabled with threshold level "INFO".}
 
-\item{log}{("OFF" par défaut) log threshold (see \code{logger::log_treshold()}).}
+\item{log}{(default "OFF") log threshold (see \code{logger::log_treshold()}).}
 
-\item{grow_cache}{(5 par défaut) cache limit in number of data file kept.}
+\item{grow_cache}{(integer) (default 5 par défaut) cache limit in number of data file kept.}
 
-\item{limit_mb}{(50 par défaut) individual cache data files size on disk limit. If above \strong{no caching}.}
+\item{limit_mb}{(integer) (default 50) individual cache data files size on disk limit. If above \strong{no caching}.}
+
+\item{priority}{(integer) (default 10) can be used as a way to control the order of execution when refreshing data (see \code{sourcoise_refresh()})}
 }
 \value{
 data (list ou ce que le code retourne)

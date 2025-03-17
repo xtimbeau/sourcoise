@@ -80,6 +80,7 @@ sourcoise_status <- function(
           src = tolower(dd$src),
           date = lubridate::as_datetime(dd$date),
           valid = valid$valid,
+          priority = dd$priority %||% 10,
           uid = dd$uid,
           index = dd$cc |> as.numeric(),
           timing = dd$timing,

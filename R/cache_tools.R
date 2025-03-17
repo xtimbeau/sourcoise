@@ -45,6 +45,7 @@ cache_data <- function(data, ctxt) {
   data$data_hash <- new_data_hash
   data$id <- stringr::str_c(ctxt$uid, "-", cc)
   data$uid <- ctxt$uid
+  data$priority <- ctxt$priority
   data$cc <- cc
   fnm <- fs::path_join(
     c(ctxt$full_cache_rep,

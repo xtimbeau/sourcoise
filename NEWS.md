@@ -5,8 +5,12 @@
 * enregistre correctement le champ date (quand cache est retourné)
 * `ignore.case` dans les recherches de fichiers
 * enregistre correctement le chemin du log si le cache est invalide
-* les arguments sont employés (par un hash) pour différencier les caches, ce qui permet de les utiliser sans problème.
-* le log est spécifique à chaque utilisateur
+* les arguments sont employés (par un *hash*) pour différencier les caches, ce qui permet de les utiliser sans problème.
+* le log est maintenant spécifique à chaque utilisateur
+
+## ajouts
+
+* le paramètre `priority` permet de controller l'ordre d'exécution dans le cas d'un refresh, afin de traiter les cascades d'exécution
 
 # sourcoise 0.5.0
 

@@ -54,6 +54,8 @@ It is possible to pass to refresh a function that will be executed before every 
 If packages are loaded inside the script, then this is not needed.
 
 Parameters registered ins \code{sourcoise_status()} such as \code{wd} or \code{args} are used to execute the script.
+
+Defining a \code{priority} in \code{sourcoise()}, will change the order of execution of refresh. This allows to execute first data that will be used then inside another script with \code{sourcoise()}. When a \code{sourcoise("something.r", force_exec=TRUE)} is run, inside calls to \code{sourcoise()} are \emph{not} forced. \code{priority} is a crude way -- yet efficient -- to achieve a correct execution with up to date data. Of course, all calls to \code{sourcoise()} of the same script should set the same level of priority as the last executed will be kept, with no verification done, so left to the responsability of the user.
 }
 \examples{
 \dontshow{if (rlang::is_installed("insee")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
