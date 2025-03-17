@@ -157,7 +157,7 @@ sourcoise <- function(
     if(our_data$ok=="exec") {
       our_data <- cache_data(our_data, ctxt)
       logger::log_success(
-        "{ctxt$relname} (exex. no cache found) in {round(our_data$timing, 2)} sec. ({scales::label_bytes()(our_data$size)})")
+        "{ctxt$relname} (exec. no cache found) in {round(our_data$timing, 2)} sec. ({scales::label_bytes()(our_data$size)})")
       if(metadata) {
         return(our_data)
       } else {
