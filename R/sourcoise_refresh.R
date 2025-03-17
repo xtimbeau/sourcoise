@@ -124,7 +124,7 @@ sourcoise_refresh <- function(
     msrc <- fs::path_join(c(root, src)) |> fs::path_rel(cwd)
     if( src_data$ok == "exec" ) {
       cli::cli_alert_success(
-        "{msrc} exectued in {round(src_data$timing)} s. for {scales::label_bytes()(src_data$size)} of data" )
+        "{msrc} executed in {round(src_data$timing)} s. for {scales::label_bytes()(src_data$size)} of data" )
     } else {
       cli::cli_alert_danger(
         "{msrc} failed (see log {.file {src_data$log_file}})" )
