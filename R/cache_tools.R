@@ -49,7 +49,7 @@ cache_data <- function(data, ctxt) {
   data$cc <- cc
   fnm <- fs::path_join(
     c(ctxt$full_cache_rep,
-      stringr::str_c(ctxt$basename, "_", data$id))) |> fs::path_ext_set("json")
+      stringr::str_c(ctxt$basename, "_", stringr::str_c(data$id, ".json"))))
   if(!ctxt$nocache) {
 
     les_metas <- data
@@ -61,7 +61,7 @@ cache_data <- function(data, ctxt) {
     if(!exists) {
       fnd <- fs::path_join(
         c(ctxt$full_cache_rep,
-          stringr::str_c(ctxt$basename, "_", data$data_hash))) |> fs::path_ext_set("qs2")
+          stringr::str_c(ctxt$basename, "_", stringr::str_c(data$data_hash, ".qs2"))))
       qs2::qs_save( data$data, file = fnd, nthreads = getOption("sourcoise.nthreads") )
       f_i <- fs::file_info(fnd)
       les_metas$file_size <- f_i$size

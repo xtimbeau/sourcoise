@@ -75,7 +75,7 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
   ctxt$qmd_path <- ctxt$paths$doc_path
   if(Sys.getenv("QUARTO_DOCUMENT_PATH") != "") {
     ctxt$qmd_file <- fs::path_join(c(ctxt$qmd_path, knitr::current_input())) |>
-      fs::path_ext_set("qmd") |>
+      stringr::str_c(".qmd") |>
       fs::path_norm()
   } else {
     ctxt$qmd_file <- NULL

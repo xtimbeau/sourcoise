@@ -35,7 +35,7 @@ try_find_root <- function(root=NULL, src_in = getOption("sourcoise.src_in"), qui
       else {
         if(!quiet)
           cli::cli_alert_warning("{root$error}")
-        return(NULL)
+        return(getwd())
       }
     }
     return(Sys.getenv("QUARTO_PROJECT_DIR") |> fs::path_abs() |> fs::path_norm())
@@ -45,7 +45,7 @@ try_find_root <- function(root=NULL, src_in = getOption("sourcoise.src_in"), qui
     paths <- find_project_root(NULL, NULL)
     return( fs::path_join(c(paths$project_path, paths$doc_path)) |> fs::path_norm() )
   }
-  root <- NULL
+  getwd()
 }
 
 
