@@ -10,6 +10,10 @@ status](https://www.r-pkg.org/badges/version/sourcoise)](https://CRAN.R-project.
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![R-CMD-check](https://github.com/xtimbeau/sourcoise/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/xtimbeau/sourcoise/actions/workflows/R-CMD-check.yaml)
+[![metacran
+downloads](https://cranlogs.r-pkg.org/badges/sourcoise)](https://cran.r-project.org/package=sourcoise)
+[![CRAN_latest_release_date](https://www.r-pkg.org/badges/last-release/sourcoise)](https://cran.r-project.org/package=sourcoise)
+[![CRAN_latest_release_date](https://www.r-pkg.org/badges/last-release/sourcoise)](https://cran.r-project.org/package=sourcoise)
 <!-- badges: end -->
 
 `{sourcoise}` is a package that provides tools for running an R script
@@ -17,12 +21,12 @@ and caching the results (saving them to disk). The aim is to be able to
 execute (quickly) code that accesses files or an API and which, in the
 absence of updates, always produces the same result. When the API is
 likely to block (or if you don’t have an internet connection), this
-avoids blocking the rendering of a document or a quarto site.
+avoids failure of the rendering of a `qmd` document or a quarto website.
 
 The script code that retrieves the data from a file or an API has to be
 isolated, and that is improving reproducibility. `sourcoise()` can be
 called in a `sourcoise()` which allows modularity. The cache is
-persistant (on disk, possibly synched with github) accross sessions of
+persistent (on disk, possibly synched with github) across sessions of
 the same project. The package provides tools, for checking the cache,
 `sourcoise_status()`, and refreshing it on demand,
 `sourcoise_refresh()`, or at a given frequency trhough a parameter of
