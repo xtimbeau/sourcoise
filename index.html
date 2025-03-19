@@ -68,8 +68,8 @@
 </div>
 <!-- badges: start -->
 
-<p><a href="https://xtimbeau.github.io/sourcoise/">sourcoise</a> is a package that provides tools for running an R script and caching the results (saving them to disk). The aim is to be able to execute (quickly) code that accesses files or an API and which, in the absence of updates, always produces the same result. When the API is likely to block (or if you don’t have an internet connection), this avoids blocking the rendering of a document or a quarto site.</p>
-<p>The script code that retrieves the data from a file or an API has to be isolated, and that is improving reproducibility. <code><a href="reference/sourcoise.html">sourcoise()</a></code> can be called in a <code><a href="reference/sourcoise.html">sourcoise()</a></code> which allows modularity. The cache is persistant (on disk, possibly synched with github) accross sessions of the same project. The package provides tools, for checking the cache, <code><a href="reference/sourcoise_status.html">sourcoise_status()</a></code>, and refreshing it on demand, <code><a href="reference/sourcoise_refresh.html">sourcoise_refresh()</a></code>, or at a given frequency trhough a parameter of <code><a href="reference/sourcoise.html">sourcoise()</a></code>.</p>
+<p><a href="https://xtimbeau.github.io/sourcoise/">sourcoise</a> is a package that provides tools for running an R script and caching the results (saving them to disk). The aim is to be able to execute (quickly) code that accesses files or an API and which, in the absence of updates, always produces the same result. When the API is likely to block (or if you don’t have an internet connection), this avoids failure of the rendering of a <code>qmd</code> document or a quarto website.</p>
+<p>The script code that retrieves the data from a file or an API has to be isolated, and that is improving reproducibility. <code><a href="reference/sourcoise.html">sourcoise()</a></code> can be called in a <code><a href="reference/sourcoise.html">sourcoise()</a></code> which allows modularity. The cache is persistent (on disk, possibly synched with github) across sessions of the same project. The package provides tools, for checking the cache, <code><a href="reference/sourcoise_status.html">sourcoise_status()</a></code>, and refreshing it on demand, <code><a href="reference/sourcoise_refresh.html">sourcoise_refresh()</a></code>, or at a given frequency trhough a parameter of <code><a href="reference/sourcoise.html">sourcoise()</a></code>.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -158,6 +158,9 @@ ggplot(mes_datas) + &lt;&lt;graph code&gt;&gt;
 <li><a href="https://CRAN.R-project.org/package=sourcoise" class="external-link"><img src="https://www.r-pkg.org/badges/version/sourcoise" alt="CRAN status"></a></li>
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#stable" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle: stable"></a></li>
 <li><a href="https://github.com/xtimbeau/sourcoise/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/xtimbeau/sourcoise/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://cran.r-project.org/package=sourcoise" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/sourcoise" alt="metacran downloads"></a></li>
+<li><a href="https://cran.r-project.org/package=sourcoise" class="external-link"><img src="https://www.r-pkg.org/badges/last-release/sourcoise" alt="CRAN_latest_release_date"></a></li>
+<li><a href="https://cran.r-project.org/package=sourcoise" class="external-link"><img src="https://www.r-pkg.org/badges/last-release/sourcoise" alt="CRAN_latest_release_date"></a></li>
 </ul>
 </div>
 
