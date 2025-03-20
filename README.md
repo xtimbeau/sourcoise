@@ -13,7 +13,6 @@ stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://
 [![metacran
 downloads](https://cranlogs.r-pkg.org/badges/sourcoise)](https://cran.r-project.org/package=sourcoise)
 [![CRAN_latest_release_date](https://www.r-pkg.org/badges/last-release/sourcoise)](https://cran.r-project.org/package=sourcoise)
-[![CRAN_latest_release_date](https://www.r-pkg.org/badges/last-release/sourcoise)](https://cran.r-project.org/package=sourcoise)
 <!-- badges: end -->
 
 `{sourcoise}` is a package that provides tools for running an R script
@@ -29,7 +28,7 @@ called in a `sourcoise()` which allows modularity. The cache is
 persistent (on disk, possibly synched with github) across sessions of
 the same project. The package provides tools, for checking the cache,
 `sourcoise_status()`, and refreshing it on demand,
-`sourcoise_refresh()`, or at a given frequency trhough a parameter of
+`sourcoise_refresh()`, or at a given frequency through a parameter of
 `sourcoise()`.
 
 ## Installation
@@ -67,9 +66,9 @@ ggplot(mes_datas) + <<graph code>>
 ```
 ````
 
-The first time the script is run completly, subsequent calls will use
-the cache on disk, persistant across session, unless the cache is
-invalidated.
+The first time the script is run completely, subsequent calls will use
+the cache on disk, persistent across session of the same project (R
+project, ), unless the cache is invalidated.
 
 To check the status of cache, just call `sourcoise_status()`. It will
 scan your project and collect info about your cached data. To refresh
@@ -92,7 +91,7 @@ There are many benefits:
 2.  the cache is transferable via *github*. It’s in a (hidden) folder,
     but saved in the project folder and *committed* by github. The cache
     produced on a workstation can therefore be accessed via `pull` on
-    other workstations, without the need to reexecute the code.
+    other workstations, without the need to re-execute the code.
 
 3.  if the source code triggers an error, you can override it: In the
     case of a package that is not installed, missing data (for example,
@@ -114,13 +113,13 @@ There are many benefits:
     folder where `mon_script.r` is. Then, the code is resusable anywhere
     in the project or elsewhere. Note that it is done with simple copy
     of source scripts and does not compare to a common code called in
-    many situation, which involves another approach (a package for
-    instance).
+    many situation, which involves another approach (a package and
+    functions for instance).
 
 5.  This provides an embryo of reproducibility by designating the script
     that produces the data and thus allowing to complement the code
     chunk with a reference to reproduce it. It is possible to propose
-    the code to be downloaded in the qmd, for instance.
+    the code to be downloaded in the qmd.
 
 ## Coming soon
 
