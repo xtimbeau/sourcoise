@@ -77,7 +77,7 @@ sourcoise_refresh <- function(
     dplyr::arrange(dplyr::desc(.data$date)) |>
     dplyr::slice(1) |>
     dplyr::ungroup() |>
-    dplyr::arrange(dplyr::desc(priority))
+    dplyr::arrange(dplyr::desc(.data$priority))
 
   if(nrow(what)==0)
     return(invisible(list()))
