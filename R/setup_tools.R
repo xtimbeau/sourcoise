@@ -11,7 +11,7 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
 
   if(is.null(args)) {
     ctxt$args <- list()
-    ctxt$argid <- ""
+    ctxt$argid <- NULL
   }
   else {
     ctxt$args <- args

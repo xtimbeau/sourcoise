@@ -13,7 +13,6 @@ sourcoise(
   prevent_exec = getOption("sourcoise.prevent_exec"),
   metadata = getOption("sourcoise.metadata"),
   wd = getOption("sourcoise.wd"),
-  src_in = getOption("sourcoise.src_in"),
   exec_wd = NULL,
   quiet = TRUE,
   inform = FALSE,
@@ -36,8 +35,6 @@ sourcoise(
 \item{metadata}{(boolean) if TRUE \code{sourcoise()} returns a list with data is the \verb{$data}  and various meta data (see details).}
 
 \item{wd}{(character) if \code{project} working directory for the execution of script will be the root of the project. If \code{file} then it will be the dir of the script (défaut) If \code{qmd}, then working dir will be the dir in which the calling \code{qmd} is. Current directory is restored after execution (successful or failed).}
-
-\item{src_in}{(character) if \code{project} searches for source starting at the root of the project, if "file" searches in qmd dir. If "wd", then in working directory. Cache folder (\code{.sourcoise}) is stored there.}
 
 \item{exec_wd}{(character) force exec dir (expert use).}
 
@@ -83,11 +80,12 @@ Usually the fisrt call return and cache the results. Results can be aby R object
 
 In order to simplify usage and to avoid complex bugs, some parameters can be set only globally, through options().
 \itemize{
-\item sourcoise.root (character) force root, and bypass soucroise mechanism to find root. Useful when you want to execute sourcoise in a non-project context (see examples).
-\item sourcoise.nocache (boolean) no caching, so makes sourcoise less useful, can be used for testing purpose
-\item sourcoise.log (default "OFF") log threshold (see \code{logger::log_treshold()}).
-\item sourcoise.grow_cache (integer) (default 5 par défaut) cache limit in number of data file kept.
-\item sourcoise.limit_mb (integer) (default 50) individual cache data files size on disk limit. If above \strong{no caching} occurs.
+\item \code{sourcoise.root} (character) force root, and bypass soucroise mechanism to find root. Useful when you want to execute sourcoise in a non-project context (see examples).
+\code{sourcoise.src_in} (character) if \code{project} searches for source starting at the root of the project, if "file" searches in qmd dir. If "wd", then in working directory. Cache folder (\code{.sourcoise}) is stored there.
+\item \code{sourcoise.nocache} (boolean) no caching, so makes sourcoise less useful, can be used for testing purpose
+\item \code{sourcoise.log} (default "OFF") log threshold (see \code{logger::log_treshold()}).
+\item \code{sourcoise.grow_cache} (integer) (default 5 par défaut) cache limit in number of data file kept.
+\item \code{sourcoise.limit_mb} (integer) (default 50) individual cache data files size on disk limit. If above \strong{no caching} occurs.
 }
 }
 

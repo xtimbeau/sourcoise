@@ -29,11 +29,12 @@
 #' @section Global options:
 #'
 #' In order to simplify usage and to avoid complex bugs, some parameters can be set only globally, through options().
-#' - sourcoise.root (character) force root, and bypass soucroise mechanism to find root. Useful when you want to execute sourcoise in a non-project context (see examples).
-#' - sourcoise.nocache (boolean) no caching, so makes sourcoise less useful, can be used for testing purpose
-#' - sourcoise.log (default "OFF") log threshold (see `logger::log_treshold()`).
-#' - sourcoise.grow_cache (integer) (default 5 par défaut) cache limit in number of data file kept.
-#' - sourcoise.limit_mb (integer) (default 50) individual cache data files size on disk limit. If above **no caching** occurs.
+#' - `sourcoise.root` (character) force root, and bypass soucroise mechanism to find root. Useful when you want to execute sourcoise in a non-project context (see examples).
+#' `sourcoise.src_in` (character) if `project` searches for source starting at the root of the project, if "file" searches in qmd dir. If "wd", then in working directory. Cache folder (`.sourcoise`) is stored there.
+#' - `sourcoise.nocache` (boolean) no caching, so makes sourcoise less useful, can be used for testing purpose
+#' - `sourcoise.log` (default "OFF") log threshold (see `logger::log_treshold()`).
+#' - `sourcoise.grow_cache` (integer) (default 5 par défaut) cache limit in number of data file kept.
+#' - `sourcoise.limit_mb` (integer) (default 50) individual cache data files size on disk limit. If above **no caching** occurs.
 #'
 #' @section Metadata:
 #'
@@ -55,7 +56,6 @@
 #' @param prevent_exec (boolean) prevent execution, cache valid or not, returned previous cached data, possibly invalid.
 #' @param metadata (boolean) if TRUE `sourcoise()` returns a list with data is the `$data`  and various meta data (see details).
 #' @param wd (character) if `project` working directory for the execution of script will be the root of the project. If `file` then it will be the dir of the script (défaut) If `qmd`, then working dir will be the dir in which the calling `qmd` is. Current directory is restored after execution (successful or failed).
-#' @param src_in (character) if `project` searches for source starting at the root of the project, if "file" searches in qmd dir. If "wd", then in working directory. Cache folder (`.sourcoise`) is stored there.
 #' @param exec_wd (character) force exec dir (expert use).
 #' @param quiet (boolean) mute messages and warnings from script execution.
 #' @param inform (boolean) Display logs on console, even if logging is disabled with threshold level "INFO".
@@ -99,7 +99,6 @@ sourcoise <- function(
     prevent_exec = getOption("sourcoise.prevent_exec"),
     metadata = getOption("sourcoise.metadata"),
     wd = getOption("sourcoise.wd"),
-    src_in = getOption("sourcoise.src_in"),
     exec_wd = NULL,
     quiet = TRUE,
     inform = FALSE,
@@ -113,7 +112,7 @@ sourcoise <- function(
              prevent_exec = prevent_exec,
              metadata = metadata,
              wd = wd,
-             src_in = src_in,
+             src_in = getOption("sourcoise.src_in"),
              exec_wd = exec_wd,
              root = getOption("sourcoise.root"),
              quiet = quiet,
@@ -123,6 +122,69 @@ sourcoise <- function(
              grow_cache = getOption("sourcoise.grow_cache"),
              limit_mb = getOption("sourcoise.limit_mb"),
              priority = priority)
+}
+
+
+#' Returns sourcoise metadata on a script
+#'
+#' quick acces to metadata of the script, data is not fecthed.
+#'
+#' -    `timing`: time of full script execution
+#' -    `date`: date of last full execution
+#' -    `size`: size of objects returned (in R memory)
+#' -    `args`: args given to sourcoise for the script
+#' -    `lapse`: dely before reexecution
+#' -    `track`: list of files tracked
+#' -    `qmd_file`: list of qmd calling this script
+#' -    `log_file`: last log file
+#' -    `file_size`: size of data cached on disk
+#' -    `data_date`: date of last data save (if no new data when executed, no data is saved)
+#' -    `data_file`: path to data cached (as a qs2 data file)
+#' -    `file`: path to the json file storing metadata (and .sourcoise dir)
+#' @param path (character) path of the script
+#' @param args (named list) arguments of the script if any
+#'
+#' @returns a named list with cache information
+#' @export
+#'
+#' @examples
+#' @examplesIf rlang::is_installed("insee")
+#' dir <- tempdir()
+#' set_sourcoise_root(dir)
+#' fs::file_copy(
+#'    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
+#'   dir,
+#'   overwrite = TRUE)
+#' # Force execution (root is set explicitly here, it is normally deduced from project)
+#' data <- sourcoise("prix_insee.R", force_exec = TRUE)
+#' # Then we access metadata
+#' sourcoise_meta("prix_insee.R")
+#'
+sourcoise_meta <- function(path, args=NULL) {
+  ctxt <- setup_context(
+    path = path,
+    root = getOption("sourcoise.root"),
+    src_in = getOption("sourcoise.src_in"),
+    exec_wd = NULL,
+    wd = getOption("sourcoise.wd"),
+    track = NULL,
+    args = args,
+    lapse = "never",
+    nocache = FALSE,
+    grow_cache = getOption("sourcoise.grow_cache"),
+    limit_mb = getOption("sourcoise.limit_mb"),
+    log = "OFF",
+    inform = FALSE,
+    priority = 10,
+    quiet = TRUE)
+
+  ctxt <- valid_metas(ctxt)
+
+  good_datas <- ctxt$meta_datas |> purrr::keep(~.x$valid)
+
+  return(good_datas[[1]][c("timing", "date", "size", "args",
+                      "lapse", "track", "qmd_file", "log_file", "file_size",
+                      "data_date", "data_file", "file")])
 }
 
 ## real function

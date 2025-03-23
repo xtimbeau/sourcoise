@@ -2,17 +2,21 @@
 
 ## Correction de bugs
 
-* enregistre correctement le champ date (quand cache est retourné)
-* `ignore.case` dans les recherches de fichiers
-* enregistre correctement le chemin du log si le cache est invalide
+* enregistre correctement le champ date (quand cache est retourné).
+* `ignore.case` dans les recherches de fichiers.
+* enregistre correctement le chemin du log si le cache est invalide.
 * les arguments sont employés (par un *hash*) pour différencier les caches, ce qui permet de les utiliser sans problème.
-* le log est maintenant spécifique à chaque utilisateur
-* cas où le nom de fichier comporte un "." (ne considère pas ça comme une extension)
-* cas où il n'y a pas de projet (root=wd dans ce cas) et `sourcoise()` fonctionne
+* le log est maintenant spécifique à chaque utilisateur.
+* cas où le nom de fichier comporte un "." (ne considère pas ça comme une extension).
+* cas où il n'y a pas de projet (root=wd dans ce cas) et `sourcoise()` fonctionne.
+* nommage correct du fichier si il n'y a pas d'arguments.
 
 ## ajouts
 
-* le paramètre `priority` permet de controller l'ordre d'exécution dans le cas d'un refresh, afin de traiter les cascades d'exécution
+* le paramètre `priority` permet de controller l'ordre d'exécution dans le cas d'un refresh, afin de traiter les cascades d'exécution.
+* simplification des paramètres de `sourcoise()`. Les paramètres enlevés sont fixés globalement par `options()`.
+* la fonction `set_sourcoise_root()` permet de fixer la racine de `sourcoise`.
+* la fonction `sourcoise_meta()` renvoie les métadonnées directement (sans les datas donc).
 
 # sourcoise 0.5.0
 
@@ -26,7 +30,7 @@
 
 ## Correction de bugs
 
-* traite correctement les sources multiples et trouve le plus proche mieux
+* traite correctement les sources multiples et trouve le plus proche mieux.
 
 ### Ajouts
 
