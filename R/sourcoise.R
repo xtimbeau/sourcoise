@@ -26,13 +26,26 @@
 #'
 #' `track` is the trigger #3. It is simply a list of files (following path convention defined by `scr_in`, so either script dir of project dir as reference). If the files in the list are changed then the execution is triggered. It is done with a hash and it is difficult to have a croo plateform hash for excel files. Nevertheless, hash is done on text files with same results of different platforms.
 #'
+#' @section Global options
+#'
+#' In order to simplify usage and to avoid complex bugs, some parameters can be set only globally, through options().
+#' - sourcoise.root (character) force root, and bypass soucroise mechanism to find root. Useful when you want to execute sourcoise in a non-project context (see examples).
+#' - sourcoise.nocache (boolean) no caching, so makes sourcoise less useful, can be used for testing purpose
+#' - sourcoise.log (default "OFF") log threshold (see `logger::log_treshold()`).
+#' - sourcoise.grow_cache (integer) (default 5 par défaut) cache limit in number of data file kept.
+#' - sourcoise.limit_mb (integer) (default 50) individual cache data files size on disk limit. If above **no caching** occurs.
+#'
+#' @section Metadata returned
+#'
 #' If `metadata=TRUE`, a list is returned, with some metadatas. Main ones are `$data`, the data returned, `$date`, execution date, `$timing` execution timing, `$size` of the R object in memory, `$data_file`, `$data_date` and  `$file_size` documenting data file path, date size on disk and last modification date, parameters of the call (`$track`, `$wd`, `$src_in`, `$args` and so on).
 #'
 #' `force_exec` and `prevent_exec` are parameters that force the script execution (trigger #5) of prevent it (so cache is returned or NULL if no cache). Those 2 parameters can be set for one specific execution, but they are intendend to a global setting through the option `sourcoise.force_exec` or `sourcoise.prevent_exec`.
 #'
 #' If returned data after execution is not different than previously cached data, then no caching occurs in order to limit the disk use and to avoid keeping an history of the same data files. This implies the possibility of a difference between last execution date and last data modification date. If you are insterested in the moment data was changed, then `$data_date` is to be preferred.
 #'
-#' Working with github : `sourcoise()` is designed to function with *github*. Cache information is specific to each user (avoiding conflicts) and cached data is named with the hash. Conflicts could occur in the rare case the same script is executed on different machines and that this script return each time a different result (such as a random generator).
+#' @section Working with github
+#'
+#' `sourcoise()` is designed to function with *github*. Cache information is specific to each user (avoiding conflicts) and cached data is named with the hash. Conflicts could occur in the rare case the same script is executed on different machines and that this script return each time a different result (such as a random generator).
 #'
 #' @param path (character) path of the script to execute (see details).
 #' @param args (list) list of args that can be used in the script (in the form `args$xxx`).
@@ -46,11 +59,6 @@
 #' @param exec_wd (character) force exec dir (expert use).
 #' @param quiet (boolean) mute messages and warnings from script execution.
 #' @param inform (boolean) Display logs on console, even if logging is disabled with threshold level "INFO".
-#' @param root (character) force root (expert use).
-#' @param nocache (boolean) no caching.
-#' @param log (default "OFF") log threshold (see `logger::log_treshold()`).
-#' @param grow_cache (integer) (default 5 par défaut) cache limit in number of data file kept.
-#' @param limit_mb (integer) (default 50) individual cache data files size on disk limit. If above **no caching**.
 #' @param priority (integer) (default 10) can be used as a way to control the order of execution when refreshing data (see `sourcoise_refresh()`)
 
 #'
@@ -70,15 +78,17 @@
 #' @examplesIf rlang::is_installed(c("insee", "bench"))
 #' # Performance and mem test
 #' dir <- tempdir()
+#' options(sourcoise.root = dir)
 #' fs::file_copy(
 #'    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
 #'    dir,
 #'    overwrite = TRUE)
 #' bench::mark(
-#'  forced = data <- sourcoise("prix_insee.r", root = dir, force_exec = TRUE),
-#'  cached = data <- sourcoise("prix_insee.r", root = dir),
+#'  forced = data <- sourcoise("prix_insee.r", force_exec = TRUE),
+#'  cached = data <- sourcoise("prix_insee.r"),
 #'  max_iterations = 5)
-
+#'
+## wrapper (limit the parameters)
 sourcoise <- function(
     path,
     args = list(),
@@ -90,9 +100,46 @@ sourcoise <- function(
     wd = getOption("sourcoise.wd"),
     src_in = getOption("sourcoise.src_in"),
     exec_wd = NULL,
-    root = NULL,
     quiet = TRUE,
-    nocache = FALSE,
+    inform = FALSE,
+    priority = 10) {
+
+  sourcoise_(path = path,
+             args = args,
+             track = track,
+             lapse = lapse,
+             force_exec = force_exec,
+             prevent_exec = prevent_exec,
+             metadata = metadata,
+             wd = wd,
+             src_in = src_in,
+             exec_wd = exec_wd,
+             root = getOption("sourcoise.root"),
+             quiet = quiet,
+             nocache = getOption("sourcoise.nocache"),
+             inform = inform,
+             log = getOption("sourcoise.log"),
+             grow_cache = getOption("sourcoise.grow_cache"),
+             limit_mb = getOption("sourcoise.limit_mb"),
+             priority = priority)
+}
+
+## real function
+
+sourcoise_ <- function(
+    path,
+    args = list(),
+    track = list(),
+    lapse = getOption("sourcoise.lapse"),
+    force_exec = getOption("sourcoise.force_exec"),
+    prevent_exec = getOption("sourcoise.prevent_exec"),
+    metadata = getOption("sourcoise.metadata"),
+    wd = getOption("sourcoise.wd"),
+    src_in = getOption("sourcoise.src_in"),
+    exec_wd = NULL,
+    root = getOption("sourcoise.root"),
+    quiet = TRUE,
+    nocache = getOption("sourcoise.nocache"),
     inform = FALSE,
     log = getOption("sourcoise.log"),
     grow_cache = getOption("sourcoise.grow_cache"),
@@ -113,7 +160,7 @@ sourcoise <- function(
     limit_mb = limit_mb,
     log = log,
     inform = inform,
-    priority = 10,
+    priority = priority,
     quiet = quiet)
 
   if(is.null(ctxt)) {

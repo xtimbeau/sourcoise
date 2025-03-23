@@ -4,6 +4,9 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
                           lapse, nocache, limit_mb, grow_cache, log, priority, inform=FALSE, quiet=TRUE) {
   ctxt <- list()
 
+  if(!fs::dir_exists(root))
+    root <- NULL
+
   if(is.null(track))
     ctxt$track <- list()
   else
