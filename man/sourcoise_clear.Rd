@@ -23,15 +23,16 @@ removes every json and qs2 files found by \code{sourcoise_status()} unless a spe
 \examples{
 \dontshow{if (rlang::is_installed("insee")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 dir <- tempdir()
+set_sourcoise_root(dir)
 fs::file_copy(
     fs::path_package("sourcoise", "ipch", "prix_insee.R"),
     dir,
     overwrite = TRUE)
-# Force execution (root is set explicitly here, it is normally deduced from project)
-data <- sourcoise("prix_insee.R", root = dir, force_exec = TRUE)
+# Force execution
+data <- sourcoise("prix_insee.R", force_exec = TRUE)
 # we then clear all caches
-sourcoise_clear(root = dir)
-sourcoise_status(root = dir)
+sourcoise_clear()
+sourcoise_status()
 \dontshow{\}) # examplesIf}
 }
 \seealso{

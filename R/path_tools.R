@@ -23,8 +23,15 @@ try_find_src <- function(root, name) {
 }
 
 try_find_root <- function(root=NULL, src_in = getOption("sourcoise.src_in"), quiet = TRUE) {
-  if(!is.null(root))
-    return(root)
+  if(!is.null(root)) {
+    if(fs::dir_exists(root))
+      return(root)
+    root <- NULL
+  }
+  if(!is.null(getOption("sourcoise.root"))) {
+    if(fs::dir_exists(getOption("sourcoise.root")))
+      return(getOption("sourcoise.root"))
+  }
   if(src_in == "project") {
     if(Sys.getenv("QUARTO_PROJECT_DIR") == "") {
       safe_find_root <- purrr::safely(rprojroot::find_root)

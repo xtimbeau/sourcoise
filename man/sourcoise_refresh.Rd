@@ -60,14 +60,15 @@ Defining a \code{priority} in \code{sourcoise()}, will change the order of execu
 \examples{
 \dontshow{if (rlang::is_installed("insee")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 dir <- tempdir()
+set_sourcoise_root(dir)
 fs::file_copy(
    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
    dir,
    overwrite = TRUE)
-# Force execution (root is set explicitly here, it is normally deduced from project)
-data <- sourcoise("prix_insee.R", root = dir, force_exec = TRUE)
+# Force execution
+data <- sourcoise("prix_insee.R", force_exec = TRUE)
 # we then refresh all caches
-sourcoise_refresh(root = dir)
+sourcoise_refresh()
 \dontshow{\}) # examplesIf}
 }
 \seealso{

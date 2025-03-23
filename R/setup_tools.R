@@ -4,9 +4,6 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
                           lapse, nocache, limit_mb, grow_cache, log, priority, inform=FALSE, quiet=TRUE) {
   ctxt <- list()
 
-  if(!fs::dir_exists(root))
-    root <- NULL
-
   if(is.null(track))
     ctxt$track <- list()
   else
@@ -34,10 +31,7 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
   # on trouve le fichier
   ctxt$name <- remove_ext(path)
   ctxt$paths <- find_project_root()
-  if(is.null(root))
-    ctxt$root <- try_find_root(root, src_in)
-  else
-    ctxt$root <- fs::path_abs(root)
+  ctxt$root <- try_find_root(root, src_in)
 
   ctxt$uid <- digest::digest(ctxt$root, algo = "crc32")
 

@@ -38,14 +38,15 @@
 #' @export
 #' @examplesIf rlang::is_installed("insee")
 #' dir <- tempdir()
+#' set_sourcoise_root(dir)
 #' fs::file_copy(
 #'    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
 #'    dir,
 #'    overwrite = TRUE)
-#' # Force execution (root is set explicitly here, it is normally deduced from project)
-#' data <- sourcoise("prix_insee.R", root = dir, force_exec = TRUE)
+#' # Force execution
+#' data <- sourcoise("prix_insee.R", force_exec = TRUE)
 #' # we then refresh all caches
-#' sourcoise_refresh(root = dir)
+#' sourcoise_refresh()
 
 sourcoise_refresh <- function(
     what = NULL,
@@ -104,7 +105,7 @@ sourcoise_refresh <- function(
       exec_wd <- fs::path_join(c(root, fs::path_dir(src))) |> fs::path_norm()
     if(wd=="qmd")
       exec_wd <- fs::path_join(c(root, fs::path_dir(qmd_file[[1]]))) |> fs::path_norm()
-    src_data <- sourcoise(
+    src_data <- sourcoise_(
       path = src,
       force_exec = force_exec,
       track = track,

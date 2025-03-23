@@ -26,7 +26,7 @@
 #'
 #' `track` is the trigger #3. It is simply a list of files (following path convention defined by `scr_in`, so either script dir of project dir as reference). If the files in the list are changed then the execution is triggered. It is done with a hash and it is difficult to have a croo plateform hash for excel files. Nevertheless, hash is done on text files with same results of different platforms.
 #'
-#' @section Global options
+#' @section Global options:
 #'
 #' In order to simplify usage and to avoid complex bugs, some parameters can be set only globally, through options().
 #' - sourcoise.root (character) force root, and bypass soucroise mechanism to find root. Useful when you want to execute sourcoise in a non-project context (see examples).
@@ -35,7 +35,7 @@
 #' - sourcoise.grow_cache (integer) (default 5 par défaut) cache limit in number of data file kept.
 #' - sourcoise.limit_mb (integer) (default 50) individual cache data files size on disk limit. If above **no caching** occurs.
 #'
-#' @section Metadata returned
+#' @section Metadata:
 #'
 #' If `metadata=TRUE`, a list is returned, with some metadatas. Main ones are `$data`, the data returned, `$date`, execution date, `$timing` execution timing, `$size` of the R object in memory, `$data_file`, `$data_date` and  `$file_size` documenting data file path, date size on disk and last modification date, parameters of the call (`$track`, `$wd`, `$src_in`, `$args` and so on).
 #'
@@ -43,7 +43,7 @@
 #'
 #' If returned data after execution is not different than previously cached data, then no caching occurs in order to limit the disk use and to avoid keeping an history of the same data files. This implies the possibility of a difference between last execution date and last data modification date. If you are insterested in the moment data was changed, then `$data_date` is to be preferred.
 #'
-#' @section Working with github
+#' @section Working with github:
 #'
 #' `sourcoise()` is designed to function with *github*. Cache information is specific to each user (avoiding conflicts) and cached data is named with the hash. Conflicts could occur in the rare case the same script is executed on different machines and that this script return each time a different result (such as a random generator).
 #'
@@ -67,18 +67,19 @@
 #' @export
 #' @examplesIf rlang::is_installed("insee")
 #' dir <- tempdir()
+#' set_sourcoise_root(dir)
 #' fs::file_copy(
 #'    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
 #'   dir,
 #'   overwrite = TRUE)
 #' # Force execution (root is set explicitly here, it is normally deduced from project)
-#' data <- sourcoise("prix_insee.R", root = dir, force_exec = TRUE)
+#' data <- sourcoise("prix_insee.R", force_exec = TRUE)
 #' # The second time cache is used
-#' data <- sourcoise("prix_insee.R", root = dir)
+#' data <- sourcoise("prix_insee.R")
 #' @examplesIf rlang::is_installed(c("insee", "bench"))
 #' # Performance and mem test
 #' dir <- tempdir()
-#' options(sourcoise.root = dir)
+#' set_sourcoise_root(dir)
 #' fs::file_copy(
 #'    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
 #'    dir,

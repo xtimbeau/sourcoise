@@ -15,13 +15,8 @@ sourcoise(
   wd = getOption("sourcoise.wd"),
   src_in = getOption("sourcoise.src_in"),
   exec_wd = NULL,
-  root = NULL,
   quiet = TRUE,
-  nocache = FALSE,
   inform = FALSE,
-  log = getOption("sourcoise.log"),
-  grow_cache = getOption("sourcoise.grow_cache"),
-  limit_mb = getOption("sourcoise.limit_mb"),
   priority = 10
 )
 }
@@ -46,19 +41,9 @@ sourcoise(
 
 \item{exec_wd}{(character) force exec dir (expert use).}
 
-\item{root}{(character) force root (expert use).}
-
 \item{quiet}{(boolean) mute messages and warnings from script execution.}
 
-\item{nocache}{(boolean) no caching.}
-
 \item{inform}{(boolean) Display logs on console, even if logging is disabled with threshold level "INFO".}
-
-\item{log}{(default "OFF") log threshold (see \code{logger::log_treshold()}).}
-
-\item{grow_cache}{(integer) (default 5 par défaut) cache limit in number of data file kept.}
-
-\item{limit_mb}{(integer) (default 50) individual cache data files size on disk limit. If above \strong{no caching}.}
 
 \item{priority}{(integer) (default 10) can be used as a way to control the order of execution when refreshing data (see \code{sourcoise_refresh()})}
 }
@@ -92,37 +77,60 @@ Usually the fisrt call return and cache the results. Results can be aby R object
 \code{lapse} parameter is used for invalidation trigger 4. \code{lapse = "1 day"} ou \code{lapse="day"} for instance will trigger once a day the execution. \code{lapse = "3 days"} will do it every 72h. \code{hours}, \code{weeks}, \code{months}, \code{quarters} or \code{years} are understood time units. MOre complex calendar instructions could be added, but \code{sourcoise_refesh()} provides a solution more general and easy to adapt to any use case, as to my knowledge, there is no general mechanism to be warned of data updates.
 
 \code{track} is the trigger #3. It is simply a list of files (following path convention defined by \code{scr_in}, so either script dir of project dir as reference). If the files in the list are changed then the execution is triggered. It is done with a hash and it is difficult to have a croo plateform hash for excel files. Nevertheless, hash is done on text files with same results of different platforms.
+}
+\section{Global options}{
+
+
+In order to simplify usage and to avoid complex bugs, some parameters can be set only globally, through options().
+\itemize{
+\item sourcoise.root (character) force root, and bypass soucroise mechanism to find root. Useful when you want to execute sourcoise in a non-project context (see examples).
+\item sourcoise.nocache (boolean) no caching, so makes sourcoise less useful, can be used for testing purpose
+\item sourcoise.log (default "OFF") log threshold (see \code{logger::log_treshold()}).
+\item sourcoise.grow_cache (integer) (default 5 par défaut) cache limit in number of data file kept.
+\item sourcoise.limit_mb (integer) (default 50) individual cache data files size on disk limit. If above \strong{no caching} occurs.
+}
+}
+
+\section{Metadata}{
+
 
 If \code{metadata=TRUE}, a list is returned, with some metadatas. Main ones are \verb{$data}, the data returned, \verb{$date}, execution date, \verb{$timing} execution timing, \verb{$size} of the R object in memory, \verb{$data_file}, \verb{$data_date} and  \verb{$file_size} documenting data file path, date size on disk and last modification date, parameters of the call (\verb{$track}, \verb{$wd}, \verb{$src_in}, \verb{$args} and so on).
 
 \code{force_exec} and \code{prevent_exec} are parameters that force the script execution (trigger #5) of prevent it (so cache is returned or NULL if no cache). Those 2 parameters can be set for one specific execution, but they are intendend to a global setting through the option \code{sourcoise.force_exec} or \code{sourcoise.prevent_exec}.
 
 If returned data after execution is not different than previously cached data, then no caching occurs in order to limit the disk use and to avoid keeping an history of the same data files. This implies the possibility of a difference between last execution date and last data modification date. If you are insterested in the moment data was changed, then \verb{$data_date} is to be preferred.
-
-Working with github : \code{sourcoise()} is designed to function with \emph{github}. Cache information is specific to each user (avoiding conflicts) and cached data is named with the hash. Conflicts could occur in the rare case the same script is executed on different machines and that this script return each time a different result (such as a random generator).
 }
+
+\section{Working with github}{
+
+
+\code{sourcoise()} is designed to function with \emph{github}. Cache information is specific to each user (avoiding conflicts) and cached data is named with the hash. Conflicts could occur in the rare case the same script is executed on different machines and that this script return each time a different result (such as a random generator).
+}
+
 \examples{
 \dontshow{if (rlang::is_installed("insee")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 dir <- tempdir()
+set_sourcoise_root(dir)
 fs::file_copy(
    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
   dir,
   overwrite = TRUE)
 # Force execution (root is set explicitly here, it is normally deduced from project)
-data <- sourcoise("prix_insee.R", root = dir, force_exec = TRUE)
+data <- sourcoise("prix_insee.R", force_exec = TRUE)
 # The second time cache is used
-data <- sourcoise("prix_insee.R", root = dir)
+data <- sourcoise("prix_insee.R")
 \dontshow{\}) # examplesIf}
 \dontshow{if (rlang::is_installed(c("insee", "bench"))) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # Performance and mem test
 dir <- tempdir()
+set_sourcoise_root(dir)
 fs::file_copy(
    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
    dir,
    overwrite = TRUE)
 bench::mark(
- forced = data <- sourcoise("prix_insee.r", root = dir, force_exec = TRUE),
- cached = data <- sourcoise("prix_insee.r", root = dir),
+ forced = data <- sourcoise("prix_insee.r", force_exec = TRUE),
+ cached = data <- sourcoise("prix_insee.r"),
  max_iterations = 5)
 \dontshow{\}) # examplesIf}
 }

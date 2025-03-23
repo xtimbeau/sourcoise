@@ -11,7 +11,7 @@
     sourcoise.unfreeze = FALSE,
     sourcoise.log = "OFF",
     sourcoise.root = NULL,
-    sourcoise.nocache = NULL,
+    sourcoise.nocache = FALSE,
     sourcoise.grow_cache = 5,
     sourcoise.limit_mb = 50,
     sourcoise.nthreads = 1,
