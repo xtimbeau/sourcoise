@@ -54,7 +54,7 @@ sourcoise_refresh <- function(
     unfreeze = TRUE,
     quiet = FALSE,
     init_fn = getOption("sourcoise.init_fn"),
-    root = NULL,
+    root = getOption("sourcoise.root"),
     log = "INFO",
     .progress = TRUE) {
 

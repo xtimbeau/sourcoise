@@ -64,12 +64,10 @@ test_that("sourcoise_meta", {
 
 status <- sourcoise_status()
 
-if(rlang::is_installed("tibble")) {
-  test_that("sourcoise_status", {
-    expect(tibble::is_tibble(status)&nrow(status)>0,
-           "status is not a non empty tibble")
-  })
-}
+test_that("sourcoise_status", {
+  expect(tibble::is_tibble(status)&nrow(status)>0,
+         "status is not a non empty tibble")
+})
 
 test_that("sourcoise_status", {
   expect(all(c("src", "root", "args", "track", "lapse") %in% names(status)),
