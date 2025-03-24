@@ -18,6 +18,10 @@
 * la fonction `set_sourcoise_root()` permet de fixer la racine de `sourcoise`.
 * la fonction `sourcoise_meta()` renvoie les métadonnées directement (sans les datas donc).
 
+## autres
+
+* tests inclus, `{covr}` implementé.
+
 # sourcoise 0.5.0
 
 * CRAN version

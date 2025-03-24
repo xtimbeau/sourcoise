@@ -20,7 +20,6 @@
 #' @returns a named list with cache information
 #' @export
 #'
-#' @examples
 #' @examplesIf rlang::is_installed("insee")
 #' dir <- tempdir()
 #' set_sourcoise_root(dir)
@@ -57,7 +56,7 @@ sourcoise_meta <- function(path, args=NULL) {
   good_datas <- ctxt$meta_datas |> purrr::keep(~.x$valid)
   if(length(good_datas)==0)
     if(length(ctxt$meta_datas)>=1) {
-      nogood_data <- ctxt$meta_datas[which.max(map_chr(ctxt$meta_datas, "data_date") |> as.Date())]
+      nogood_data <- ctxt$meta_datas[which.max(purrr::map_chr(ctxt$meta_datas, "data_date") |> as.Date())]
       nogood_data$ok <- "invalid cache"
       nogood_data$json_file <- nogood_data$file
       return(nogood_data[c("ok", "timing", "date", "size", "args",

@@ -1,11 +1,5 @@
 # fonctions --------------------
 
-check_return <- function(src) {
-  src.txt <- readLines(src, warn=FALSE)
-  ret <- stringr::str_extract(src.txt, "^return\\((.*)", group=1)
-  purrr::keep(ret, ~!is.na(.x))
-}
-
 what_lapse <- function(check) {
 
   ext <- function(e) {

@@ -13,3 +13,4 @@ vignettes/\.quarto
 ^README\.Rmd$
 rinit.r
 ^codecov\.yml$
+.covrignore
