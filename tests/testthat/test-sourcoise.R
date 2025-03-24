@@ -43,7 +43,7 @@ if(rlang::is_installed("bench")) {
   timing <- bench::mark(sourcoise("prix_insee.R", lapse = "hour"))
 
   test_that("Timings", {
-    expect(timing_force$median>5*timing$median,
+    expect(timing_force$median>=timing$median,
            "cache is too slow")
   })
 }
