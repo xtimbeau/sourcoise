@@ -36,7 +36,7 @@ cache_data <- function(data, ctxt) {
       exists <- fs::file_exists(exists_data_file)
       finfo <- fs::file_info(exists_data_file)
       exists_file_size <- finfo$size
-      exists_data_date <- finfo$modification_time
+      exists_data_date <- finfo$modification_time |> as.character()
     }
     cc <- max(files$cc, na.rm = TRUE) + 1
   }
@@ -47,7 +47,7 @@ cache_data <- function(data, ctxt) {
   data$uid <- ctxt$uid
   data$priority <- ctxt$priority
   data$cc <- cc
-  fnm <- fs::path_join(
+  data$json_file <- fs::path_join(
     c(ctxt$full_cache_rep,
       stringr::str_c(ctxt$basename, "_", stringr::str_c(data$id, ".json"))))
   if(!ctxt$nocache) {
@@ -76,7 +76,8 @@ cache_data <- function(data, ctxt) {
       les_metas$data_date <- exists_data_date
     }
     les_metas$data_file <- data$data_file <- fs::path_file(fnd)
-    jsonlite::write_json(les_metas, path = fnm)
+    data$data_date <- les_metas$data_date
+    jsonlite::write_json(les_metas, path = data$json_file)
     prune_cache(ctxt)
   }
   return(data)
@@ -139,10 +140,12 @@ pick_gooddata <- function(good_datas, ctxt) {
     newmdata$track <- ctxt$track
     newmdata$src_in <- ctxt$src_in
     newmdata$log_file <- ctxt$log_file
+    newmdata$json_file <- fnm
     jsonlite::write_json(newmdata, path = fnm)
   }
 
   good_good_data$ok <- "cache"
+  good_good_data$json_file <- fnm
   if(getOption("sourcoise.memoize"))
     good_good_data$data <- read_data_from_cache(fnd)
   else
@@ -153,4 +156,25 @@ pick_gooddata <- function(good_datas, ctxt) {
 
 read_data_from_cache <- function(fnd) {
   qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
+}
+
+data_returned <- function(data, ctxt) {
+  if(!ctxt$metadata)
+    return(data$data)
+  list(
+    ok = data$ok,
+    data = data$data,
+    timing = data$timing,
+    date = data$date,
+    size = data$size,
+    args = ctxt$args,
+    lapse = ctxt$lapse,
+    track = ctxt$track,
+    qmd_file = ctxt$qmd_file,
+    log_file = ctxt$log_file,
+    data_file = data$data_file,
+    file_size = data$file_size,
+    data_date = data$data_date,
+    json_file = data$json_file
+  )
 }

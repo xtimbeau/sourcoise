@@ -12,3 +12,4 @@ vignettes/\.quarto
 ^CRAN-SUBMISSION$
 ^README\.Rmd$
 rinit.r
+^codecov\.yml$

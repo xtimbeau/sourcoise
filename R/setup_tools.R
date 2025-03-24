@@ -1,7 +1,8 @@
 # calcule les différents chemins et trouve les fichiers/répertoire dont on a besoin
 
 setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
-                          lapse, nocache, limit_mb, grow_cache, log, priority, inform=FALSE, quiet=TRUE) {
+                          lapse, nocache, limit_mb, grow_cache, log, priority,
+                          metadata, inform=FALSE, quiet=TRUE) {
   ctxt <- list()
 
   if(is.null(track))
@@ -9,14 +10,12 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
   else
     ctxt$track <- track
 
-  if(is.null(args)) {
+  if(is.null(args))
     ctxt$args <- list()
-    ctxt$argid <- NULL
-  }
-  else {
+  else
     ctxt$args <- args
-    ctxt$argid <- digest::digest(args, algo = "crc32")
-  }
+
+  ctxt$argid <- digest::digest(args, algo = "crc32")
 
   ctxt$lapse <- lapse
   ctxt$quiet <- quiet
@@ -27,6 +26,7 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
   ctxt$grow_cache <- grow_cache
   ctxt$limit_mb <- limit_mb
   ctxt$priority <- priority
+  ctxt$metadata <- metadata
 
   # on trouve le fichier
   ctxt$name <- remove_ext(path)

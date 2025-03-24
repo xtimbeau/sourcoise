@@ -124,69 +124,6 @@ sourcoise <- function(
              priority = priority)
 }
 
-
-#' Returns sourcoise metadata on a script
-#'
-#' quick acces to metadata of the script, data is not fecthed.
-#'
-#' -    `timing`: time of full script execution
-#' -    `date`: date of last full execution
-#' -    `size`: size of objects returned (in R memory)
-#' -    `args`: args given to sourcoise for the script
-#' -    `lapse`: dely before reexecution
-#' -    `track`: list of files tracked
-#' -    `qmd_file`: list of qmd calling this script
-#' -    `log_file`: last log file
-#' -    `file_size`: size of data cached on disk
-#' -    `data_date`: date of last data save (if no new data when executed, no data is saved)
-#' -    `data_file`: path to data cached (as a qs2 data file)
-#' -    `file`: path to the json file storing metadata (and .sourcoise dir)
-#' @param path (character) path of the script
-#' @param args (named list) arguments of the script if any
-#'
-#' @returns a named list with cache information
-#' @export
-#'
-#' @examples
-#' @examplesIf rlang::is_installed("insee")
-#' dir <- tempdir()
-#' set_sourcoise_root(dir)
-#' fs::file_copy(
-#'    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
-#'   dir,
-#'   overwrite = TRUE)
-#' # Force execution (root is set explicitly here, it is normally deduced from project)
-#' data <- sourcoise("prix_insee.R", force_exec = TRUE)
-#' # Then we access metadata
-#' sourcoise_meta("prix_insee.R")
-#'
-sourcoise_meta <- function(path, args=NULL) {
-  ctxt <- setup_context(
-    path = path,
-    root = getOption("sourcoise.root"),
-    src_in = getOption("sourcoise.src_in"),
-    exec_wd = NULL,
-    wd = getOption("sourcoise.wd"),
-    track = NULL,
-    args = args,
-    lapse = "never",
-    nocache = FALSE,
-    grow_cache = getOption("sourcoise.grow_cache"),
-    limit_mb = getOption("sourcoise.limit_mb"),
-    log = "OFF",
-    inform = FALSE,
-    priority = 10,
-    quiet = TRUE)
-
-  ctxt <- valid_metas(ctxt)
-
-  good_datas <- ctxt$meta_datas |> purrr::keep(~.x$valid)
-
-  return(good_datas[[1]][c("timing", "date", "size", "args",
-                      "lapse", "track", "qmd_file", "log_file", "file_size",
-                      "data_date", "data_file", "file")])
-}
-
 ## real function
 
 sourcoise_ <- function(
@@ -224,7 +161,8 @@ sourcoise_ <- function(
     log = log,
     inform = inform,
     priority = priority,
-    quiet = quiet)
+    quiet = quiet,
+    metadata = metadata)
 
   if(is.null(ctxt)) {
     logger::log_error("file {path} not found")
@@ -245,11 +183,7 @@ sourcoise_ <- function(
       our_data <- cache_data(our_data, ctxt)
       logger::log_success(
         "{ctxt$relname} (forced) in {round(our_data$timing, 2)} sec. ({scales::label_bytes()(our_data$size)})")
-      if(metadata) {
-        return(our_data)
-      } else {
-        return(our_data$data)
-      }
+      return(data_returned(our_data, ctxt))
     }
   }
 
@@ -268,11 +202,9 @@ sourcoise_ <- function(
       our_data <- cache_data(our_data, ctxt)
       logger::log_success(
         "{ctxt$relname} (exec. no cache found) in {round(our_data$timing, 2)} sec. ({scales::label_bytes()(our_data$size)})")
-      if(metadata) {
-        return(our_data)
-      } else {
-        return(our_data$data)
-      }
+
+      return(data_returned(our_data, ctxt))
+
     } else {
       if(length(ctxt$meta_datas)==0) {
         msg <- "{ctxt$relname} failed, no cache: \n{our_data$error$message}"
@@ -282,7 +214,8 @@ sourcoise_ <- function(
         return(our_data)
       }
       return_data <- pick_gooddata(ctxt$meta_datas, ctxt)
-      msg <- "{ctxt$relname} failed, returning invalid cache ({scales::label_bytes()(return_data$size)})"
+      msg <-
+        "{ctxt$relname} failed, returning invalid cache ({scales::label_bytes()(return_data$size)})"
       if(ctxt$quiet)
         cli::cli_alert_danger(msg)
       logger::log_warn(msg)
@@ -292,10 +225,6 @@ sourcoise_ <- function(
     logger::log_success("{ctxt$relname} valid cache ({scales::label_bytes()(return_data$size)})")
   }
 
-  if(metadata) {
-    return(return_data)
-  } else {
-    return(return_data$data)
-  }
+  return(data_returned(return_data, ctxt))
 }
 

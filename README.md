@@ -13,6 +13,8 @@ stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://
 [![metacran
 downloads](https://cranlogs.r-pkg.org/badges/sourcoise)](https://cran.r-project.org/package=sourcoise)
 [![CRAN_latest_release_date](https://www.r-pkg.org/badges/last-release/sourcoise)](https://cran.r-project.org/package=sourcoise)
+[![Codecov test
+coverage](https://codecov.io/gh/xtimbeau/sourcoise/graph/badge.svg)](https://app.codecov.io/gh/xtimbeau/sourcoise)
 <!-- badges: end -->
 
 `{sourcoise}` is a package that provides tools for running an R script

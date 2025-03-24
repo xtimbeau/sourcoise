@@ -1,0 +1,97 @@
+library(tidyverse)
+
+dir <- tempdir()
+set_sourcoise_root(dir)
+fs::file_copy(
+  fs::path_package("sourcoise", "ipch", "prix_insee.R"),
+  dir,
+  overwrite = TRUE)
+# Force execution (root is set explicitly here, it is normally deduced from project)
+timing_force <- bench::mark(sourcoise("prix_insee.R", force_exec = TRUE, lapse = "hour"))
+timing <- bench::mark(sourcoise("prix_insee.R", lapse = "hour"))
+data <- sourcoise("prix_insee.R", force_exec = TRUE, metadata = TRUE)
+
+## sourcoise() ----------------
+
+test_that("We get data", {
+  expect(
+    identical(x=names(data$data), y=c("ipcha", "ipchm", "ipch")),
+    "Execution is wrong")
+})
+
+cache_dir <- fs::path_dir(data$json_file)
+
+test_that("Cache dir is there", {
+  expect(
+    fs::dir_exists(cache_dir),
+    "No cache dir")
+})
+
+test_that("Data cached is well named", {
+  expect(
+    str_detect(data$data_file, "prix_insee-4262323b.+\\.qs2"),
+    "wrong name")
+})
+
+test_that("Data cached exists", {
+  expect(
+    fs::file_exists(fs::path_join(c(fs::path_dir(data$json_file), data$data_file))),
+    "no data cached")
+})
+
+## timing test
+
+test_that("Timings", {
+  expect(timing_force$median>5*timing$median,
+         "cache is too slow")
+})
+
+## sourcoise_meta ----------------
+
+meta <- sourcoise_meta("prix_insee.R")
+
+test_that("sourcoise_meta", {
+  expect(meta$ok == "cache ok&valid",
+         "no metadata returned")
+  expect(meta$data_date == str_remove(data$data_date, " CET$"),
+         "date not the same")
+  expect(meta$data_file == data$data_file,
+         "data_file not the same")
+})
+
+## sourcoise_status ----------------
+
+test_that("sourcoise_status", {
+  expect(is_tibble(sourcoise_status())&nrow(sourcoise_status())>0,
+         "status is not a non empty tibble")
+})
+
+test_that("sourcoise_status", {
+  expect(all(c("src", "root", "args", "track", "lapse") %in% names(sourcoise_status())),
+         "status is not well formed")
+})
+
+## sourcoise_refresh
+
+sr <- sourcoise_refresh()
+
+test_that("sourcoise_refresh", {
+  expect(length(sr)==4 & sr$ok[[1]]=="exec",
+         "Refresh did not worked")
+})
+
+## sourcoise_clear ----------------
+
+sourcoise_clear()
+
+test_that("sourcoise_status", {
+  expect(is_tibble(sourcoise_status())&nrow(sourcoise_status())==0,
+         "status is not an empty tibble")
+})
+
+sourcoise_reset()
+
+test_that("sourcoise_reset", {
+  expect(!fs::dir_exists(cache_dir),
+         "cache dir was not removed")
+})
