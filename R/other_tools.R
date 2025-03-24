@@ -23,7 +23,6 @@ what_lapse <- function(check) {
     return(lubridate::years(ext(check)))
 }
 
-
 unfreeze <- function(qmd_file, root, quiet=TRUE) {
   if(is.null(qmd_file))
     return(NULL)

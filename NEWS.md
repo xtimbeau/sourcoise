@@ -10,6 +10,7 @@
 * cas où le nom de fichier comporte un "." (ne considère pas ça comme une extension).
 * cas où il n'y a pas de projet (root=wd dans ce cas) et `sourcoise()` fonctionne.
 * nommage correct du fichier si il n'y a pas d'arguments.
+* différencie bien les scripts selon les arguments lors de `status` ou `refresh`
 
 ## ajouts
 

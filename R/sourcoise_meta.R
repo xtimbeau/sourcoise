@@ -64,8 +64,6 @@ sourcoise_meta <- function(path, args=NULL) {
                                "data_date", "data_file", "json_file")])
     } else
     return(list(ok="no cache data"))
-  else
-
 
   good_datas[[1]]$json_file <- good_datas[[1]]$file
   good_datas[[1]]$ok <- "cache ok&valid"

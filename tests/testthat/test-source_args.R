@@ -1,5 +1,8 @@
 dir <- tempdir()
 set_sourcoise_root(dir)
+
+sourcoise_clear()
+
 fs::file_copy(
   fs::path_package("sourcoise", "synthetic.R"),
   dir,
@@ -21,12 +24,11 @@ if(tibble::is_tibble(data_100)) {
       "Wrong execution with size=1000")
   })
 }
-## test clear
 
-sourcoise_clear()
+sr <- sourcoise_refresh()
 
-test_that("Right with args (100)", {
-  expect(
-    nrow(data_100)==100,
-    "Wrong execution with size=100")
-})
+test_that(
+  "refresh is ok", {
+  expect(length(sr)==4 & length(sr$ok) == 2, "Error in refresh")
+  })
+

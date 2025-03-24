@@ -14,3 +14,4 @@ vignettes/\.quarto
 rinit.r
 ^codecov\.yml$
 .covrignore
+.travis.yml

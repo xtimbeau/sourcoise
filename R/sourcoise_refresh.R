@@ -74,7 +74,7 @@ sourcoise_refresh <- function(
 
   # on en garde qu'un et on trie dans l'ordre des priorités
   what <- what |>
-    dplyr::group_by(.data$src) |>
+    dplyr::group_by(.data$src, .data$args) |>
     dplyr::arrange(dplyr::desc(.data$date)) |>
     dplyr::slice(1) |>
     dplyr::ungroup() |>

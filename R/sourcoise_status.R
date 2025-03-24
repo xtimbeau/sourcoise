@@ -120,7 +120,7 @@ sourcoise_status <- function(
 
       if(prune)
         cached <- cached |>
-          dplyr::group_by(.data$src) |>
+          dplyr::group_by(.data$src, .data$args) |>
           dplyr::filter(.data$date == max(.data$date)) |>
           dplyr::ungroup()
 

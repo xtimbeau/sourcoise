@@ -1,11 +1,12 @@
 dir <- tempdir()
 set_sourcoise_root(dir)
+sourcoise_reset()
 fs::file_copy(
   fs::path_package("sourcoise", "ipch", "prix_insee.R"),
   dir,
   overwrite = TRUE)
 # Force execution (root is set explicitly here, it is normally deduced from project)
-
+options(sourcoise.log = "INFO")
 data <- sourcoise("prix_insee.R", force_exec = TRUE, metadata = TRUE)
 
 ## sourcoise() ----------------
@@ -36,6 +37,11 @@ test_that("Data cached exists", {
     "no data cached")
 })
 
+test_that("prevent works", {
+  expect( sourcoise("prix_insee.R", prevent_exec = TRUE, metadata = TRUE)$ok == "cache",
+          "prevent fails")
+})
+
 ## timing test
 
 if(rlang::is_installed("bench")) {
@@ -59,6 +65,33 @@ test_that("sourcoise_meta", {
   expect(meta$data_file == data$data_file,
          "data_file not the same")
 })
+
+test_that("meta ok when no cache", {
+  expect(sourcoise_meta("toto.R")$ok == "no cache data",
+         "meta fails when nothing found")
+})
+
+## track files
+
+# write.csv("data", file = fs::path_join(c(dir, "data.csv")))
+# zz <- sourcoise("prix_insee.R", track = "data.csv", metadata=TRUE)
+#
+# test_that(
+#   "tracking", {
+#     expect(sourcoise("prix_insee.R", track = "data.csv", metadata=TRUE)$ok == "cache", "cache ?")
+#   })
+#
+# write.csv("data modified", file = fs::path_join(c(dir, "data.csv")))
+#
+# test_that(
+#   "tracking", {
+#     expect(sourcoise("prix_insee.R", track = "data.csv", metadata=TRUE)$ok == "exec",  "exec ?")
+#   })
+#
+# test_that(
+#   "tracking", {
+#     expect(sourcoise("prix_insee.R", track = "data.csv", metadata=TRUE)$ok == "cache",  "cache ?")
+#   })
 
 ## sourcoise_status ----------------
 
@@ -88,12 +121,12 @@ test_that("sourcoise_refresh", {
 sourcoise_clear()
 status <- sourcoise_status()
 
-if(rlang::is_installed("tibble")) {
-  test_that("sourcoise_status", {
-    expect(tibble::is_tibble(status)&nrow(status)==0,
-           "status is not an empty tibble")
-  })
-}
+
+test_that("sourcoise_status", {
+  expect(tibble::is_tibble(status)&nrow(status)==0,
+         "status is not an empty tibble")
+})
+
 sourcoise_reset()
 
 test_that("sourcoise_reset", {
