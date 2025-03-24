@@ -41,18 +41,22 @@
 <h2 class="pkg-version" data-toc-text="development version" id="sourcoise-development-version">sourcoise (development version)<a class="anchor" aria-label="anchor" href="#sourcoise-development-version"></a></h2>
 <div class="section level3">
 <h3 id="correction-de-bugs-development-version">Correction de bugs<a class="anchor" aria-label="anchor" href="#correction-de-bugs-development-version"></a></h3>
-<ul><li>enregistre correctement le champ date (quand cache est retourné)</li>
+<ul><li>enregistre correctement le champ date (quand cache est retourné).</li>
 <li>
-<code>ignore.case</code> dans les recherches de fichiers</li>
-<li>enregistre correctement le chemin du log si le cache est invalide</li>
+<code>ignore.case</code> dans les recherches de fichiers.</li>
+<li>enregistre correctement le chemin du log si le cache est invalide.</li>
 <li>les arguments sont employés (par un <em>hash</em>) pour différencier les caches, ce qui permet de les utiliser sans problème.</li>
-<li>le log est maintenant spécifique à chaque utilisateur</li>
-<li>cas où le nom de fichier comporte un “.” (ne considère pas ça comme une extension)</li>
-<li>cas où il n’y a pas de projet (root=wd dans ce cas) et <code><a href="../reference/sourcoise.html">sourcoise()</a></code> fonctionne</li>
+<li>le log est maintenant spécifique à chaque utilisateur.</li>
+<li>cas où le nom de fichier comporte un “.” (ne considère pas ça comme une extension).</li>
+<li>cas où il n’y a pas de projet (root=wd dans ce cas) et <code><a href="../reference/sourcoise.html">sourcoise()</a></code> fonctionne.</li>
+<li>nommage correct du fichier si il n’y a pas d’arguments.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="ajouts-development-version">ajouts<a class="anchor" aria-label="anchor" href="#ajouts-development-version"></a></h3>
-<ul><li>le paramètre <code>priority</code> permet de controller l’ordre d’exécution dans le cas d’un refresh, afin de traiter les cascades d’exécution</li>
+<ul><li>le paramètre <code>priority</code> permet de controller l’ordre d’exécution dans le cas d’un refresh, afin de traiter les cascades d’exécution.</li>
+<li>simplification des paramètres de <code><a href="../reference/sourcoise.html">sourcoise()</a></code>. Les paramètres enlevés sont fixés globalement par <code><a href="https://rdrr.io/r/base/options.html" class="external-link">options()</a></code>.</li>
+<li>la fonction <code><a href="../reference/set_sourcoise_root.html">set_sourcoise_root()</a></code> permet de fixer la racine de <code>sourcoise</code>.</li>
+<li>la fonction <code><a href="../reference/sourcoise_meta.html">sourcoise_meta()</a></code> renvoie les métadonnées directement (sans les datas donc).</li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -67,7 +71,7 @@
 <h2 class="pkg-version" data-toc-text="0.3.3" id="sourcoise-033">sourcoise 0.3.3<a class="anchor" aria-label="anchor" href="#sourcoise-033"></a></h2>
 <div class="section level3">
 <h3 id="correction-de-bugs-0-3-3">Correction de bugs<a class="anchor" aria-label="anchor" href="#correction-de-bugs-0-3-3"></a></h3>
-<ul><li>traite correctement les sources multiples et trouve le plus proche mieux</li>
+<ul><li>traite correctement les sources multiples et trouve le plus proche mieux.</li>
 </ul><div class="section level4">
 <h4 id="ajouts-0-3-3">Ajouts<a class="anchor" aria-label="anchor" href="#ajouts-0-3-3"></a></h4>
 <ul><li>utilise <a href="https://memoise.r-lib.org" class="external-link">memoise</a> pour cacher en mémoire les données sur disque</li>
