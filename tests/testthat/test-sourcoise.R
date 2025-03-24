@@ -1,5 +1,3 @@
-library(tidyverse)
-
 dir <- tempdir()
 set_sourcoise_root(dir)
 fs::file_copy(
@@ -7,8 +5,7 @@ fs::file_copy(
   dir,
   overwrite = TRUE)
 # Force execution (root is set explicitly here, it is normally deduced from project)
-timing_force <- bench::mark(sourcoise("prix_insee.R", force_exec = TRUE, lapse = "hour"))
-timing <- bench::mark(sourcoise("prix_insee.R", lapse = "hour"))
+
 data <- sourcoise("prix_insee.R", force_exec = TRUE, metadata = TRUE)
 
 ## sourcoise() ----------------
@@ -29,7 +26,7 @@ test_that("Cache dir is there", {
 
 test_that("Data cached is well named", {
   expect(
-    str_detect(data$data_file, "prix_insee-4262323b.+\\.qs2"),
+    stringr::str_detect(data$data_file, "prix_insee-4262323b.+\\.qs2"),
     "wrong name")
 })
 
@@ -41,11 +38,15 @@ test_that("Data cached exists", {
 
 ## timing test
 
-test_that("Timings", {
-  expect(timing_force$median>5*timing$median,
-         "cache is too slow")
-})
+if(rlang::is_installed("bench")) {
+  timing_force <- bench::mark(sourcoise("prix_insee.R", force_exec = TRUE, lapse = "hour"))
+  timing <- bench::mark(sourcoise("prix_insee.R", lapse = "hour"))
 
+  test_that("Timings", {
+    expect(timing_force$median>5*timing$median,
+           "cache is too slow")
+  })
+}
 ## sourcoise_meta ----------------
 
 meta <- sourcoise_meta("prix_insee.R")
@@ -53,7 +54,7 @@ meta <- sourcoise_meta("prix_insee.R")
 test_that("sourcoise_meta", {
   expect(meta$ok == "cache ok&valid",
          "no metadata returned")
-  expect(meta$data_date == str_remove(data$data_date, " CET$"),
+  expect(meta$data_date == stringr::str_remove(data$data_date, " CET$"),
          "date not the same")
   expect(meta$data_file == data$data_file,
          "data_file not the same")

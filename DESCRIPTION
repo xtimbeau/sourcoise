@@ -41,7 +41,6 @@ Suggests:
     memoise,
     quarto,
     bench,
-    tidyverse,
     testthat (>= 3.0.0)
 VignetteBuilder:
   quarto

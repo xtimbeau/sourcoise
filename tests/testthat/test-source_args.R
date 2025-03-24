@@ -1,5 +1,3 @@
-library(tidyverse)
-
 dir <- tempdir()
 set_sourcoise_root(dir)
 fs::file_copy(
