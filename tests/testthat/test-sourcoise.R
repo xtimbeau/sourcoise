@@ -61,15 +61,18 @@ test_that("sourcoise_meta", {
 })
 
 ## sourcoise_status ----------------
+
+status <- sourcoise_status()
+
 if(rlang::is_installed("tibble")) {
   test_that("sourcoise_status", {
-    expect(tibble::is_tibble(sourcoise_status())&nrow(sourcoise_status())>0,
+    expect(tibble::is_tibble(status)&nrow(status)>0,
            "status is not a non empty tibble")
   })
 }
 
 test_that("sourcoise_status", {
-  expect(all(c("src", "root", "args", "track", "lapse") %in% names(sourcoise_status())),
+  expect(all(c("src", "root", "args", "track", "lapse") %in% names(status)),
          "status is not well formed")
 })
 
@@ -85,9 +88,11 @@ test_that("sourcoise_refresh", {
 ## sourcoise_clear ----------------
 
 sourcoise_clear()
+status <- sourcoise_status()
+
 if(rlang::is_installed("tibble")) {
   test_that("sourcoise_status", {
-    expect(tibble::is_tibble(sourcoise_status())&nrow(sourcoise_status())==0,
+    expect(tibble::is_tibble(status)&nrow(status)==0,
            "status is not an empty tibble")
   })
 }
