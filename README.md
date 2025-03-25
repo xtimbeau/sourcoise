@@ -51,7 +51,7 @@ devtools::install_gitub("xtimbeau/sourcoise")
 pak::pak("xtimbeau/sourcoise")
 ```
 
-## Use
+## Usage
 
 To populate a graph or table with data, put the code in a script `r`
 (`"mon_script.r"`), ending the script with a
@@ -79,22 +79,22 @@ everything, call `sourcoise_refresh()`, it will execute all scripts and
 refresh data in the cache. Options are available to filter what really
 need to be refreshed.
 
-## Benefits
+## Many benefits
 
-There are many benefits:
-
-1.  time savings when code execution takes a long time (accessing an
-    API, downloading large amounts of data, major processing). Reading
-    an excel file can also take a long time. The time taken to access
+1.  time saving when code execution takes a long time (accessing an API,
+    downloading large amounts of data, major processing). Reading an
+    excel file can also take a long time. The time taken to access
     cached data depends on its size, but even for large data (and
     there’s no reason why it should be that large), the order of
     magnitude is a few milliseconds (4 to 10ms) for execution when data
-    is cached, thanks to optimization.
+    is cached, thanks to optimization and `{memoise}`.
 
 2.  the cache is transferable via *github*. It’s in a (hidden) folder,
-    but saved in the project folder and *committed* by github. The cache
-    produced on a workstation can therefore be accessed via `pull` on
-    other workstations, without the need to re-execute the code.
+    but saved in the project folder and *committed* and *pushed* on
+    github. The cache produced on a workstation can therefore be
+    accessed via `pull` on other workstations, without the need to
+    re-execute the code (and thanks to a smart naming scheme, without
+    too much conflicts).
 
 3.  if the source code triggers an error, you can override it: In the
     case of a package that is not installed, missing data (for example,
