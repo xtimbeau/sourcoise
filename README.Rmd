@@ -46,7 +46,7 @@ devtools::install_gitub("xtimbeau/sourcoise")
 pak::pak("xtimbeau/sourcoise")
 ```
 
-## Use
+## Usage
 
 To populate a graph or table with data, put the code in a script `r` (`"mon_script.r"`), ending the script with a `return(data_pour_le_graphique)`.
 In the `.qmd` or `.rmd` (or also an `R` script) we have the instructions for the graph in a `r` code chunk:
@@ -67,13 +67,11 @@ The first time the script is run completely, subsequent calls will use the cache
 To check the status of cache, just call `sourcoise_status()`. It will scan your project and collect info about your cached data.
 To refresh everything, call `sourcoise_refresh()`, it will execute all scripts and refresh data in the cache. Options are available to filter what really need to be refreshed.
 
-## Benefits
+## Many benefits
 
-There are many benefits:
+1. time saving when code execution takes a long time (accessing an API, downloading large amounts of data, major processing). Reading an excel file can also take a long time. The time taken to access cached data depends on its size, but even for large data (and there's no reason why it should be that large), the order of magnitude is a few milliseconds (4 to 10ms) for execution when data is cached, thanks to optimization and `{memoise}`.
 
-1. time savings when code execution takes a long time (accessing an API, downloading large amounts of data, major processing). Reading an excel file can also take a long time. The time taken to access cached data depends on its size, but even for large data (and there's no reason why it should be that large), the order of magnitude is a few milliseconds (4 to 10ms) for execution when data is cached, thanks to optimization.
-
-2. the cache is transferable via *github*. It's in a (hidden) folder, but saved in the project folder and *committed* by github. The cache produced on a workstation can therefore be accessed via `pull` on other workstations, without the need to re-execute the code.
+2. the cache is transferable via *github*. It's in a (hidden) folder, but saved in the project folder and *committed* and *pushed* on github. The cache produced on a workstation can therefore be accessed via `pull` on other workstations, without the need to re-execute the code (and thanks to a smart naming scheme, without too much conflicts).
 
 3. if the source code triggers an error, you can override it: In the case of a package that is not installed, missing data (for example, an absolute path in the code), or an API that blocks (such as the OECD API, particularly unreliable), then `sourcoise()` tries to take the result of the last successful execution (if cached). Although this can be problematic, i.e. an unreported error and use of an ivalid cache, it has the enormous advantage of not blocking the process and allows to handle the error in parallel.
 

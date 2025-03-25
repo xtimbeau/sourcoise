@@ -9,7 +9,7 @@ Authors@R: c(
       role = c("aut", "cre", "cph")
     )
   )
-Description: Provides a function that behave nearly as base::source() but implements a caching mechanism on disk, project based.
+Description: Provides a function that behaves nearly as base::source() but implements a caching mechanism on disk, project based.
     It allows to quasi source() R scripts that gather data but can fail or consume to much time to respond even if nothing new is expected.
     It comes with tools to check and execute on demand or when cache is invalid the script.
 License: MIT + file LICENSE
