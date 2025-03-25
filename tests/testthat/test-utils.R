@@ -25,7 +25,6 @@ test_that("try_find_src ?", {
     "try_find_src fails")
 })
 
-
 test_that("try_find_root ?", {
   expect(try_find_root() == dir,
          "try_find_root fails")
