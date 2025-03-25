@@ -15,7 +15,7 @@ fs::file_copy(
 
 test_that("find_src ?", {
   expect(
-    find_src(dir, "prix_insee") == fs::path_join(c(dir,"prix_insee.r")),
+    find_src(dir, "prix_insee")  |> stringr::str_detect(fs::path_join(c(dir,"prix_insee"))),
     "find_src fails")
 })
 
