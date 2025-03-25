@@ -2,3 +2,9 @@ url: https://xtimbeau.github.io/sourcoise/
 template:
   bootstrap: 5
 
+footer:
+  structure:
+    right: built_with
+    left: [developed_by, madein]
+  components:
+    madein: hand made with love in France
