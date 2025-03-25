@@ -15,7 +15,7 @@ message: false
 warning: false
 ---
 
-`sourcoise()` fournit une fonction qui se comporte presque comme `base::source()` en implémentant un mécanisme de cache sur disque. Cela permet de *sourcer* des scripts `r` qui récoltent des données, mais qui peuvent échouer (pas de connection internet, API qui ne répond pas, changement dans le format des données renvoyées) ou qui consomment trop de temps à l'exécution (calculs lourds, téléchargements lents), même si le retour (les données produites par exemple) est le même. 
+`sourcoise()` [suʁsɔiz] fournit une fonction qui se comporte presque comme `base::source()` en implémentant un mécanisme de cache sur disque. Cela permet de *sourcer* des scripts `r` qui récoltent des données, mais qui peuvent échouer (pas de connection internet, API qui ne répond pas, changement dans le format des données renvoyées) ou qui consomment trop de temps à l'exécution (calculs lourds, téléchargements lents), même si le retour (les données produites par exemple) est le même. 
 
 Le package inclu des outils pour la gestion du cache et des exécutions, notamment les fonctions `sourcoise_status()` et `sourcoise_refresh()`.
 
