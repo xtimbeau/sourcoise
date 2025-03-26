@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# sourcoise : Source and Cache
+# sourçoïse : Source and Cache
 
 <!-- badges: start -->
 
@@ -17,13 +17,13 @@ downloads](https://cranlogs.r-pkg.org/badges/sourcoise)](https://cran.r-project.
 coverage](https://codecov.io/gh/xtimbeau/sourcoise/graph/badge.svg)](https://app.codecov.io/gh/xtimbeau/sourcoise)
 <!-- badges: end -->
 
-`{sourcoise}` \[suʁsɔiz\] is a package that provides tools for running
-an R script and caching the results (saving them to disk). The aim is to
-be able to execute (quickly) code that accesses files or an API and
-which, in the absence of updates, always produces the same result. When
-the API is likely to block (or if you don’t have an internet
-connection), this avoids failure of the rendering of a `qmd` document or
-a quarto website.
+`{sourcoise}` (pronouced \[suʁsɔiz\] as *sourcçoïse*) is a package that
+provides tools for running an R script and caching the results (saving
+them to disk). The aim is to be able to execute (quickly) code that
+accesses files or an API and which, in the absence of updates, always
+produces the same result. When the API is likely to block (or if you
+don’t have an internet connection), this avoids failure of the rendering
+of a `qmd` document or a quarto website.
 
 The script code that retrieves the data from a file or an API has to be
 isolated, and that is improving reproducibility. `sourcoise()` can be

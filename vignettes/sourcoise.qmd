@@ -1,5 +1,5 @@
 ---
-title: "sourcoise : *sourcer et mettre en cache*"
+title: "sourçoïse : *sourcer et mettre en cache*"
 vignette: >
   %\VignetteIndexEntry{sourcoise}
   %\VignetteEngine{quarto::html}
