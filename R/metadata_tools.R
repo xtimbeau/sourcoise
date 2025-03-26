@@ -90,10 +90,18 @@ get_mdatas <- function(name, data_rep) {
   #   r})
 }
 
+read_json_safe <- purrr::safely(jsonlite::read_json)
+
 read_mdata <- function(path) {
-  l <- jsonlite::read_json(path, simplifyVector = TRUE)
-  l$file <- path
-  l
+  l <- read_json_safe(path, simplifyVector = TRUE)
+  if(is.null(l$error)) {
+    l <- l$result
+    l$json_file <- path
+    return(l)
+  }
+  logger::log_error("{path} is not a json file, {l$error$message} [deleting json]")
+  fs::file_delete(path)
+  l <- list()
 }
 
 get_ddatas <- function(name, data_rep) {
