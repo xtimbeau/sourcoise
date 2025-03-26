@@ -45,8 +45,10 @@ test_that("prevent works", {
 ## timing test
 
 if(rlang::is_installed("bench")) {
-  timing_force <- bench::mark(sourcoise("prix_insee.R", force_exec = TRUE, lapse = "hour"))
-  timing <- bench::mark(sourcoise("prix_insee.R", lapse = "hour"))
+  gc()
+  timing_force <- bench::mark(sourcoise("prix_insee.R", force_exec = TRUE, lapse = "hour"), max_iterations = 5 )
+  gc()
+  timing <- bench::mark(sourcoise("prix_insee.R", lapse = "hour"), max_iterations = 5)
 
   test_that("Timings", {
     expect(timing_force$median>=timing$median,
