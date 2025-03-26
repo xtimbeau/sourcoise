@@ -8,7 +8,7 @@
 * les arguments sont employés (par un *hash*) pour différencier les caches, ce qui permet de les utiliser sans problème.
 * le log est maintenant spécifique à chaque utilisateur.
 * cas où le nom de fichier comporte un "." (ne considère pas ça comme une extension).
-* cas où il n'y a pas de projet (root=wd dans ce cas) et `sourcoise()` fonctionne (merci François)
+* cas où il n'y a pas de projet (root=wd dans ce cas) et `sourcoise()` fonctionne (merci François).
 * nommage correct du fichier si il n'y a pas d'arguments.
 * différencie bien les scripts selon les arguments lors de `status` ou `refresh`
 * vérifie que le json est correctement formé à la lecture (merci Elliot)

@@ -70,6 +70,7 @@ sourcoise_status <- function(
   if(length(roots)>0) {
     cached <- purrr::map_dfr(roots, \(a_root) {
       purrr::map_dfr(jsons[[a_root]], ~{
+        browser()
         dd <- read_mdata(.x)
         valid <- valid_meta4meta(dd, root = a_root)
         if(is.null(dd$log_file)||length(dd$log_file)==0)

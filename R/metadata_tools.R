@@ -1,5 +1,5 @@
 valid_meta4meta <- function(meta, root) {
-  cache_dir <- fs::path_dir(meta$file)
+  cache_dir <- fs::path_dir(meta$json_file)
   src_hash <- hash_file(fs::path_join(c(root, meta$src)))
   track_hash <- 0
 

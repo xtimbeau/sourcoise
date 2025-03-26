@@ -58,14 +58,12 @@ sourcoise_meta <- function(path, args=NULL) {
     if(length(ctxt$meta_datas)>=1) {
       nogood_data <- ctxt$meta_datas[which.max(purrr::map_chr(ctxt$meta_datas, "data_date") |> as.Date())]
       nogood_data$ok <- "invalid cache"
-      nogood_data$json_file <- nogood_data$file
       return(nogood_data[c("ok", "timing", "date", "size", "args",
                                "lapse", "track", "qmd_file", "log_file", "file_size",
                                "data_date", "data_file", "json_file")])
     } else
     return(list(ok="no cache data"))
 
-  good_datas[[1]]$json_file <- good_datas[[1]]$file
   good_datas[[1]]$ok <- "cache ok&valid"
 
   return(good_datas[[1]][c("ok", "timing", "date", "size", "args",
