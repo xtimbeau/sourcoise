@@ -55,8 +55,7 @@
 #' @param force_exec (boolean) execute code, disregarding cache valid or invalid.
 #' @param prevent_exec (boolean) prevent execution, cache valid or not, returned previous cached data, possibly invalid.
 #' @param metadata (boolean) if TRUE `sourcoise()` returns a list with data is the `$data`  and various meta data (see details).
-#' @param wd (character) if `project` working directory for the execution of script will be the root of the project. If `file` then it will be the dir of the script (défaut) If `qmd`, then working dir will be the dir in which the calling `qmd` is. Current directory is restored after execution (successful or failed).
-#' @param exec_wd (character) force exec dir (expert use).
+#' @param wd (character) if `project` working directory for the execution of script will be the root of the project. If `file` then it will be the dir of the script (default) If `qmd`, then working dir will be the dir in which the calling `qmd` is. Current directory is restored after execution (successful or failed).
 #' @param quiet (boolean) mute messages and warnings from script execution.
 #' @param inform (boolean) Display logs on console, even if logging is disabled with threshold level "INFO".
 #' @param priority (integer) (default 10) can be used as a way to control the order of execution when refreshing data (see `sourcoise_refresh()`)
@@ -99,7 +98,6 @@ sourcoise <- function(
     prevent_exec = getOption("sourcoise.prevent_exec"),
     metadata = getOption("sourcoise.metadata"),
     wd = getOption("sourcoise.wd"),
-    exec_wd = NULL,
     quiet = TRUE,
     inform = FALSE,
     priority = 10) {
@@ -113,7 +111,7 @@ sourcoise <- function(
              metadata = metadata,
              wd = wd,
              src_in = getOption("sourcoise.src_in"),
-             exec_wd = exec_wd,
+             exec_wd = NULL,
              root = getOption("sourcoise.root"),
              quiet = quiet,
              nocache = getOption("sourcoise.nocache"),
