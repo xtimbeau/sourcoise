@@ -13,7 +13,6 @@ sourcoise(
   prevent_exec = getOption("sourcoise.prevent_exec"),
   metadata = getOption("sourcoise.metadata"),
   wd = getOption("sourcoise.wd"),
-  exec_wd = NULL,
   quiet = TRUE,
   inform = FALSE,
   priority = 10
@@ -34,9 +33,7 @@ sourcoise(
 
 \item{metadata}{(boolean) if TRUE \code{sourcoise()} returns a list with data is the \verb{$data}  and various meta data (see details).}
 
-\item{wd}{(character) if \code{project} working directory for the execution of script will be the root of the project. If \code{file} then it will be the dir of the script (défaut) If \code{qmd}, then working dir will be the dir in which the calling \code{qmd} is. Current directory is restored after execution (successful or failed).}
-
-\item{exec_wd}{(character) force exec dir (expert use).}
+\item{wd}{(character) if \code{project} working directory for the execution of script will be the root of the project. If \code{file} then it will be the dir of the script (default) If \code{qmd}, then working dir will be the dir in which the calling \code{qmd} is. Current directory is restored after execution (successful or failed).}
 
 \item{quiet}{(boolean) mute messages and warnings from script execution.}
 

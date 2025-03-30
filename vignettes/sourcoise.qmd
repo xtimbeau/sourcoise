@@ -21,7 +21,7 @@ Le package inclu des outils pour la gestion du cache et des exécutions, notamme
 
 ## Comment l'utiliser ?
 
-1.  Mettre le code qui fabrique les données dans un script (`"prix_insee.r"`) et l'enregistrer dans le dossier où est le qmd dans lequel les données sont mises en graphique ou en tableau. Dans l'exemple di-dessous, le code `r` télécharge des données (assez volumineuses) sur le site de l'INSEE, les transforme et renvoie un tibble prêt pour le graphique. Le script se termine par un `return` qui renvoie les données calculées ou téléchargées. Ce sont ces données qui sont mises en cache. Le temps d'exécution est de 11s et le script peut bloquer si l'API de l'INSEE n'est pas accessible (ou si on a pas de connection internet).
+1.  Mettre le code qui fabrique les données dans un script (`"prix_insee.r"`) et l'enregistrer dans le dossier où est le qmd dans lequel les données sont mises en graphique ou en tableau. Dans l'exemple di-dessous, le code `r` télécharge des données (assez volumineuses) sur le site de l'INSEE, les transforme et renvoie un tibble prêt pour le graphique. Le script se termine par un `return` qui renvoie les données calculées ou téléchargées. Ce sont ces données qui sont mises en cache. Le temps d'exécution est de l'ordre de 100ms et le script peut bloquer si l'API de l'INSEE n'est pas accessible (ou si on a pas de connection internet).
 
 ``` bash
 ├── prix.qmd
