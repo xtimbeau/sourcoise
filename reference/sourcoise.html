@@ -53,7 +53,6 @@
 <span>  prevent_exec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"sourcoise.prevent_exec"</span><span class="op">)</span>,</span>
 <span>  metadata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"sourcoise.metadata"</span><span class="op">)</span>,</span>
 <span>  wd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"sourcoise.wd"</span><span class="op">)</span>,</span>
-<span>  exec_wd <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  quiet <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  inform <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  priority <span class="op">=</span> <span class="fl">10</span></span>
@@ -93,11 +92,7 @@
 
 
 <dt id="arg-wd">wd<a class="anchor" aria-label="anchor" href="#arg-wd"></a></dt>
-<dd><p>(character) if <code>project</code> working directory for the execution of script will be the root of the project. If <code>file</code> then it will be the dir of the script (défaut) If <code>qmd</code>, then working dir will be the dir in which the calling <code>qmd</code> is. Current directory is restored after execution (successful or failed).</p></dd>
-
-
-<dt id="arg-exec-wd">exec_wd<a class="anchor" aria-label="anchor" href="#arg-exec-wd"></a></dt>
-<dd><p>(character) force exec dir (expert use).</p></dd>
+<dd><p>(character) if <code>project</code> working directory for the execution of script will be the root of the project. If <code>file</code> then it will be the dir of the script (default) If <code>qmd</code>, then working dir will be the dir in which the calling <code>qmd</code> is. Current directory is restored after execution (successful or failed).</p></dd>
 
 
 <dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>
@@ -175,7 +170,7 @@ If <code>src_in="project"</code>, then script <code>path</code> is searched from
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="set_sourcoise_root.html">set_sourcoise_root</a></span><span class="op">(</span><span class="va">dir</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpV7nDyK"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmppQVRIX"</span>
 <span class="r-in"><span><span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/copy.html" class="external-link">file_copy</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>   <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/path_package.html" class="external-link">path_package</a></span><span class="op">(</span><span class="st">"sourcoise"</span>, <span class="st">"ipch"</span>, <span class="st">"prix_insee.R"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  <span class="va">dir</span>,</span></span>
@@ -187,7 +182,7 @@ If <code>src_in="project"</code>, then script <code>path</code> is searched from
 <span class="r-in"><span><span class="co"># Performance and mem test</span></span></span>
 <span class="r-in"><span><span class="va">dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="set_sourcoise_root.html">set_sourcoise_root</a></span><span class="op">(</span><span class="va">dir</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpV7nDyK"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmppQVRIX"</span>
 <span class="r-in"><span><span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/copy.html" class="external-link">file_copy</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>   <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/path_package.html" class="external-link">path_package</a></span><span class="op">(</span><span class="st">"sourcoise"</span>, <span class="st">"ipch"</span>, <span class="st">"prix_insee.R"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>   <span class="va">dir</span>,</span></span>
@@ -196,12 +191,11 @@ If <code>src_in="project"</code>, then script <code>path</code> is searched from
 <span class="r-in"><span> forced <span class="op">=</span> <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">sourcoise</span><span class="op">(</span><span class="st">"prix_insee.r"</span>, force_exec <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span> cached <span class="op">=</span> <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">sourcoise</span><span class="op">(</span><span class="st">"prix_insee.r"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span> max_iterations <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some expressions had a GC in every iteration; so filtering is disabled.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 13</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   expression     min  median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:t&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:t&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> forced      85.4ms   117ms      9.44    1.95MB     1.89     5     1    529.9ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> cached      11.1ms  11.1ms     89.1   273.82KB     0        5     0     56.1ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expression      min median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> forced       82.7ms 86.1ms      10.3    1.95MB        0     5     0    483.2ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> cached       10.7ms 10.9ms      91.8  273.82KB        0     5     0     54.4ms</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more variables: result &lt;list&gt;, memory &lt;list&gt;, time &lt;list&gt;, gc &lt;list&gt;</span></span>
 </code></pre></div>
     </div>
