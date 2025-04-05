@@ -4,7 +4,7 @@ exec_source <- function(ctxt) {
     if(ctxt$inform)
       res <- base::source(src, local=TRUE, encoding = getOption("sourcoise.encoding"))
     else
-      (res <- base::source(src, local=TRUE, encoding = getOption("sourcoise.encoding")) |>
+      (res <- base::source(src, local=TRUE, encoding = getOption("sourcoise.encoding"))) |>
       utils::capture.output(file = nullfile(), type = "output") |>
       utils::capture.output(file = nullfile(), type = "message") |>
       suppressMessages() |>
