@@ -12,6 +12,7 @@
 * nommage correct du fichier si il n'y a pas d'arguments.
 * différencie bien les scripts selon les arguments lors de `status` ou `refresh`
 * vérifie que le json est correctement formé à la lecture (merci Elliot)
+* force l'encodage à être selon l'otion `sourcoise.encoding` et à être `UTF-8` pour foncitonner sur le multiplateforme avec macOS et windows
 
 ## ajouts
 
