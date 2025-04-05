@@ -15,7 +15,8 @@
     sourcoise.grow_cache = 5,
     sourcoise.limit_mb = 50,
     sourcoise.nthreads = 1,
-    sourcoise.memoize = TRUE
+    sourcoise.memoize = TRUE,
+    sourcoise.encoding = "UTF-8"
   )
 
   toset <- !(names(op.sourcoise) %in% names(op))

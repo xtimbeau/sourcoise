@@ -2,9 +2,9 @@ exec_source <- function(ctxt) {
   safe_source <- purrr::safely(\(src, args) {
     args <- args
     if(ctxt$inform)
-      res <- base::source(src, local=TRUE)
+      res <- base::source(src, local=TRUE, encoding = getOption("sourcoise.encoding"))
     else
-      (res <- base::source(src, local=TRUE)) |>
+      (res <- base::source(src, local=TRUE, encoding = getOption("sourcoise.encoding")) |>
       utils::capture.output(file = nullfile(), type = "output") |>
       utils::capture.output(file = nullfile(), type = "message") |>
       suppressMessages() |>
