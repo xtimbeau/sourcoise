@@ -1,15 +1,11 @@
-## Resubmission
+## Update of the package, version 0.6.0
 
-In this version, as asked, I have documented the return values for sourcoise_reset() following guidelines.
+Various bugs have been corrected and documented in news
 
-I used the opportunity to improve documentation of other exported functions (sourcoise_refresh() and sourcoise_status()), being clearer about intended side-effects.
+## R CMD check results 
 
-I solved a bug, and its is part of this resubmission.
+sourcoise 0.6.0
 
-Package still succeeds to automated checks.
+Duration: 1m 3.4s
 
-## R CMD check results
-
-0 errors | 0 warnings | 1 note
-
-* This is a new release.
+0 errors ✔ | 0 warnings ✔ | 0 notes ✔
