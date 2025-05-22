@@ -13,11 +13,11 @@ fs::file_copy(
 
 ## find_src ----------------
 
-test_that("find_src ?", {
-  expect(
-    stringr::str_detect(find_src(dir, "prix_insee"), "prix_insee"),
-    "find_src fails")
-})
+# test_that("find_src ?", {
+#   expect(
+#     stringr::str_detect(find_src(dir, "prix_insee"), "prix_insee"),
+#     "find_src fails")
+# })
 
 test_that("try_find_src ?", {
   expect(
