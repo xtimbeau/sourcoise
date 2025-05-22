@@ -1,4 +1,4 @@
-# sourcoise (development version)
+# sourcoise 0.6.0
 
 ## Correction de bugs
 
@@ -13,7 +13,6 @@
 * différencie bien les scripts selon les arguments lors de `status` ou `refresh`
 * vérifie que le json est correctement formé à la lecture (merci Elliot)
 * force l'encodage à être selon l'otion `sourcoise.encoding` et à être `UTF-8` pour foncitonner sur le multiplateforme avec macOS et windows
-* introduit une nouvelle convention d'accès aux fichiers sources (sera étendue pour les autres) : "/chemin/src" part de la racine du projet systématiquement, "src.r" cherche dans le dossier de l'appelant
 
 ## ajouts
 
@@ -21,6 +20,7 @@
 * simplification des paramètres de `sourcoise()`. Les paramètres enlevés sont fixés globalement par `options()`.
 * la fonction `set_sourcoise_root()` permet de fixer la racine de `sourcoise`.
 * la fonction `sourcoise_meta()` renvoie les métadonnées directement (sans les datas donc).
+* introduit une nouvelle convention d'accès aux fichiers sources (sera étendue pour les autres) : "/chemin/src" part de la racine du projet systématiquement, "src.r" cherche dans le dossier de l'appelant
 
 ## autres
 
