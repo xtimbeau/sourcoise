@@ -7,7 +7,7 @@ find_src <- function(root, name, paths=NULL) {
     path <- fs::path_join(c(root, name)) |> fs::path_norm()
   }
   else
-    if(!is.null(paths))
+    if(!is.null(paths)&&paths$in_quarto)
       path <- fs::path_join(c(paths$project_path, paths$doc_path, name)) |> fs::path_norm()
     else
       path <- fs::path_join(c(root, name)) |> fs::path_norm()
@@ -59,9 +59,12 @@ try_find_root <- function(root=NULL, src_in = getOption("sourcoise.src_in"), qui
 
 
 find_project_root <- function(project_path = NULL, doc_path = NULL) {
+  in_quarto <- FALSE
   if(is.null(doc_path)) {
-    if(Sys.getenv("QUARTO_DOCUMENT_PATH") != "" | quarto::is_using_quarto())
+    if(Sys.getenv("QUARTO_DOCUMENT_PATH") != "" | quarto::is_using_quarto()) {
+      in_quarto <- TRUE
       doc_path <- Sys.getenv("QUARTO_DOCUMENT_PATH") |> fs::path_abs() |> fs::path_norm()
+    }
     else
       doc_path <- getwd() |> fs::path_abs() |> fs::path_norm()
   }
@@ -72,6 +75,8 @@ find_project_root <- function(project_path = NULL, doc_path = NULL) {
       project_path <- safe_find_root(rprojroot::is_quarto_project)
       if(!is.null(project_path$error))
         project_path <- safe_find_root(rprojroot::is_rstudio_project)
+      else
+        in_quarto <- TRUE
       if(!is.null(project_path$error))
         project_path$result <- getwd()
       project_path <- project_path$result
@@ -79,5 +84,5 @@ find_project_root <- function(project_path = NULL, doc_path = NULL) {
   }
   project_path <- project_path |> fs::path_norm() |> fs::path_abs()
   doc_path <- doc_path |> fs::path_norm() |> fs::path_abs() |> fs::path_rel(project_path)
-  return(list(project_path = project_path, doc_path = doc_path))
+  return(list(project_path = project_path, doc_path = doc_path, in_quarto = in_quarto))
 }

@@ -49,3 +49,4 @@ test_that("what lapse", {
   expect(what_lapse("2 years") == "2y 0m 0d 0H 0M 0S",
          "year failed")
 })
+
