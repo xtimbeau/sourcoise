@@ -63,8 +63,7 @@ Cache is invalidated when :
 4 -   last execution occurred a certain time ago and is considered as expired
 5 -   execution is forced
 
-If \code{src_in="file"}, then script \code{path} is searched from the \code{.qmd} dir. If no \code{.qmd} esxits (or is not the caller) the the current work dir is used (which is the usual way \code{base::source} works).
-If \code{src_in="project"}, then script \code{path} is searched from the root dir of the project, being a Rproject or a quarto project, using the package \code{{rprojroot}}. This guarantees to find the script without using current working directory and is a more robust way to proceed.
+Whatever values takes \code{src_in}, if the file path starts with a \code{/}, then the source file will be interpreted from project root (if any). This is coherent whith naming convention in \code{quarto}. Otherwise, the document path wil be used firstly (if any, that is to say executed from quarto, rendering). Finally, working directory will be used. If everything fails, it will try to search in the project directory a corresponding file and will keep the closest from the calling point.
 
 Usually the fisrt call return and cache the results. Results can be aby R object and are serialized and saved using \code{qs2}. Subsequent calls, supposing none of cache invalidation are true, are then very quick. No logging is used, data is fecteched from the cache and that's it. For standard size data, used in a table or a graph (< 1Mb roughly), return timing is under 5ms.
 
@@ -78,7 +77,7 @@ Usually the fisrt call return and cache the results. Results can be aby R object
 In order to simplify usage and to avoid complex bugs, some parameters can be set only globally, through options().
 \itemize{
 \item \code{sourcoise.root} (character) force root, and bypass soucroise mechanism to find root. Useful when you want to execute sourcoise in a non-project context (see examples).
-\code{sourcoise.src_in} (character) if \code{project} searches for source starting at the root of the project, if "file" searches in qmd dir. If "wd", then in working directory. Cache folder (\code{.sourcoise}) is stored there.
+\code{sourcoise.src_in} (character) if \code{project} stores the cache folder (\code{.sourcoise}) at the project root, if \code{file}, \code{.sourcoise} is stored at the calling point.
 \item \code{sourcoise.nocache} (boolean) no caching, so makes sourcoise less useful, can be used for testing purpose
 \item \code{sourcoise.log} (default "OFF") log threshold (see \code{logger::log_treshold()}).
 \item \code{sourcoise.grow_cache} (integer) (default 5 par défaut) cache limit in number of data file kept.

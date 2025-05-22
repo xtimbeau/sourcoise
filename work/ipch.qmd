@@ -7,10 +7,20 @@ editor: visual
 ```{r}
 library(sourcoise)
 library(tidyverse)
-ipch_data <- sourcoise("ipch/prix_insee.R")
+ipch_data <- sourcoise("prix_insee.R")
 
 ggplot(data = ipch_data$ipchm) + 
   aes(x = DATE, y = ipch ) +
   geom_line()
 
+```
+
+```{r}
+getwd()
+sourcoise:::find_src(sourcoise:::try_find_root(NULL, "file"), "prix_insee", sourcoise:::find_project_root()) 
+sourcoise:::try_find_root(NULL, src_in = "file")
+sourcoise:::try_find_root(NULL, src_in = "project")
+sourcoise:::try_find_src(sourcoise:::try_find_root(NULL, src_in = "project"), "prix_insee")
+sourcoise:::try_find_src(sourcoise:::try_find_root(NULL, src_in = "file"), "prix_insee")
+sourcoise:::find_project_root()
 ```

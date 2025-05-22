@@ -37,7 +37,7 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
 
   ctxt <- startup_log(log, ctxt)
 
-  ctxt[["src"]] <- find_src(ctxt$root, ctxt$name)
+  ctxt[["src"]] <- find_src(ctxt$root, ctxt$name, ctxt$paths)
   if(is.null(ctxt[["src"]])) {
     ctxt[["src"]] <- try_find_src(ctxt$root, ctxt$name)
     if(length(ctxt[["src"]])==0)

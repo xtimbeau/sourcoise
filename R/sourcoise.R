@@ -17,8 +17,7 @@
 #'  4 -   last execution occurred a certain time ago and is considered as expired
 #'  5 -   execution is forced
 #'
-#' If `src_in="file"`, then script `path` is searched from the `.qmd` dir. If no `.qmd` esxits (or is not the caller) the the current work dir is used (which is the usual way `base::source` works).
-#' If `src_in="project"`, then script `path` is searched from the root dir of the project, being a Rproject or a quarto project, using the package `{rprojroot}`. This guarantees to find the script without using current working directory and is a more robust way to proceed.
+#' Whatever values takes `src_in`, if the file path starts with a `/`, then the source file will be interpreted from project root (if any). This is coherent whith naming convention in `quarto`. Otherwise, the document path wil be used firstly (if any, that is to say executed from quarto, rendering). Finally, working directory will be used. If everything fails, it will try to search in the project directory a corresponding file and will keep the closest from the calling point.
 #'
 #' Usually the fisrt call return and cache the results. Results can be aby R object and are serialized and saved using `qs2`. Subsequent calls, supposing none of cache invalidation are true, are then very quick. No logging is used, data is fecteched from the cache and that's it. For standard size data, used in a table or a graph (< 1Mb roughly), return timing is under 5ms.
 #'
@@ -30,7 +29,7 @@
 #'
 #' In order to simplify usage and to avoid complex bugs, some parameters can be set only globally, through options().
 #' - `sourcoise.root` (character) force root, and bypass soucroise mechanism to find root. Useful when you want to execute sourcoise in a non-project context (see examples).
-#' `sourcoise.src_in` (character) if `project` searches for source starting at the root of the project, if "file" searches in qmd dir. If "wd", then in working directory. Cache folder (`.sourcoise`) is stored there.
+#' `sourcoise.src_in` (character) if `project` stores the cache folder (`.sourcoise`) at the project root, if `file`, `.sourcoise` is stored at the calling point.
 #' - `sourcoise.nocache` (boolean) no caching, so makes sourcoise less useful, can be used for testing purpose
 #' - `sourcoise.log` (default "OFF") log threshold (see `logger::log_treshold()`).
 #' - `sourcoise.grow_cache` (integer) (default 5 par défaut) cache limit in number of data file kept.

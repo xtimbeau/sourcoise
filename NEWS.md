@@ -13,6 +13,7 @@
 * différencie bien les scripts selon les arguments lors de `status` ou `refresh`
 * vérifie que le json est correctement formé à la lecture (merci Elliot)
 * force l'encodage à être selon l'otion `sourcoise.encoding` et à être `UTF-8` pour foncitonner sur le multiplateforme avec macOS et windows
+* introduit une nouvelle convention d'accès aux fichiers sources (sera étendue pour les autres) : "/chemin/src" part de la racine du projet systématiquement, "src.r" cherche dans le dossier de l'appelant
 
 ## ajouts
 

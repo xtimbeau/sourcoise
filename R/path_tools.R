@@ -2,13 +2,15 @@ remove_ext <- function(name) {
   stringr::str_remove(name, "\\.[r|R]$")
 }
 
-find_src <- function(root, name) {
-  if(fs::is_absolute_path(name)) {
-    logger::log_warn("Source script path is absolute, that is not recommanded")
-    path <- name
+find_src <- function(root, name, paths=NULL) {
+  if(stringr::str_detect(name, "^/(?!/)")) {
+    path <- fs::path_join(c(root, name)) |> fs::path_norm()
   }
   else
-    path <- fs::path_join(c(root, name)) |> fs::path_norm()
+    if(!is.null(paths))
+      path <- fs::path_join(c(paths$project_path, paths$doc_path, name)) |> fs::path_norm()
+    else
+      path <- fs::path_join(c(root, name)) |> fs::path_norm()
   fn <- stringr::str_c(path, ".r")
   if(fs::file_exists(fn)) return(fn)
   fn <- stringr::str_c(path, ".R")
