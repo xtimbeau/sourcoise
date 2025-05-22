@@ -3,14 +3,12 @@ remove_ext <- function(name) {
 }
 
 find_src <- function(root, name, paths=NULL) {
-  if(stringr::str_detect(name, "^/(?!/)")) {
-    path <- fs::path_join(c(root, name)) |> fs::path_norm()
-  }
-  else
-    if(!is.null(paths)&&paths$in_quarto)
-      path <- fs::path_join(c(paths$project_path, paths$doc_path, name)) |> fs::path_norm()
-    else
-      path <- fs::path_join(c(root, name)) |> fs::path_norm()
+  path <- fs::path_join(c(root, name)) |> fs::path_norm()
+  if(!stringr::str_detect(name, "^/(?!/)"))
+    if(!is.null(paths))
+      if(paths$in_quarto)
+        path <- fs::path_join(c(paths$project_path, paths$doc_path, name)) |> fs::path_norm()
+
   fn <- stringr::str_c(path, ".r")
   if(fs::file_exists(fn)) return(fn)
   fn <- stringr::str_c(path, ".R")
