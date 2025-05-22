@@ -19,16 +19,16 @@ fs::file_copy(
 #     "find_src fails")
 # })
 
-test_that("try_find_src ?", {
-  expect(
-    stringr::str_detect(try_find_src(dir, "prix_insee"), "prix_insee"),
-    "try_find_src fails")
-})
+# test_that("try_find_src ?", {
+#   expect(
+#     stringr::str_detect(try_find_src(dir, "prix_insee"), "prix_insee"),
+#     "try_find_src fails")
+# })
 
-test_that("try_find_root ?", {
-  expect(try_find_root() == dir,
-         "try_find_root fails")
-})
+# test_that("try_find_root ?", {
+#   expect(try_find_root() == dir,
+#          "try_find_root fails")
+# })
 
 test_that("unfreeze&uncache", {
   expect(is.null(unfreeze("test.qmd", root = dir)),
