@@ -6,12 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>sourçoïse : sourcer et mettre en cache • sourcoise</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -92,21 +91,21 @@
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ipchm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pyr-opendatafr.github.io/R-Insee-Data/reference/get_idbank_list.html" class="external-link">get_idbank_list</a></span><span class="op">(</span><span class="st">"IPCH-2015"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">COICOP2016</span><span class="op">==</span><span class="st">"00"</span>, <span class="va">FREQ</span><span class="op">==</span><span class="st">"M"</span>, <span class="va">NATURE</span><span class="op">==</span><span class="st">"INDICE"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">idbank</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>     <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">COICOP2016</span><span class="op">==</span><span class="st">"00"</span>, <span class="va">FREQ</span><span class="op">==</span><span class="st">"M"</span>, <span class="va">NATURE</span><span class="op">==</span><span class="st">"INDICE"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>     <span class="fu">pull</span><span class="op">(</span><span class="va">idbank</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>     <span class="fu"><a href="https://pyr-opendatafr.github.io/R-Insee-Data/reference/get_insee_idbank.html" class="external-link">get_insee_idbank</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">DATE</span>, ipch <span class="op">=</span> <span class="va">OBS_VALUE</span>, <span class="va">IDBANK</span><span class="op">)</span></span>
+<span>     <span class="fu">select</span><span class="op">(</span><span class="va">DATE</span>, ipch <span class="op">=</span> <span class="va">OBS_VALUE</span>, <span class="va">IDBANK</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ipch</span> <span class="op">&lt;-</span> <span class="va">ipchm</span> <span class="op">|&gt;</span></span>
-<span>     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>DATE <span class="op">=</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/round_date.html" class="external-link">floor_date</a></span><span class="op">(</span><span class="va">DATE</span>, unit<span class="op">=</span><span class="st">"quarter"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">DATE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>ipch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">ipch</span><span class="op">)</span><span class="op">)</span></span>
+<span>     <span class="fu">mutate</span><span class="op">(</span>DATE <span class="op">=</span> <span class="fu">floor_date</span><span class="op">(</span><span class="va">DATE</span>, unit<span class="op">=</span><span class="st">"quarter"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>     <span class="fu">group_by</span><span class="op">(</span><span class="va">DATE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>     <span class="fu">summarise</span><span class="op">(</span>ipch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">ipch</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ipcha</span> <span class="op">&lt;-</span> <span class="va">ipch</span> <span class="op">|&gt;</span> </span>
-<span>     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/year.html" class="external-link">year</a></span><span class="op">(</span><span class="va">DATE</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>ipch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">ipch</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>ipch <span class="op">=</span> <span class="va">ipch</span> <span class="op">/</span> <span class="va">ipch</span><span class="op">[</span><span class="va">y</span> <span class="op">==</span> <span class="fl">2023</span><span class="op">]</span><span class="op">)</span></span>
+<span>     <span class="fu">mutate</span><span class="op">(</span>y <span class="op">=</span> <span class="fu">year</span><span class="op">(</span><span class="va">DATE</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>     <span class="fu">group_by</span><span class="op">(</span><span class="va">y</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>     <span class="fu">summarize</span><span class="op">(</span>ipch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">ipch</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>     <span class="fu">mutate</span><span class="op">(</span>ipch <span class="op">=</span> <span class="va">ipch</span> <span class="op">/</span> <span class="va">ipch</span><span class="op">[</span><span class="va">y</span> <span class="op">==</span> <span class="fl">2023</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># le return final</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>ipcha <span class="op">=</span> <span class="va">ipcha</span>, ipchm <span class="op">=</span> <span class="va">ipchm</span>, ipch <span class="op">=</span> <span class="va">ipch</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -118,9 +117,9 @@
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
 <span><span class="va">ipch_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sourcoise.html">sourcoise</a></span><span class="op">(</span><span class="st">"prix_insee.R"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">ipch_data</span><span class="op">$</span><span class="va">ipchm</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">DATE</span>, y <span class="op">=</span> <span class="va">ipch</span> <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">ipch_data</span><span class="op">$</span><span class="va">ipchm</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">DATE</span>, y <span class="op">=</span> <span class="va">ipch</span> <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>L’utilisation de <code><a href="../reference/sourcoise.html">sourcoise()</a></code> se fait comme celle de <code><a href="https://rdrr.io/r/base/source.html" class="external-link">base::source()</a></code> à l’assignement prêt dans <code>ipch_data</code>. Le résultat est mis en cache (enregistré sur disque) et les exécutions suivantes ne prennent que quelques millisecondes. Ces appels fonctionnent sans téléchargement et sans erreur possible si le serveur est hors ligne ou que l’on a plus d’internet, ou que le code ne fonctionne pas sur la machine où on utilise les données.</p>
 <p><code><a href="../reference/sourcoise.html">sourcoise()</a></code> utilise un cache (caché dans un dossier <code>.sourcoise</code>). Il repère le fichier source (le script) et détecte les changements éventuels (ce qui invalide le cache). Si le cache est valide, les données sont renvoyées, sinon, le script est exécuté et les nouvelles données mises en cache.</p>
 <p>Il existe d’autres moyens d’invalider le cache : il peut avoir une durée de vie maximale, avec l’argument <code>lapse="day"</code>. Cette option dit que si le cache est plus vieux que 24h, il est renouvelé par une ré-exécution du script. Ce paramètre peut prendre plusieurs valeurs et des formes comme <code>2 hours</code> ou <code>3 weeks</code>. D’autres déclencheurs temporels seront possiblement ajoutés pour introduire des calendriers (comme 45 jours après la fin du trimestre). Cependant, <code><a href="../reference/sourcoise.html">sourcoise()</a></code> n’est pas capable d’aller vérifier (de façon générale) que les données téléchargées ont été mise à jour et donc de ne pas invalider le cache sur cette information</p>
@@ -165,107 +164,89 @@
 <p>Lorsque les scripts sont exécutés par <code><a href="../reference/sourcoise_refresh.html">sourcoise_refresh()</a></code> le log est activé par défaut. Comme les <code>qmd</code> appelants sont connus, <code><a href="../reference/sourcoise_refresh.html">sourcoise_refresh()</a></code> peut <em>unfreezé</em> ou <em>uncaché</em> les <code>qmd</code> ou les chunks des <code>qmd</code>. C’est important dans le <em>workflow</em>, parce que lorsqu’on rafraichit les données, on veut que les chunks soient réévalués pour que les tableaux ou les graphiques soient refait à partir des nouvelles données. Or, si on utilise <code>freeze</code> <code>quarto</code> n’a pas de moyen de savoir que le <code>freeze</code> est périmé.</p>
 <p>Il est possible de sélectionner les données qui sont rafraichies. <code><a href="../reference/sourcoise_refresh.html">sourcoise_refresh()</a></code> part du résulat de <code><a href="../reference/sourcoise_status.html">sourcoise_status()</a></code> par défaut. Il est ainsi possible de faire une sélection des données en cache et de ne passer que celles là à <code><a href="../reference/sourcoise_refresh.html">sourcoise_refresh()</a></code>. Avec un peu de programmation, on peut donc mettre en place un schéma qui régulièrement vérifie la validité des données (calendrier, API ou autre) et déclenche sélectivement la mise à jour. <code><a href="../reference/sourcoise.html">sourcoise()</a></code> peut appeler d’autres <code><a href="../reference/sourcoise.html">sourcoise()</a></code> mais pour le moment, il n’y a aucune prise en compte de cette hiérarchie.</p>
 </section><script id="quarto-html-after-body" type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
-    }
-  }
-  toggleBodyColorPrimary();
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
         }
       }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-    const config = {
-      allowHTML: true,
-      maxWidth: 500,
-      delay: 100,
-      arrow: false,
-      appendTo: function(el) {
-          return el.parentElement;
-      },
-      interactive: true,
-      interactiveBorder: 10,
-      theme: 'light-border',
-      placement: 'bottom-start',
-    };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
-    window.tippy(el, config);
-  }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'light-border',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
       }
-    } else {
-      return undefined;
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config);
     }
-  };
-  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-  for (var i=0; i<bibliorefs.length; i++) {
-    const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
-          }
-          popup.appendChild(citeDiv);
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
         });
-        return popup.innerHTML;
-      });
+      }
     }
-  }
-});
-</script></main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+  });
+  </script></main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
@@ -275,7 +256,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer>
