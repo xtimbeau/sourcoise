@@ -30,7 +30,7 @@
 #' # Force execution (root is set explicitly here, it is normally deduced from project)
 #' data <- sourcoise("some_data.R", force_exec = TRUE)
 #' # Then we access metadata
-#' sourcoise_meta("some_date.R")
+#' sourcoise_meta("some_data.R")
 #'
 sourcoise_meta <- function(path, args=NULL) {
   ctxt <- setup_context(

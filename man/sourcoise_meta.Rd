@@ -34,16 +34,15 @@ quick acces to metadata of the script, data is not fecthed.
 }
 }
 \examples{
-\dontshow{if (rlang::is_installed("insee")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 dir <- tempdir()
 set_sourcoise_root(dir)
 fs::file_copy(
-   fs::path_package("sourcoise", "ipch", "prix_insee.R"),
+   fs::path_package("sourcoise", "some_data.R"),
   dir,
   overwrite = TRUE)
 # Force execution (root is set explicitly here, it is normally deduced from project)
-data <- sourcoise("prix_insee.R", force_exec = TRUE)
+data <- sourcoise("some_data.R", force_exec = TRUE)
 # Then we access metadata
-sourcoise_meta("prix_insee.R")
-\dontshow{\}) # examplesIf}
+sourcoise_meta("some_data.R")
+
 }
