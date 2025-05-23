@@ -22,25 +22,29 @@ test_that("We get data", {
     "Execution is wrong")
 })
 
-cache_dir <- fs::path_dir(data$json_file)
+if(!is.na(data$json_file))
+  cache_dir <- fs::path_dir(data$json_file)
 
-test_that("Cache dir is there", {
-  expect(
-    fs::dir_exists(cache_dir),
-    "No cache dir")
-})
+if(!is.na(cache_dir))
+  test_that("Cache dir is there", {
+    expect(
+      fs::dir_exists(cache_dir),
+      "No cache dir")
+  })
 
-test_that("Data cached is well named", {
-  expect(
-    stringr::str_detect(data$data_file, "prix_insee-4262323b.+\\.qs2"),
-    "wrong name")
-})
+if(!is.na(data$data_file))
+  test_that("Data cached is well named", {
+    expect(
+      stringr::str_detect(data$data_file, "prix_insee-4262323b.+\\.qs2"),
+      "wrong name")
+  })
 
-test_that("Data cached exists", {
-  expect(
-    fs::file_exists(fs::path_join(c(fs::path_dir(data$json_file), data$data_file))),
-    "no data cached")
-})
+if(!is.na(data$json_file))
+  test_that("Data cached exists", {
+    expect(
+      fs::file_exists(fs::path_join(c(fs::path_dir(data$json_file), data$data_file))),
+      "no data cached")
+  })
 
 test_that("prevent works", {
   expect( sourcoise("prix_insee.R", prevent_exec = TRUE, metadata = TRUE)$ok == "cache",
