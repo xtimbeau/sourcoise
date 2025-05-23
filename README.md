@@ -17,7 +17,7 @@ downloads](https://cranlogs.r-pkg.org/badges/sourcoise)](https://cran.r-project.
 coverage](https://codecov.io/gh/xtimbeau/sourcoise/graph/badge.svg)](https://app.codecov.io/gh/xtimbeau/sourcoise)
 <!-- badges: end -->
 
-`{sourcoise}` (pronouced \[suʁsɔiz\] as *sourcçoïse*) is a package that
+`{sourcoise}` (pronouced \[suʁsɔiz\] as *sourçoïse*) is a package that
 provides tools for running an R script and caching the results (saving
 them to disk). The aim is to be able to execute (quickly) code that
 accesses files or an API and which, in the absence of updates, always
