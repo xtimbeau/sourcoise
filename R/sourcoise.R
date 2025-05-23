@@ -67,25 +67,25 @@
 #' dir <- tempdir()
 #' set_sourcoise_root(dir)
 #' fs::file_copy(
-#'    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
+#'    fs::path_package("sourcoise", "some_data.R"),
 #'   dir,
 #'   overwrite = TRUE)
 #' # Force execution (root is set explicitly here, it is normally deduced from project)
-#' data <- sourcoise("prix_insee.R", force_exec = TRUE)
+#' data <- sourcoise("some_data.R", force_exec = TRUE)
 #' # The second time cache is used
-#' data <- sourcoise("prix_insee.R")
-#' @examplesIf rlang::is_installed(c("insee", "bench"))
+#' data <- sourcoise("some_data.R")
+#' @examplesIf rlang::is_installed(c("bench"))
 #' # Performance and mem test
 #' dir <- tempdir()
 #' set_sourcoise_root(dir)
 #' fs::file_copy(
-#'    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
+#'    fs::path_package("sourcoise", "some_data.R"),
 #'    dir,
 #'    overwrite = TRUE)
 #' bench::mark(
-#'  forced = data <- sourcoise("prix_insee.r", force_exec = TRUE),
-#'  cached = data <- sourcoise("prix_insee.r"),
-#'  max_iterations = 5)
+#'  forced = data <- sourcoise("some_data.R", force_exec = TRUE),
+#'  cached = data <- sourcoise("some_data.R"),
+#'  max_iterations = 1)
 #'
 ## wrapper (limit the parameters)
 sourcoise <- function(

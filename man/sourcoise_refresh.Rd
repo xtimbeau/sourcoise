@@ -58,18 +58,16 @@ Parameters registered ins \code{sourcoise_status()} such as \code{wd} or \code{a
 Defining a \code{priority} in \code{sourcoise()}, will change the order of execution of refresh. This allows to execute first data that will be used then inside another script with \code{sourcoise()}. When a \code{sourcoise("something.r", force_exec=TRUE)} is run, inside calls to \code{sourcoise()} are \emph{not} forced. \code{priority} is a crude way -- yet efficient -- to achieve a correct execution with up to date data. Of course, all calls to \code{sourcoise()} of the same script should set the same level of priority as the last executed will be kept, with no verification done, so left to the responsability of the user.
 }
 \examples{
-\dontshow{if (rlang::is_installed("insee")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 dir <- tempdir()
 set_sourcoise_root(dir)
 fs::file_copy(
-   fs::path_package("sourcoise", "ipch", "prix_insee.R"),
+   fs::path_package("sourcoise", "some_data.R"),
    dir,
    overwrite = TRUE)
 # Force execution
-data <- sourcoise("prix_insee.R", force_exec = TRUE)
+data <- sourcoise("some_data.R", force_exec = TRUE)
 # we then refresh all caches
 sourcoise_refresh()
-\dontshow{\}) # examplesIf}
 }
 \seealso{
 Other sourcoise: 

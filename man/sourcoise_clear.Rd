@@ -25,11 +25,11 @@ removes every json and qs2 files found by \code{sourcoise_status()} unless a spe
 dir <- tempdir()
 set_sourcoise_root(dir)
 fs::file_copy(
-    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
+    fs::path_package("sourcoise", "some_data.R"),
     dir,
     overwrite = TRUE)
 # Force execution
-data <- sourcoise("prix_insee.R", force_exec = TRUE)
+data <- sourcoise("some_data.R", force_exec = TRUE)
 # we then clear all caches
 sourcoise_clear()
 sourcoise_status()

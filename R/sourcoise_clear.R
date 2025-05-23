@@ -13,11 +13,11 @@
 #' dir <- tempdir()
 #' set_sourcoise_root(dir)
 #' fs::file_copy(
-#'     fs::path_package("sourcoise", "ipch", "prix_insee.R"),
+#'     fs::path_package("sourcoise", "some_data.R"),
 #'     dir,
 #'     overwrite = TRUE)
 #' # Force execution
-#' data <- sourcoise("prix_insee.R", force_exec = TRUE)
+#' data <- sourcoise("some_data.R", force_exec = TRUE)
 #' # we then clear all caches
 #' sourcoise_clear()
 #' sourcoise_status()
@@ -54,10 +54,10 @@ sourcoise_clear <- function(
 #' dir <- tempdir()
 #' set_sourcoise_root(dir)
 #' fs::file_copy(
-#'    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
+#'    fs::path_package("sourcoise", "some_data.R"),
 #'    dir,
 #'    overwrite = TRUE)
-#' data <- sourcoise("prix_insee.R", force_exec = TRUE)
+#' data <- sourcoise("some_data.R", force_exec = TRUE)
 #' sourcoise_reset()
 
 sourcoise_reset <- function(
@@ -70,5 +70,3 @@ sourcoise_reset <- function(
   purrr::walk(caches_reps, ~fs::dir_delete(.x))
 
 }
-
-

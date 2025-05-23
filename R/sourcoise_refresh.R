@@ -36,15 +36,15 @@
 #' @importFrom rlang .data
 #' @return a list of r scripts (characters) executed, with timing and success and a side effect on caches
 #' @export
-#' @examplesIf rlang::is_installed("insee")
+#' @examples
 #' dir <- tempdir()
 #' set_sourcoise_root(dir)
 #' fs::file_copy(
-#'    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
+#'    fs::path_package("sourcoise", "some_data.R"),
 #'    dir,
 #'    overwrite = TRUE)
 #' # Force execution
-#' data <- sourcoise("prix_insee.R", force_exec = TRUE)
+#' data <- sourcoise("some_data.R", force_exec = TRUE)
 #' # we then refresh all caches
 #' sourcoise_refresh()
 

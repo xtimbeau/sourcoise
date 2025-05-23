@@ -20,10 +20,10 @@ Removes all \code{.sourcoise} folders found under the project root.
 dir <- tempdir()
 set_sourcoise_root(dir)
 fs::file_copy(
-   fs::path_package("sourcoise", "ipch", "prix_insee.R"),
+   fs::path_package("sourcoise", "some_data.R"),
    dir,
    overwrite = TRUE)
-data <- sourcoise("prix_insee.R", force_exec = TRUE)
+data <- sourcoise("some_data.R", force_exec = TRUE)
 sourcoise_reset()
 \dontshow{\}) # examplesIf}
 }

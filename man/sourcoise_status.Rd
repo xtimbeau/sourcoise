@@ -57,11 +57,11 @@ Data returned is:
 dir <- tempdir()
 set_sourcoise_root(dir)
 fs::file_copy(
-    fs::path_package("sourcoise", "ipch", "prix_insee.R"),
+    fs::path_package("sourcoise", "some_data.R"),
     dir,
     overwrite = TRUE)
 # Force execution
-data <- sourcoise("prix_insee.R", force_exec = TRUE)
+data <- sourcoise("some_data.R", force_exec = TRUE)
 # status returns the cache status
 sourcoise_status()
 \dontshow{\}) # examplesIf}
