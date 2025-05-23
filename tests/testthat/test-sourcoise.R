@@ -5,6 +5,11 @@ fs::file_copy(
   fs::path_package("sourcoise", "ipch", "prix_insee.R"),
   dir,
   overwrite = TRUE)
+fs::file_copy(
+  fs::path_package("sourcoise", "ipch", "slow.R"),
+  dir,
+  overwrite = TRUE)
+
 # Force execution (root is set explicitly here, it is normally deduced from project)
 options(sourcoise.log = "INFO")
 data <- sourcoise("prix_insee.R", force_exec = TRUE, metadata = TRUE)
@@ -46,9 +51,9 @@ test_that("prevent works", {
 
 if(rlang::is_installed("bench")) {
   gc()
-  timing_force <- bench::mark(sourcoise("prix_insee.R", force_exec = TRUE, lapse = "hour"), max_iterations = 5 )
+  timing_force <- bench::mark(sourcoise("slow.R", force_exec = TRUE), max_iterations = 5 )
   gc()
-  timing <- bench::mark(sourcoise("prix_insee.R", lapse = "hour"), max_iterations = 5)
+  timing <- bench::mark(sourcoise("slow.R"), max_iterations = 5)
 
   test_that("Timings", {
     expect(timing_force$median>=timing$median,

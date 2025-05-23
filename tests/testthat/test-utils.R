@@ -5,6 +5,10 @@ fs::file_copy(
   dir,
   overwrite = TRUE)
 fs::file_copy(
+  fs::path_package("sourcoise", "ipch", "slow.R"),
+  dir,
+  overwrite = TRUE)
+fs::file_copy(
   fs::path_package("sourcoise", "test.qmd"),
   dir,
   overwrite = TRUE)
