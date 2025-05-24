@@ -21,25 +21,25 @@ test_that("We get data", {
     identical(x=names(data$data), y=c("ipcha", "ipchm", "ipch")),
     "Execution is wrong")
 })
-
-if(!is.na(data$json_file))
+cache_dir <- NULL
+if(!is.null(data$json_file))
   cache_dir <- fs::path_dir(data$json_file)
 
-if(!is.na(cache_dir))
+if(!is.null(cache_dir))
   test_that("Cache dir is there", {
     expect(
       fs::dir_exists(cache_dir),
       "No cache dir")
   })
 
-if(!is.na(data$data_file))
+if(!is.null(data$data_file))
   test_that("Data cached is well named", {
     expect(
       stringr::str_detect(data$data_file, "prix_insee-4262323b.+\\.qs2"),
       "wrong name")
   })
 
-if(!is.na(data$json_file))
+if(!is.null(data$json_file))
   test_that("Data cached exists", {
     expect(
       fs::file_exists(fs::path_join(c(fs::path_dir(data$json_file), data$data_file))),
