@@ -1,3 +1,5 @@
+# sourcoise 0.6.1
+
 # sourcoise 0.6.0
 
 ## Correction de bugs
