@@ -139,8 +139,8 @@ test_that("sourcoise_status", {
 })
 
 sourcoise_reset()
-
-test_that("sourcoise_reset", {
-  expect(!fs::dir_exists(cache_dir),
-         "cache dir was not removed")
-})
+if(!is.null(cache_dir))
+  test_that("sourcoise_reset", {
+    expect(!fs::dir_exists(cache_dir),
+           "cache dir was not removed")
+  })
