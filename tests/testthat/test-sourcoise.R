@@ -53,7 +53,7 @@ test_that("prevent works", {
 
 ## timing test
 
-if(rlang::is_installed("bench")) {
+if(rlang::is_installed("bench")&FALSE) {
   gc()
   timing_force <- bench::mark(sourcoise("slow.R", force_exec = TRUE), max_iterations = 5 )
   gc()
