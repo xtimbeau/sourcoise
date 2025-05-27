@@ -1,5 +1,11 @@
 # sourcoise 0.6.1
 
+CRAN test failed, unfailed.
+
+# sourcoise 0.6.1
+
+CRAN test failed
+
 # sourcoise 0.6.0
 
 ## Correction de bugs
