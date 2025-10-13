@@ -163,10 +163,13 @@ sourcoise_ <- function(
 
   if(is.null(ctxt)) {
     logger::log_error("file {path} not found")
-    return(list(error = glue::glue("file {path} not found"), ok = FALSE, log_file = ctxt$log_file))
+    return(list(error = glue::glue("file {path} not found"),
+                ok = FALSE,
+                log_file = ctxt$log_file))
   }
 
-  if(is.null(force_exec)) force <- FALSE else if(force_exec=="TRUE") force <- TRUE else force <- FALSE
+  if(is.null(force_exec))
+    force <- FALSE else if(force_exec=="TRUE") force <- TRUE else force <- FALSE
   if(is.null(prevent_exec))
     prevent <- FALSE
   else if(prevent_exec=="TRUE")

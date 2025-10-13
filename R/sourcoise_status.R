@@ -66,7 +66,6 @@ sourcoise_status <- function(
                       ~fs::dir_ls(.x, glob = "*.json", recurse = TRUE))
   qs2 <- purrr::map(caches_reps,
                     ~fs::dir_ls(.x, glob = "*.qs2", recurse = TRUE))
-
   if(length(roots)>0) {
     cached <- purrr::map_dfr(roots, \(a_root) {
       purrr::map_dfr(jsons[[a_root]], ~{
