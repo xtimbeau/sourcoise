@@ -124,7 +124,7 @@ If packages are loaded inside the script, then this is not needed.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="set_sourcoise_root.html">set_sourcoise_root</a></span><span class="op">(</span><span class="va">dir</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmpff9OS4"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp4ik78I"</span>
 <span class="r-in"><span><span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/copy.html" class="external-link">file_copy</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>   <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/path_package.html" class="external-link">path_package</a></span><span class="op">(</span><span class="st">"sourcoise"</span>, <span class="st">"some_data.R"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>   <span class="va">dir</span>,</span></span>
@@ -133,52 +133,8 @@ If packages are loaded inside the script, then this is not needed.</p>
 <span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="sourcoise.html">sourcoise</a></span><span class="op">(</span><span class="st">"some_data.R"</span>, force_exec <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># we then refresh all caches</span></span></span>
 <span class="r-in"><span><span class="fu">sourcoise_refresh</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: sourcoise_refresh()</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: res &lt;- purrr::pmap(what, function(src, wd, lapse, args, root, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     track, qmd_file, src_in, timing, log_file, priority, ...) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     exec_wd &lt;- getwd()</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (wd == "project") </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         exec_wd &lt;- fs::path_norm(root)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (wd == "file") </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         exec_wd &lt;- fs::path_norm(fs::path_join(c(root, fs::path_dir(src))))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (wd == "qmd") </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         exec_wd &lt;- fs::path_norm(fs::path_join(c(root, fs::path_dir(qmd_file[[1]]))))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     src_data &lt;- sourcoise_(path = src, force_exec = force_exec, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         track = track, args = args, wd = wd, lapse = lapse, metadata = TRUE, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         quiet = TRUE, src_in = src_in, root = root, log = log, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         priority = priority)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (.progress) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         cli::cli_progress_update(inc = timing, id = idpgr)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     msrc &lt;- fs::path_rel(fs::path_join(c(root, src)), cwd)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (src_data$ok == "exec") {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         cli::cli_alert_success("{msrc} executed in {round(src_data$timing)} s. for {scales::label_bytes()(src_data$size)} of data")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         cli::cli_alert_danger("{msrc} failed (see log {.file {src_data$log_file}})")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (unfreeze) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         purrr::walk(src_data$qmd_file, ~{</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             if (src_data$ok == "exec") {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 unfreeze(.x, root, quiet = TRUE)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 uncache(.x, root, quiet = TRUE)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         })</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (!is.null(src_data$error)) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         list(src = fs::path_join(c(root, src)), ok = "error", </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             timing = NA, size = NA)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     else list(src = fs::path_join(c(root, src)), ok = src_data$ok, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         timing = src_data$timing, size = src_data$size)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> })</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">some_data.r</span> executed in 0 s. for 3 kB of data</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (.progress) cli::cli_process_done(id = idpgr)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: cli::cli_process_done(id = idpgr)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: res &lt;- purrr::transpose(res)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: dt &lt;- round(as.numeric(difftime(Sys.time(), refresh_start, units = "secs")))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: tsize &lt;- sum(unlist(res$size))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (!quiet) cli::cli_alert_info("Total refresh in {dt} seconds for {scales::label_bytes()(tsize)} of data")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: cli::cli_alert_info("Total refresh in {dt} seconds for {scales::label_bytes()(tsize)} of data")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Total refresh in 0 seconds for 3 kB of data</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: invisible(res)</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
