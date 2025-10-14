@@ -94,7 +94,6 @@ sourcoise_refresh <- function(
     cwd <- root
   if(.progress)
     idpgr <- cli::cli_progress_bar("refreshing", total = total_time)
-browser()
   res <- purrr::pmap(
     what,
     function(src, wd, lapse, args, root, track, qmd_file, src_in, timing, log_file, priority, ...) {
