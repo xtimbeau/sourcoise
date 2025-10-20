@@ -102,7 +102,7 @@ If returned data after execution is not different than previously cached data, t
 }
 
 \examples{
-\dontshow{if (rlang::is_installed("insee")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (rlang::is_installed("insee")) withAutoprint(\{ # examplesIf}
 dir <- tempdir()
 set_sourcoise_root(dir)
 fs::file_copy(
@@ -114,7 +114,7 @@ data <- sourcoise("some_data.R", force_exec = TRUE)
 # The second time cache is used
 data <- sourcoise("some_data.R")
 \dontshow{\}) # examplesIf}
-\dontshow{if (rlang::is_installed(c("bench"))) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (rlang::is_installed(c("bench"))) withAutoprint(\{ # examplesIf}
 # Performance and mem test
 dir <- tempdir()
 set_sourcoise_root(dir)

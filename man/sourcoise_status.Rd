@@ -53,7 +53,7 @@ Data returned is:
 }
 }
 \examples{
-\dontshow{if (rlang::is_installed("insee")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (rlang::is_installed("insee")) withAutoprint(\{ # examplesIf}
 dir <- tempdir()
 set_sourcoise_root(dir)
 fs::file_copy(
