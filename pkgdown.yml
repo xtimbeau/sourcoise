@@ -1,11 +1,11 @@
 pandoc: 3.1.11
-pkgdown: 2.1.3
+pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   advanced: advanced.html
   compared: compared.html
   sourcoise: sourcoise.html
-last_built: 2025-10-20T10:06Z
+last_built: 2025-11-24T11:02Z
 urls:
   reference: https://xtimbeau.github.io/sourcoise/reference
   article: https://xtimbeau.github.io/sourcoise/articles

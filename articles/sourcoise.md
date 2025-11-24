@@ -1,0 +1,247 @@
+# sourçoïse : *sourcer et mettre en cache*
+
+[`sourcoise()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise.md)
+(prononcé sourçoïse \[suʁsɔiz\]) fournit une fonction qui se comporte
+presque comme [`base::source()`](https://rdrr.io/r/base/source.html) en
+implémentant un mécanisme de cache sur disque. Cela permet de *sourcer*
+des scripts `r` qui récoltent des données, mais qui peuvent échouer (pas
+de connection internet, API qui ne répond pas, changement dans le format
+des données renvoyées) ou qui consomment trop de temps à l’exécution
+(calculs lourds, téléchargements lents), même si le retour (les données
+produites par exemple) est le même.
+
+Le package inclu des outils pour la gestion du cache et des exécutions,
+notamment les fonctions
+[`sourcoise_status()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_status.md)
+et
+[`sourcoise_refresh()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_refresh.md).
+
+## Comment l’utiliser ?
+
+1.  Mettre le code qui fabrique les données dans un script
+    (`"prix_insee.r"`) et l’enregistrer dans le dossier où est le qmd
+    dans lequel les données sont mises en graphique ou en tableau. Dans
+    l’exemple di-dessous, le code `r` télécharge des données (assez
+    volumineuses) sur le site de l’INSEE, les transforme et renvoie un
+    tibble prêt pour le graphique. Le script se termine par un `return`
+    qui renvoie les données calculées ou téléchargées. Ce sont ces
+    données qui sont mises en cache. Le temps d’exécution est de l’ordre
+    de 100ms et le script peut bloquer si l’API de l’INSEE n’est pas
+    accessible (ou si on a pas de connection internet).
+
+``` bash
+├── prix.qmd
+└── prix_insee.R
+```
+
+Le script `prix_insee.r` comporte un
+[`return()`](https://rdrr.io/r/base/function.html) à la fin :
+
+``` r
+library(insee)
+library(tidyverse)
+
+ipchm <- get_idbank_list("IPCH-2015") |>
+     filter(COICOP2016=="00", FREQ=="M", NATURE=="INDICE") |> 
+     pull(idbank) |>
+     get_insee_idbank() |>
+     select(DATE, ipch = OBS_VALUE, IDBANK)
+
+ipch <- ipchm |>
+     mutate(DATE = floor_date(DATE, unit="quarter")) |>
+     group_by(DATE) |>
+     summarise(ipch = mean(ipch))
+
+ipcha <- ipch |> 
+     mutate(y = year(DATE)) |> 
+     group_by(y) |>
+     summarize(ipch = mean(ipch)) |> 
+     mutate(ipch = ipch / ipch[y == 2023])
+
+# le return final
+return(list(ipcha = ipcha, ipchm = ipchm, ipch = ipch))
+```
+
+2.  Dans `ipch.qmd` on met le chunk suivant :
+
+``` r
+library(sourcoise)
+library(tidyverse)
+ipch_data <- sourcoise("prix_insee.R")
+
+ggplot(data = ipch_data$ipchm) + 
+  aes(x = DATE, y = ipch ) +
+  geom_line()
+```
+
+L’utilisation de
+[`sourcoise()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise.md)
+se fait comme celle de
+[`base::source()`](https://rdrr.io/r/base/source.html) à l’assignement
+prêt dans `ipch_data`. Le résultat est mis en cache (enregistré sur
+disque) et les exécutions suivantes ne prennent que quelques
+millisecondes. Ces appels fonctionnent sans téléchargement et sans
+erreur possible si le serveur est hors ligne ou que l’on a plus
+d’internet, ou que le code ne fonctionne pas sur la machine où on
+utilise les données.
+
+[`sourcoise()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise.md)
+utilise un cache (caché dans un dossier `.sourcoise`). Il repère le
+fichier source (le script) et détecte les changements éventuels (ce qui
+invalide le cache). Si le cache est valide, les données sont renvoyées,
+sinon, le script est exécuté et les nouvelles données mises en cache.
+
+Il existe d’autres moyens d’invalider le cache : il peut avoir une durée
+de vie maximale, avec l’argument `lapse="day"`. Cette option dit que si
+le cache est plus vieux que 24h, il est renouvelé par une ré-exécution
+du script. Ce paramètre peut prendre plusieurs valeurs et des formes
+comme `2 hours` ou `3 weeks`. D’autres déclencheurs temporels seront
+possiblement ajoutés pour introduire des calendriers (comme 45 jours
+après la fin du trimestre). Cependant,
+[`sourcoise()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise.md)
+n’est pas capable d’aller vérifier (de façon générale) que les données
+téléchargées ont été mise à jour et donc de ne pas invalider le cache
+sur cette information
+
+Il est aussi possible de déclencher l’invalidation du cache si un autre
+fichier a été modifié. Il suffit de fournir une liste de fichiers (dont
+les chemins sont relatifs au script) qui seront tracés. Ces fichiers
+peuvent être des `.csv` ou des fichiers `.xlsx` (ou tout autre type de
+fichier) et donc sont utiles pour déclencher l’exécution du script quand
+on a fait une modification manuelle ou par un autre programme de ces
+fichiers. On peut en mettre autant qu’on veut.
+
+On peut également forcer le déclenchement du script. Cela se fait par
+une option `force_exec=TRUE`. Il existe d’autres moyens pour opérer un
+rafraîchissement du cache plus généraux.
+
+Il est possible de bloquer l’exécution du code par une option
+(`prevent_exec`) qui peut être définie comme une option globale (par
+`options(sourcoise.prevent_exec=TRUE)`). Dans ce cas, aucun script ne
+sera exécuté, ce qui peut servir lorsqu’on veut faire un rendu du site
+sans prendre le risque d’une erreur d’API ou d’un blocage. Cette option
+est très pratique pour le rendu d’un site `quarto` qui peut bloquer à
+cause d’un seul téléchargement fautif.
+
+L’exécution du code s’effectue en local (donc pas d’effet de bord das
+l’environnement qui appelle le script) et modifie le *working directory*
+pour qu’il soit celui du script appelé. Cela permet alors d’utiliser des
+chemins relatifs à ce dossier. il est possible de modifier ce
+comportement par une option.
+
+Il est possible de logger l’exécution de
+[`sourcoise()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise.md)
+pour vérifier que tout s’est bien passé et de répérer les accès aux
+données ou les exécutions de script.
+
+[`sourcoise()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise.md)
+peut retourner (en plus des données) les métadonnées, ce qui permet de
+renseigner par exemple la date de dernier téléchargement dans les notes
+d’un graphique automatiquement.
+
+Une dernière chose :
+[`sourcoise()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise.md)
+est doté d’une heuristique maline trouve le fichier source même si il
+est caché (i.e. que le chemin est approximatif, ce qui déclenche une
+erreur normalement, mais là ça passe), ce qui augmente la portabilité
+des fichiers sources et facilite l’orgnisation d’un projet. Bien sûr, en
+cas d’ambiguité,
+[`sourcoise()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise.md)
+prévient (mais choisi).
+
+## Performance
+
+L’exécution “vraie” du scirpt `r` en exemple (`prix_insee.r`), sur un
+Macbook Air M2, prend 34ms et alloue 25Mb Lorsque les données sont en
+cache, l’exécution est effectuée en moins de 5ms et l’allocation de
+mémoire est celle des données finales (200kb). Le temps d’exécution des
+données cachées ne dépend que de leur taille alors que le temsp
+d’exécution “vraie” dépend de la complexité des calculs et des volumes
+téléchargés par le script. L’acces direct est bien sûr (infiniment) plus
+rapide, mais sans invalidation de cache !
+
+``` r
+library(bench)
+library(fs)
+library(sourcoise)
+file_copy(
+    path_package("sourcoise", "ipch", "prix_insee.r"),
+    "/tmp/prix_insee.r",
+    overwrite = TRUE)
+data <- sourcoise("prix_insee.r", root="/tmp")
+mark(cache = sourcoise("prix_insee.r", root="/tmp"),
+            no_cache = sourcoise("prix_insee.r", root  = "/tmp", force_exec = TRUE),
+            direct = data)
+#>   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
+#> # A tibble: 3 × 6
+#>   expression      min   median    `itr/sec` mem_alloc `gc/sec`
+#>   <bch:expr> <bch:tm> <bch:tm>        <dbl> <bch:byt>    <dbl>
+#> 1 cache        5.61ms   5.75ms        171.    171.5KB     9.92
+#> 2 no_cache    31.62ms  35.45ms         28.0    25.6MB    11.2 
+#> 3 direct            0      1ns 1370228815.         0B     0
+```
+
+^(Created on 2025-03-10 with [reprex v2.1.1](https://reprex.tidyverse.org))
+
+## Le *workflow* avec sourcoise
+
+Le cas central d’utilisation de sourcoise est dans un projet `quarto`.
+On acquiert des données de diférentes sources, plus ou moins complexes,
+nécessitant plus ou moins de traitements.
+
+Ces données peuvent être mises à jour, mais la fréquence de mise à jour
+est bien plus basse que la fréquence de rendu du projet quarto.
+
+Dans les chunks on place les mises en forme de graphiques ou de
+tableaux, afin de pouvoir les corriger et de pouvoir conserver
+l’adaptation des rendus aux support lors du `render` du projet quarto.
+Les données sont fabriquées dans les scripts `r`, placés là où sont les
+`qmd` et appelés périodiquement ou manuellement pour garantir que l’on
+dispose de la version à jour.
+
+Ce projet `quarto` est partagé par github entre plusieurs utilisateurs
+et les données mises en cache sont *commitées* (et versionnées) par
+*github*. Cela permet de dissocier exécution des scripts (et
+vérification de leur bonne exécution) du rendu des graphiques ou
+tableaux faits à partir de ces données.
+
+[`sourcoise_status()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_status.md)
+permet de faire un inventaire, pour le projet, de toutes les données en
+cache. Chaque fichier de donnée en cache, c’est-à-dire qui a été exéctué
+pleinement avec succès au moins une fois, est repéré (il existe quelque
+part dans le projet dans un dossier `.sourcoise`). Avec ce fichier,
+quelques informations sont conservés sur l’exécution (date, temps,
+taille des données) mais aussi sur le contexte d’exécution (script `r`,
+`qmd` appelants).
+
+[`sourcoise_refresh()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_refresh.md)
+permet ainsi que rafraicher tout ou partie des données en cache en
+forçant l’exécution ou en laissant les schémas d’invalidation jouer
+automatiquement.
+
+Lorsque les scripts sont exécutés par
+[`sourcoise_refresh()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_refresh.md)
+le log est activé par défaut. Comme les `qmd` appelants sont connus,
+[`sourcoise_refresh()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_refresh.md)
+peut *unfreezé* ou *uncaché* les `qmd` ou les chunks des `qmd`. C’est
+important dans le *workflow*, parce que lorsqu’on rafraichit les
+données, on veut que les chunks soient réévalués pour que les tableaux
+ou les graphiques soient refait à partir des nouvelles données. Or, si
+on utilise `freeze` `quarto` n’a pas de moyen de savoir que le `freeze`
+est périmé.
+
+Il est possible de sélectionner les données qui sont rafraichies.
+[`sourcoise_refresh()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_refresh.md)
+part du résulat de
+[`sourcoise_status()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_status.md)
+par défaut. Il est ainsi possible de faire une sélection des données en
+cache et de ne passer que celles là à
+[`sourcoise_refresh()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_refresh.md).
+Avec un peu de programmation, on peut donc mettre en place un schéma qui
+régulièrement vérifie la validité des données (calendrier, API ou autre)
+et déclenche sélectivement la mise à jour.
+[`sourcoise()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise.md)
+peut appeler d’autres
+[`sourcoise()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise.md)
+mais pour le moment, il n’y a aucune prise en compte de cette
+hiérarchie.
