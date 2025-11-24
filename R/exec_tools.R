@@ -37,12 +37,16 @@ exec_source <- function(ctxt) {
         ok = "exec",
         log_file = ctxt$log_file))
   }
-
+  data <- res$result$value
+  if(!"S7_object"%in%class(data))
+    size <- lobstr::obj_size(data) |> as.numeric()
+  else
+    size <- object.size(data) |> as.numeric()
   list(
-    data = res$result$value,
+    data = data,
     timing = timing,
     date = lubridate::now(),
-    size = lobstr::obj_size(res$result$value) |> as.numeric(),
+    size = size,
     args =ctxt$args,
     lapse = ctxt$lapse,
     src = ctxt$relname,
