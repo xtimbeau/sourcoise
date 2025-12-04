@@ -16,7 +16,7 @@ sourcoise(
   prevent_exec = getOption("sourcoise.prevent_exec"),
   metadata = getOption("sourcoise.metadata"),
   wd = getOption("sourcoise.wd"),
-  quiet = TRUE,
+  quiet = getOption("sourcoise.quiet"),
   inform = FALSE,
   priority = 10
 )
@@ -215,7 +215,7 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> [1] "/tmp/RtmpIJX9di"
+#> [1] "/tmp/Rtmp7j1oTC"
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
   dir,
@@ -227,7 +227,7 @@ data <- sourcoise("some_data.R")
 # Performance and mem test
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> [1] "/tmp/RtmpIJX9di"
+#> [1] "/tmp/Rtmp7j1oTC"
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
    dir,
@@ -239,7 +239,7 @@ bench::mark(
 #> # A tibble: 2 × 13
 #>   expression      min median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time
 #>   <bch:expr> <bch:tm> <bch:>     <dbl> <bch:byt>    <dbl> <int> <dbl>   <bch:tm>
-#> 1 forced         35ms   35ms      28.6     920KB        0     1     0       35ms
-#> 2 cached       11.5ms 11.5ms      87.1     287KB        0     1     0     11.5ms
+#> 1 forced       34.2ms 34.2ms      29.2     920KB        0     1     0     34.2ms
+#> 2 cached       11.3ms 11.3ms      88.4     287KB        0     1     0     11.3ms
 #> # ℹ 4 more variables: result <list>, memory <list>, time <list>, gc <list>
 ```
