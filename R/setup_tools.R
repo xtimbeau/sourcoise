@@ -144,12 +144,7 @@ startup_log <- function(log, ctxt) {
   log_dir <- fs::path_join(c(ctxt$root,".sourcoise", "logs"))
   logger::log_threshold(log)
 
-  if(!ctxt$quiet)
-    logger::log_appender(logger::appender_stdout)
-
   if(log == "OFF") {
-    if(!ctxt$quiet)
-      logger::log_threshold("INFO")
     return(ctxt)
   }
 
@@ -157,9 +152,7 @@ startup_log <- function(log, ctxt) {
     fs::dir_create(log_dir)
   log_fn <- fs::path_join(c(log_dir, stringr::str_c(ctxt$uid, "_", lubridate::today() |> as.character()))) |>
     fs::path_ext_set("log")
-
   logger::log_appender(logger::appender_file(log_fn))
-
   ctxt$log_file <- fs::path_rel(log_fn, getwd() |> fs::path_abs())
 
   return(ctxt)

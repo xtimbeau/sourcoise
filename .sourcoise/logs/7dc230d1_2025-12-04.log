@@ -1,0 +1,44 @@
+WARN [2025-12-04 18:35:24] work/error.r failed, returning invalid cache (1 kB)
+ERROR [2025-12-04 18:36:22] file work/erreur.r not found
+ERROR [2025-12-04 18:37:23] file work/erreur.r not found
+ERROR [2025-12-04 18:43:10] file work/erreur.r not found
+FATAL [2025-12-04 18:44:27] file work/erreur.r not found
+ERROR [2025-12-04 18:48:09] file work/erreur.r not found
+ERROR [2025-12-04 18:49:57] file work/erreur.r not found
+ERROR [2025-12-04 18:50:04] file work/erreur.r not found
+ERROR [2025-12-04 18:50:25] file work/erreur.r not found
+ERROR [2025-12-04 18:50:29] file work/erreur.r not found
+ERROR [2025-12-04 18:57:08] file work/erreur.r not found
+ERROR [2025-12-04 18:57:11] file work/erreur.r not found
+ERROR [2025-12-04 18:57:13] file work/erreur.r not found
+WARN [2025-12-04 18:57:48] work/error.r failed, returning invalid cache (1 kB)
+WARN [2025-12-04 19:22:30] work/error.r failed, returning invalid cache (1 kB)
+WARN [2025-12-04 19:45:14] work/error.r failed, returning invalid cache (1 kB)
+WARN [2025-12-04 19:45:25] work/error.r failed, returning invalid cache (1 kB)
+FATAL [2025-12-04 20:33:33] file work/erreur.r not found
+FATAL [2025-12-04 20:33:41] file work/erreur.r not found
+WARN [2025-12-04 20:33:52] work/error.r failed, returning invalid cache (1 kB)
+WARN [2025-12-04 20:36:10] work/error.r failed, returning invalid cache (1 kB)
+WARN [2025-12-04 20:41:00] work/error.r failed, returning invalid cache (1 kB)
+WARN [2025-12-04 20:41:15] work/error.r failed, returning invalid cache (1 kB)
+WARN [2025-12-04 20:42:14] work/error.r failed, returning invalid cache (1 kB)
+ERROR [2025-12-04 20:43:46] 
+ERROR [2025-12-04 20:44:10] [1m[33mError[39m in `summarize()` at ]8;line = 3:col = 1;file:///Users/xt/github/sourcoise/work/error.Rsourcoise/work/error.r:3:1]8;;:[22m
+[38;5;237m[36mℹ[38;5;237m In argument: `sum(size)`.
+[36mℹ[38;5;237m In group 1: `hp = 52`.[39m
+[1mCaused by error:[22m
+[33m![39m object 'size' not found
+WARN [2025-12-04 20:45:11] work/error.r failed, returning invalid cache (1 kB)
+SUCCESS [2025-12-04 20:46:29] work/noerror.r (exec. no cache found) in 0.01 sec. (1 kB)
+SUCCESS [2025-12-04 20:49:47] work/noerror.r valid cache (1 kB)
+SUCCESS [2025-12-04 21:03:47] work/noerror.r valid cache (1 kB)
+SUCCESS [2025-12-04 21:05:42] work/noerror.r valid cache (1 kB)
+WARN [2025-12-04 21:05:46] work/error.r failed, returning invalid cache (1 kB)
+WARN [2025-12-04 21:06:26] work/error.r failed, returning invalid cache (1 kB)
+WARN [2025-12-04 21:06:44] work/error.r failed, returning invalid cache (1 kB)
+SUCCESS [2025-12-04 21:06:51] work/noerror.r valid cache (1 kB)
+WARN [2025-12-04 21:07:00] work/error.r failed, returning invalid cache (1 kB)
+SUCCESS [2025-12-04 21:07:35] work/noerror.r (forced) in 0.01 sec. (1 kB)
+SUCCESS [2025-12-04 21:59:53] work/noerror.r (forced) in 0 sec. (1 kB)
+SUCCESS [2025-12-04 22:00:02] work/noerror.r valid cache (1 kB)
+SUCCESS [2025-12-04 22:01:08] work/noerror.r (exec. no cache found) in 0.44 sec. (360 kB)

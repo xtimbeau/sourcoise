@@ -97,7 +97,7 @@ sourcoise <- function(
     prevent_exec = getOption("sourcoise.prevent_exec"),
     metadata = getOption("sourcoise.metadata"),
     wd = getOption("sourcoise.wd"),
-    quiet = TRUE,
+    quiet = getOption("sourcoise.quiet"),
     inform = FALSE,
     priority = 10) {
 
@@ -162,7 +162,7 @@ sourcoise_ <- function(
     metadata = metadata)
 
   if(is.null(ctxt)) {
-    logger::log_error("file {path} not found")
+    logger::log_fatal("file {path} not found")
     return(list(error = glue::glue("file {path} not found"),
                 ok = FALSE,
                 log_file = ctxt$log_file))
@@ -170,61 +170,65 @@ sourcoise_ <- function(
 
   if(is.null(force_exec))
     force <- FALSE else if(force_exec=="TRUE") force <- TRUE else force <- FALSE
-  if(is.null(prevent_exec))
-    prevent <- FALSE
-  else if(prevent_exec=="TRUE")
-    prevent <- TRUE
-  else
-    prevent <- FALSE
-  our_data <- list()
-  if(force&!prevent) {
-    our_data <- exec_source(ctxt)
-    if(our_data$ok=="exec") {
-      our_data <- cache_data(our_data, ctxt)
-      logger::log_success(
-        "{ctxt$relname} (forced) in {round(our_data$timing, 2)} sec. ({scales::label_bytes()(our_data$size)})")
-      return(data_returned(our_data, ctxt))
-    }
-  }
+    if(is.null(prevent_exec))
+      prevent <- FALSE
+    else if(prevent_exec=="TRUE")
+      prevent <- TRUE
+    else
+      prevent <- FALSE
+    our_data <- list()
 
-  ctxt <- valid_metas(ctxt)
-
-  good_datas <- ctxt$meta_datas |> purrr::keep(~.x$valid)
-
-  if(length(good_datas)==0) {
-    if(prevent) {
-      logger::log_warn("No cached data, execution prevented")
-      return(list(error = "No cache&prevent", ok = FALSE, log_file = ctxt$log_file))
-    }
-    if(!is.null(our_data))
-      our_data <- exec_source(ctxt)
-    if(our_data$ok=="exec") {
-      our_data <- cache_data(our_data, ctxt)
-      logger::log_success(
-        "{ctxt$relname} (exec. no cache found) in {round(our_data$timing, 2)} sec. ({scales::label_bytes()(our_data$size)})")
-
-      return(data_returned(our_data, ctxt))
-
-    } else {
-      if(length(ctxt$meta_datas)==0) {
-        msg <- "{ctxt$relname} failed, no cache: \n{our_data$error$message}"
-        if(ctxt$quiet)
-          cli::cli_alert_danger(msg)
-        logger::log_error(msg)
-        return(our_data)
+    if(force&!prevent) {
+      our_data <- super_exec_source(ctxt)
+      if(our_data$ok=="exec") {
+        our_data <- cache_data(our_data, ctxt)
+        logger::log_success(
+          "{ctxt$relname} (forced) in {round(our_data$timing, 2)} sec. ({scales::label_bytes()(our_data$size)})")
+        return(data_returned(our_data, ctxt))
       }
-      return_data <- pick_gooddata(ctxt$meta_datas, ctxt)
-      msg <-
-        "{ctxt$relname} failed, returning invalid cache ({scales::label_bytes()(return_data$size)})"
-      if(ctxt$quiet)
-        cli::cli_alert_danger(msg)
-      logger::log_warn(msg)
     }
-  } else {
-    return_data <- pick_gooddata(good_datas, ctxt)
-    logger::log_success("{ctxt$relname} valid cache ({scales::label_bytes()(return_data$size)})")
-  }
 
-  return(data_returned(return_data, ctxt))
+    ctxt <- valid_metas(ctxt)
+
+    good_datas <- ctxt$meta_datas |> purrr::keep(~.x$valid)
+
+    if(length(good_datas)==0) {
+      if(prevent) {
+        logger::log_fatal("No cached data, execution prevented")
+        return(list(error = "No cache&prevent", ok = FALSE, log_file = ctxt$log_file))
+      }
+      if(length(our_data)==0)
+        our_data <- exec_source(ctxt)
+      if(our_data$ok=="exec") {
+        our_data <- cache_data(our_data, ctxt)
+        logger::log_success(
+          "{ctxt$relname} (exec. no cache found) in {round(our_data$timing, 2)} sec. ({scales::label_bytes()(our_data$size)})")
+
+        return(data_returned(our_data, ctxt))
+      } else {
+        if(length(ctxt$meta_datas)==0) {
+          logger::log_error("{ctxt$relname} failed, no cache")
+          if(!ctxt$quiet)
+            cli::cli_alert(our_data$error |> errorCondition())
+          return(our_data)
+        }
+        return_data <- pick_gooddata(ctxt$meta_datas, ctxt)
+        msg <-
+          "{ctxt$relname} failed, returning invalid cache ({scales::label_bytes()(return_data$size)})"
+        logger::log_warn(msg)
+        if(!ctxt$quiet)
+          cli::cli_alert(our_data$error|> errorCondition())
+      }
+    } else {
+      return_data <- pick_gooddata(good_datas, ctxt)
+      logger::log_success("{ctxt$relname} valid cache ({scales::label_bytes()(return_data$size)})")
+      if(length(our_data)!=0 && our_data$ok == FALSE ) {
+        logger::log_error("  but {ctxt$relname} failed")
+        if(!ctxt$quiet)
+          cli::cli_alert(our_data$error|> errorCondition())
+      }
+    }
+
+    return(data_returned(return_data, ctxt))
 }
 

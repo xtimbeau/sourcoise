@@ -10,6 +10,7 @@
     sourcoise.wd = "file",
     sourcoise.unfreeze = FALSE,
     sourcoise.log = "OFF",
+    sourcoise.quiet = FALSE,
     sourcoise.root = NULL,
     sourcoise.nocache = FALSE,
     sourcoise.grow_cache = 5,

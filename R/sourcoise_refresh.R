@@ -96,52 +96,57 @@ sourcoise_refresh <- function(
     idpgr <- cli::cli_progress_bar("refreshing", total = total_time)
   res <- purrr::pmap(
     what,
-    function(src, wd, lapse, args, root, track, qmd_file, src_in, timing, log_file, priority, ...) {
-    exec_wd <- getwd()
-    if(wd=="project")
-      exec_wd <- root |> fs::path_norm()
-    if(wd=="file")
-      exec_wd <- fs::path_join(c(root, fs::path_dir(src))) |> fs::path_norm()
-    if(wd=="qmd")
-      exec_wd <- fs::path_join(c(root, fs::path_dir(qmd_file[[1]]))) |> fs::path_norm()
-    src_data <- sourcoise_(
-      path = src,
-      force_exec = force_exec,
-      track = track,
-      args = args,
-      wd = wd,
-      lapse = lapse,
-      metadata = TRUE,
-      quiet = TRUE,
-      src_in = src_in,
-      root = root,
-      log = log,
-      priority = priority)
+    function(src, wd, lapse, args, root, track, qmd_file, src_in, timing, log_file, priority, data_date, ...) {
+      exec_wd <- getwd()
+      if(wd=="project")
+        exec_wd <- root |> fs::path_norm()
+      if(wd=="file")
+        exec_wd <- fs::path_join(c(root, fs::path_dir(src))) |> fs::path_norm()
+      if(wd=="qmd")
+        exec_wd <- fs::path_join(c(root, fs::path_dir(qmd_file[[1]]))) |> fs::path_norm()
+      src_data <- sourcoise_(
+        path = src,
+        force_exec = force_exec,
+        track = track,
+        args = args,
+        wd = wd,
+        lapse = lapse,
+        metadata = TRUE,
+        quiet = TRUE,
+        src_in = src_in,
+        root = root,
+        log = log,
+        priority = priority)
 
-    if(.progress)
-      cli::cli_progress_update(inc = timing, id = idpgr)
+      if(.progress)
+        cli::cli_progress_update(inc = timing, id = idpgr)
 
-    msrc <- fs::path_join(c(root, src)) |> fs::path_rel(cwd)
-    if( src_data$ok == "exec" ) {
-      cli::cli_alert_success(
-        "{msrc} executed in {round(src_data$timing)} s. for {scales::label_bytes()(src_data$size)} of data" )
-    } else {
-      cli::cli_alert_danger(
-        "{msrc} failed (see log {.file {src_data$log_file}})" )
+      msrc <- fs::path_join(c(root, src)) |> fs::path_rel(cwd)
+      if( src_data$ok == "exec" ) {
+        if(src_data$data_date > data_date) {
+          new <- "new data generated" } else {
+            new <- "same data generated" }
+        data_size <- "{scales::label_bytes()(src_data$size)}"
+        cli::cli_alert_success(
+          "{msrc} executed in {round(src_data$timing)} s., {new} ({data_size})" )
+      } else {
+        cli::cli_alert_danger(
+          "{msrc} failed (see log {.file {src_data$log_file}})" )
+        cli::cli_alert(src_data$error|> errorCondition())
+      }
+
+      if(unfreeze)
+        purrr::walk(src_data$qmd_file, ~{
+          if(src_data$ok == "exec") {
+            unfreeze(.x, root, quiet = TRUE)
+            uncache(.x, root, quiet = TRUE)
+          }
+        })
+      if(!is.null(src_data$error))
+        list(src = fs::path_join(c(root, src)), ok = "error", timing = NA, size = NA)
+      else
+        list(src = fs::path_join(c(root, src)), ok = src_data$ok, timing = src_data$timing, size = src_data$size)
     }
-
-    if(unfreeze)
-      purrr::walk(src_data$qmd_file, ~{
-        if(src_data$ok == "exec") {
-          unfreeze(.x, root, quiet = TRUE)
-          uncache(.x, root, quiet = TRUE)
-        }
-      })
-    if(!is.null(src_data$error))
-      list(src = fs::path_join(c(root, src)), ok = "error", timing = NA, size = NA)
-    else
-      list(src = fs::path_join(c(root, src)), ok = src_data$ok, timing = src_data$timing, size = src_data$size)
-  }
   )
 
   if(.progress)
