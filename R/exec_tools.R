@@ -41,7 +41,7 @@ exec_source <- function(ctxt) {
   if(!"S7_object"%in%class(data))
     size <- lobstr::obj_size(data) |> as.numeric()
   else
-    size <- object.size(data) |> as.numeric()
+    size <- utils::object.size(data) |> as.numeric()
   list(
     data = data,
     timing = timing,
@@ -66,6 +66,7 @@ super_exec_source <- function(ctxt) {
   safe_eval <- purrr::safely(\(src, args) {
     args <- args
     code <- c("func_tmp <- function() {", readLines(src), "}")
+    func_tmp <- NULL
     eval(parse(text = code, encoding = getOption("sourcoise.encoding")))
     res <- func_tmp() |>
         suppressMessages() |>
@@ -103,7 +104,7 @@ super_exec_source <- function(ctxt) {
   if(!"S7_object"%in%class(data))
     size <- lobstr::obj_size(data) |> as.numeric()
   else
-    size <- object.size(data) |> as.numeric()
+    size <- utils::object.size(data) |> as.numeric()
   list(
     data = data,
     timing = timing,

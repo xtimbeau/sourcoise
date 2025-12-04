@@ -13,7 +13,7 @@ sourcoise(
   prevent_exec = getOption("sourcoise.prevent_exec"),
   metadata = getOption("sourcoise.metadata"),
   wd = getOption("sourcoise.wd"),
-  quiet = TRUE,
+  quiet = getOption("sourcoise.quiet"),
   inform = FALSE,
   priority = 10
 )
