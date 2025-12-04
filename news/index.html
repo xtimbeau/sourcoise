@@ -38,6 +38,19 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.6.2.9000" id="sourcoise-0629000-to-be-070">sourcoise 0.6.2.9000 (to be 0.7.0)<a class="anchor" aria-label="anchor" href="#sourcoise-0629000-to-be-070"></a></h2>
+<ul><li>better handling of error messages, logged and displayed</li>
+<li>critical errors displayed, such as unfound file</li>
+<li>not quiet by default</li>
+<li>
+<code>sourcoise_refresh</code> identify and warn when new data has been generated</li>
+<li>exec engine is based on <code>parse</code> and <code>eval</code> which solve some bugs (like when returning a ggplot)</li>
+<li>
+<code>lobstr::object_size</code> fails on S7 object, this is treated as an exception</li>
+<li>
+<code>sourcoise_refresh</code> warns when an error occurs and diplays the error</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.6.1" id="sourcoise-061">sourcoise 0.6.1<a class="anchor" aria-label="anchor" href="#sourcoise-061"></a></h2><p class="text-muted">CRAN release: 2025-05-24</p>
 <p>CRAN test failed, unfailed.</p>
 </div>
@@ -56,12 +69,12 @@
 <li>les arguments sont employés (par un <em>hash</em>) pour différencier les caches, ce qui permet de les utiliser sans problème.</li>
 <li>le log est maintenant spécifique à chaque utilisateur.</li>
 <li>cas où le nom de fichier comporte un “.” (ne considère pas ça comme une extension).</li>
-<li>cas où il n’y a pas de projet (root=wd dans ce cas) et <code><a href="../reference/sourcoise.html">sourcoise()</a></code> fonctionne (merci François).</li>
+<li>cas où il n’y a pas de projet (root=wd dans ce cas) et <code><a href="../reference/sourcoise.html">sourcoise()</a></code> fonctionne (merci François G.).</li>
 <li>nommage correct du fichier si il n’y a pas d’arguments.</li>
 <li>différencie bien les scripts selon les arguments lors de <code>status</code> ou <code>refresh</code>
 </li>
 <li>vérifie que le json est correctement formé à la lecture (merci Elliot)</li>
-<li>force l’encodage à être selon l’otion <code>sourcoise.encoding</code> et à être <code>UTF-8</code> pour foncitonner sur le multiplateforme avec macOS et windows</li>
+<li>force l’encodage à être selon l’option <code>sourcoise.encoding</code> et à être <code>UTF-8</code> pour fonctionner sur le multiplateforme avec macOS et windows</li>
 </ul></div>
 <div class="section level3">
 <h3 id="ajouts-0-6-0">ajouts<a class="anchor" aria-label="anchor" href="#ajouts-0-6-0"></a></h3>
