@@ -163,6 +163,7 @@ data_returned <- function(data, ctxt) {
     return(data$data)
   list(
     ok = data$ok,
+    error = data$error,
     data = data$data,
     timing = data$timing,
     date = data$date,

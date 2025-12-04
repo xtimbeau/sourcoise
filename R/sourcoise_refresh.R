@@ -123,12 +123,15 @@ sourcoise_refresh <- function(
 
       msrc <- fs::path_join(c(root, src)) |> fs::path_rel(cwd)
       if( src_data$ok == "exec" ) {
-        if(src_data$data_date > data_date) {
-          new <- "new data generated" } else {
-            new <- "same data generated" }
-        data_size <- "{scales::label_bytes()(src_data$size)}"
-        cli::cli_alert_success(
-          "{msrc} executed in {round(src_data$timing)} s., {new} ({data_size})" )
+        if(src_data$data_date > data_date)
+          new <- TRUE else
+            new <- FALSE
+        data_size <- glue::glue("{scales::label_bytes()(src_data$size)}")
+        if(new)
+          cli::cli_alert_success(
+          "{msrc} executed in {round(src_data$timing)} s., {.strong new data generated} ({data_size})" ) else
+            cli::cli_alert_success(
+              "{msrc} executed in {round(src_data$timing)} s., same data ({data_size})" )
       } else {
         cli::cli_alert_danger(
           "{msrc} failed (see log {.file {src_data$log_file}})" )
@@ -154,7 +157,7 @@ sourcoise_refresh <- function(
 
   res <- purrr::transpose(res)
   dt <- difftime(Sys.time(), refresh_start, units = "secs") |> as.numeric() |> round()
-  tsize <- res$size |> unlist() |>  sum()
+  tsize <- res$size |> unlist() |>  sum(na.rm=TRUE)
   if(!quiet)
     cli::cli_alert_info("Total refresh in {dt} seconds for {scales::label_bytes()(tsize)} of data")
 

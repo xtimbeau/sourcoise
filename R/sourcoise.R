@@ -210,9 +210,10 @@ sourcoise_ <- function(
           logger::log_error("{ctxt$relname} failed, no cache")
           if(!ctxt$quiet)
             cli::cli_alert(our_data$error |> errorCondition())
-          return(our_data)
+          return(data_returned(our_data, ctxt))
         }
         return_data <- pick_gooddata(ctxt$meta_datas, ctxt)
+        return_data$error <- our_data$error
         msg <-
           "{ctxt$relname} failed, returning invalid cache ({scales::label_bytes()(return_data$size)})"
         logger::log_warn(msg)
