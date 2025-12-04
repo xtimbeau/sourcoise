@@ -1,3 +1,13 @@
+# sourcoise 0.6.2.9000 (to be 0.7.0)
+
+* better handling of error messages, logged and displayed
+* critical errors displayed, such as unfound file
+* not quiet by default
+* `sourcoise_refresh` identify and warn when new data has been generated
+* exec engine is based on `parse` and `eval` which solve some bugs (like when returning a ggplot)
+* `lobstr::object_size` fails on S7 object, this is treated as an exception 
+* `sourcoise_refresh` warns when an error occurs and diplays the error
+
 # sourcoise 0.6.1
 
 CRAN test failed, unfailed.
@@ -16,11 +26,11 @@ CRAN test failed
 * les arguments sont employés (par un *hash*) pour différencier les caches, ce qui permet de les utiliser sans problème.
 * le log est maintenant spécifique à chaque utilisateur.
 * cas où le nom de fichier comporte un "." (ne considère pas ça comme une extension).
-* cas où il n'y a pas de projet (root=wd dans ce cas) et `sourcoise()` fonctionne (merci François).
+* cas où il n'y a pas de projet (root=wd dans ce cas) et `sourcoise()` fonctionne (merci François G.).
 * nommage correct du fichier si il n'y a pas d'arguments.
 * différencie bien les scripts selon les arguments lors de `status` ou `refresh`
 * vérifie que le json est correctement formé à la lecture (merci Elliot)
-* force l'encodage à être selon l'otion `sourcoise.encoding` et à être `UTF-8` pour foncitonner sur le multiplateforme avec macOS et windows
+* force l'encodage à être selon l'option `sourcoise.encoding` et à être `UTF-8` pour fonctionner sur le multiplateforme avec macOS et windows
 
 ## ajouts
 
