@@ -104,7 +104,7 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> [1] "/tmp/Rtmp6WFJAw"
+#> [1] "/tmp/RtmpMgtN7K"
 fs::file_copy(
     fs::path_package("sourcoise", "some_data.R"),
     dir,
@@ -113,5 +113,8 @@ fs::file_copy(
 data <- sourcoise("some_data.R", force_exec = TRUE)
 # status returns the cache status
 sourcoise_status()
-#> Error in data.matrix(data): 'list' object cannot be coerced to type 'double'
+#> # A tibble: 1 × 6
+#>   src        exists date                data_date           file_size json_file 
+#>   <chr>      <lgl>  <dttm>              <dttm>              <chr>     <fs::path>
+#> 1 some_data… TRUE   2025-12-05 22:14:00 2025-12-05 22:14:00 242 B     …3e-1.json
 ```
