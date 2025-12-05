@@ -54,7 +54,7 @@ a named list with cache information
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> [1] "/tmp/RtmpNFNBrg"
+#> [1] "/tmp/Rtmp6WFJAw"
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
   dir,
@@ -63,43 +63,5 @@ fs::file_copy(
 data <- sourcoise("some_data.R", force_exec = TRUE)
 # Then we access metadata
 sourcoise_meta("some_data.R")
-#> $ok
-#> [1] "cache ok&valid"
-#> 
-#> $timing
-#> [1] 7e-04
-#> 
-#> $date
-#> [1] "2025-12-04 21:48:45"
-#> 
-#> $size
-#> [1] 1720
-#> 
-#> $args
-#> list()
-#> 
-#> $lapse
-#> [1] "never"
-#> 
-#> $track
-#> list()
-#> 
-#> $qmd_file
-#> named list()
-#> 
-#> $log_file
-#> named list()
-#> 
-#> $file_size
-#> [1] 242
-#> 
-#> $data_date
-#> [1] "2025-12-04 21:48:45.737946"
-#> 
-#> $data_file
-#> [1] "some_data-4262323b_f92a79811b1d8866b336be3b35cd7f50.qs2"
-#> 
-#> $json_file
-#> /tmp/RtmpNFNBrg/.sourcoise/some_data-4262323b_1d387e26-1.json
-#> 
+#> Error in setup_context(path = path, root = getOption("sourcoise.root"),     src_in = getOption("sourcoise.src_in"), exec_wd = NULL, wd = getOption("sourcoise.wd"),     track = NULL, args = args, lapse = "never", nocache = FALSE,     grow_cache = getOption("sourcoise.grow_cache"), limit_mb = getOption("sourcoise.limit_mb"),     log = "OFF", inform = FALSE, priority = 10, quiet = TRUE,     metadata = TRUE): unused argument (priority = 10)
 ```

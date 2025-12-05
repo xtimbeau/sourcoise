@@ -18,7 +18,7 @@ sourcoise(
   wd = getOption("sourcoise.wd"),
   quiet = getOption("sourcoise.quiet"),
   inform = FALSE,
-  priority = 10
+  priority = NULL
 )
 ```
 
@@ -74,12 +74,6 @@ sourcoise(
 
   (boolean) Display logs on console, even if logging is disabled with
   threshold level "INFO".
-
-- priority:
-
-  (integer) (default 10) can be used as a way to control the order of
-  execution when refreshing data (see
-  [`sourcoise_refresh()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_refresh.md))
 
 ## Value
 
@@ -215,7 +209,7 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> [1] "/tmp/RtmpNFNBrg"
+#> [1] "/tmp/Rtmp6WFJAw"
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
   dir,
@@ -227,7 +221,7 @@ data <- sourcoise("some_data.R")
 # Performance and mem test
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> [1] "/tmp/RtmpNFNBrg"
+#> [1] "/tmp/Rtmp6WFJAw"
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
    dir,
@@ -239,7 +233,7 @@ bench::mark(
 #> # A tibble: 2 × 13
 #>   expression      min median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time
 #>   <bch:expr> <bch:tm> <bch:>     <dbl> <bch:byt>    <dbl> <int> <dbl>   <bch:tm>
-#> 1 forced       34.4ms 34.4ms      29.0     920KB        0     1     0     34.4ms
-#> 2 cached       11.2ms 11.2ms      89.2     287KB        0     1     0     11.2ms
+#> 1 forced         28ms   28ms      35.7    4.23MB        0     1     0       28ms
+#> 2 cached       17.4ms 17.4ms      57.5  532.26KB        0     1     0     17.4ms
 #> # ℹ 4 more variables: result <list>, memory <list>, time <list>, gc <list>
 ```

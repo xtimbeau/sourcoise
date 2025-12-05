@@ -45,7 +45,7 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> [1] "/tmp/RtmpNFNBrg"
+#> [1] "/tmp/Rtmp6WFJAw"
 fs::file_copy(
     fs::path_package("sourcoise", "some_data.R"),
     dir,
@@ -54,7 +54,7 @@ fs::file_copy(
 data <- sourcoise("some_data.R", force_exec = TRUE)
 # we then clear all caches
 sourcoise_clear()
-#> [1] "some_data.r"
+#> Error in data.matrix(data): 'list' object cannot be coerced to type 'double'
 sourcoise_status()
-#> # A tibble: 0 × 0
+#> Error in data.matrix(data): 'list' object cannot be coerced to type 'double'
 ```

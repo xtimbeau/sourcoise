@@ -71,7 +71,7 @@ Data returned is:
 - `qmd_file`: list of path to qmd files calling this script (relevant
   only for quarto projects)
 
-- `src_in`: localisaiton of cache option
+- `src_in`: localisation of cache option
 
 - `data_file`: path to data cached
 
@@ -104,7 +104,7 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> [1] "/tmp/RtmpNFNBrg"
+#> [1] "/tmp/Rtmp6WFJAw"
 fs::file_copy(
     fs::path_package("sourcoise", "some_data.R"),
     dir,
@@ -113,12 +113,5 @@ fs::file_copy(
 data <- sourcoise("some_data.R", force_exec = TRUE)
 # status returns the cache status
 sourcoise_status()
-#> # A tibble: 1 × 23
-#>   src    date                valid priority uid   index timing size  lapse wd   
-#>   <chr>  <dttm>              <lgl>    <int> <chr> <dbl>  <dbl> <chr> <chr> <chr>
-#> 1 some_… 2025-12-04 21:48:46 TRUE        10 1d38…     1 0.0007 2 kB  never file 
-#> # ℹ 13 more variables: args <list>, json_file <fs::path>, qmd_file <list>,
-#> #   src_in <chr>, data_file <chr>, data_date <chr>, file_size <chr>,
-#> #   log_file <chr>, root <chr>, src_hash <chr>, track_hash <list>,
-#> #   track <list>, data_hash <chr>
+#> Error in data.matrix(data): 'list' object cannot be coerced to type 'double'
 ```

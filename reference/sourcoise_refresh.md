@@ -123,7 +123,7 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> [1] "/tmp/RtmpNFNBrg"
+#> [1] "/tmp/Rtmp6WFJAw"
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
    dir,
@@ -132,6 +132,5 @@ fs::file_copy(
 data <- sourcoise("some_data.R", force_exec = TRUE)
 # we then refresh all caches
 sourcoise_refresh()
-#> ✔ some_data.r executed in 0 s., same data (2 kB)
-#> ℹ Total refresh in 0 seconds for 2 kB of data
+#> Error in data.matrix(data): 'list' object cannot be coerced to type 'double'
 ```

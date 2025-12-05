@@ -2,6 +2,16 @@
 
 ## sourcoise 0.6.2.9000 (to be 0.7.0)
 
+- when refreshing, execution is forced for subcalls to sourcoise, in
+  order to allow for consistent refresh
+- priority 0 sorce files are executed first and only once when
+  refreshing (exception to previous rule)
+- function to set priority
+- short output of
+  [`sourcoise_status()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_status.md)
+- cleaning (with
+  [`sourcoise_status()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_status.md))
+  of cached data when source file does not exist any more
 - better handling of error messages, logged and displayed
 - critical errors displayed, such as unfound file
 - not quiet by default
@@ -51,7 +61,8 @@ CRAN release: 2025-05-23
 ### ajouts
 
 - le paramètre `priority` permet de controller l’ordre d’exécution dans
-  le cas d’un refresh, afin de traiter les cascades d’exécution.
+  le cas d’un refresh, afin de traiter sommairement les cascades
+  d’exécution.
 - simplification des paramètres de
   [`sourcoise()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise.md).
   Les paramètres enlevés sont fixés globalement par
