@@ -14,8 +14,7 @@ sourcoise(
   metadata = getOption("sourcoise.metadata"),
   wd = getOption("sourcoise.wd"),
   quiet = getOption("sourcoise.quiet"),
-  inform = FALSE,
-  priority = NULL
+  inform = FALSE
 )
 }
 \arguments{

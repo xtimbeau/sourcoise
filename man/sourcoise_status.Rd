@@ -4,9 +4,17 @@
 \alias{sourcoise_status}
 \title{Cache status of sourcoise}
 \usage{
-sourcoise_status(quiet = TRUE, root = NULL, prune = TRUE, clean = FALSE)
+sourcoise_status(
+  short = TRUE,
+  quiet = TRUE,
+  root = NULL,
+  prune = TRUE,
+  clean = TRUE
+)
 }
 \arguments{
+\item{short}{(boolean) (deafault \code{TRUE}) return a simplified tibble}
+
 \item{quiet}{(boolean) (default \code{TRUE}) no messages during execution}
 
 \item{root}{(string) (default \code{NULL}) force root to a defined path, advanced and not recommanded use}

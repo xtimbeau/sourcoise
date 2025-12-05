@@ -96,8 +96,7 @@ sourcoise <- function(
     metadata = getOption("sourcoise.metadata"),
     wd = getOption("sourcoise.wd"),
     quiet = getOption("sourcoise.quiet"),
-    inform = FALSE,
-    priority = NULL) {
+    inform = FALSE) {
 
   sourcoise_(path = path,
              args = args,

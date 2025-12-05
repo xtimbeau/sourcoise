@@ -109,7 +109,7 @@ sourcoise_refresh <- function(
     idpgr <- cli::cli_progress_bar("refreshing", total = total_time)
   res <- purrr::pmap(
     what,
-    function(src, wd, lapse, args, root, track, qmd_file, src_in, timing, log_file, priority, data_date, ...) {
+    function(src, wd, lapse, args, root, track, qmd_file, src_in, timing, log_file, data_date, ...) {
       exec_wd <- getwd()
       if(wd=="project")
         exec_wd <- root |> fs::path_norm()
