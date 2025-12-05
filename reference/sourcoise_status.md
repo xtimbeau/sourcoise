@@ -7,10 +7,20 @@ with this data.
 ## Usage
 
 ``` r
-sourcoise_status(quiet = TRUE, root = NULL, prune = TRUE, clean = FALSE)
+sourcoise_status(
+  short = TRUE,
+  quiet = TRUE,
+  root = NULL,
+  prune = TRUE,
+  clean = TRUE
+)
 ```
 
 ## Arguments
+
+- short:
+
+  (boolean) (deafault `TRUE`) return a simplified tibble
 
 - quiet:
 
@@ -104,7 +114,7 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> [1] "/tmp/RtmpMgtN7K"
+#> [1] "/tmp/RtmpN3PvGM"
 fs::file_copy(
     fs::path_package("sourcoise", "some_data.R"),
     dir,
@@ -116,5 +126,5 @@ sourcoise_status()
 #> # A tibble: 1 × 6
 #>   src        exists date                data_date           file_size json_file 
 #>   <chr>      <lgl>  <dttm>              <dttm>              <chr>     <fs::path>
-#> 1 some_data… TRUE   2025-12-05 22:14:00 2025-12-05 22:14:00 242 B     …3e-1.json
+#> 1 some_data… TRUE   2025-12-05 22:34:50 2025-12-05 22:34:50 242 B     …19-1.json
 ```

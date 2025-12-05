@@ -31,5 +31,5 @@ root set (character)
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> [1] "/tmp/RtmpMgtN7K"
+#> [1] "/tmp/RtmpN3PvGM"
 ```
