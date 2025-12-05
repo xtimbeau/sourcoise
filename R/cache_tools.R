@@ -27,8 +27,9 @@ cache_data <- function(data, ctxt) {
       }) |>
       dplyr::filter(.data$data_hash == new_data_hash)
     if(nrow(hashes)>0) {
+      hashes <- hashes |>
+        dplyr::slice(1)
       exists_data_file <- hashes |>
-        dplyr::slice(1) |>
         dplyr::pull(.data$data_file) |>
         fs::path_file()
 
@@ -36,7 +37,7 @@ cache_data <- function(data, ctxt) {
       exists <- fs::file_exists(exists_data_file)
       finfo <- fs::file_info(exists_data_file)
       exists_file_size <- finfo$size
-      exists_data_date <- finfo$modification_time |> as.character()
+      exists_data_date <- hashes |> dplyr::pull(.data$data_date) |> as.character()
     }
     cc <- max(files$cc, na.rm = TRUE) + 1
   }
@@ -45,18 +46,17 @@ cache_data <- function(data, ctxt) {
   data$data_hash <- new_data_hash
   data$id <- stringr::str_c(ctxt$uid, "-", cc)
   data$uid <- ctxt$uid
-  data$priority <- ctxt$priority
   data$cc <- cc
   data$json_file <- fs::path_join(
     c(ctxt$full_cache_rep,
       stringr::str_c(ctxt$basename, "_", stringr::str_c(data$id, ".json"))))
   if(!ctxt$nocache) {
-
     les_metas <- data
     les_metas$data <- NULL
     les_metas$file <- NULL
     les_metas$ok <- NULL
     les_metas$id <- NULL
+    les_metas$priority <- ctxt$priority
 
     if(!exists) {
       fnd <- fs::path_join(
@@ -77,6 +77,7 @@ cache_data <- function(data, ctxt) {
     }
     les_metas$data_file <- data$data_file <- fs::path_file(fnd)
     data$data_date <- les_metas$data_date
+
     jsonlite::write_json(les_metas, path = data$json_file)
     prune_cache(ctxt)
   }
@@ -87,6 +88,7 @@ cache_data <- function(data, ctxt) {
 prune_cache <- function(ctxt) {
   if(is.infinite(ctxt$grow_cache))
     return(NULL)
+
   md <- get_mdatas(ctxt$basename, ctxt$full_cache_rep)
 
   pairs <- purrr::imap_dfr(
@@ -95,7 +97,7 @@ prune_cache <- function(ctxt) {
 
   datas <- unique(pairs$data_file)
   jsons <- unique(pairs$json_file)
-  pairs <- pairs |>
+  datapairs <- pairs |>
     dplyr::group_by(.data$data_file) |>
     dplyr::arrange(dplyr::desc(.data$date)) |>
     dplyr::summarize(
@@ -103,8 +105,11 @@ prune_cache <- function(ctxt) {
       json_file = dplyr::first(.data$json_file)) |>
     dplyr::arrange(dplyr::desc(.data$date)) |>
     dplyr::slice_head(n=ctxt$grow_cache)
-  jsons_out <- setdiff(jsons, pairs$json_file)
-  datas_out <- setdiff(datas, pairs$data_file)
+  datas_out <- setdiff(datas, datapairs$data_file)
+  json_in <- pairs |>
+    semi_join(datapairs, join_by(data_file)) |>
+    pull(json_file)
+  jsons_out <- setdiff(jsons, json_in)
 
   sure_delete <- function(fn) {
     if(fs::file_exists(fn))

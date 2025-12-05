@@ -15,7 +15,7 @@ sourcoise(
   wd = getOption("sourcoise.wd"),
   quiet = getOption("sourcoise.quiet"),
   inform = FALSE,
-  priority = 10
+  priority = NULL
 )
 }
 \arguments{
@@ -38,8 +38,6 @@ sourcoise(
 \item{quiet}{(boolean) mute messages and warnings from script execution.}
 
 \item{inform}{(boolean) Display logs on console, even if logging is disabled with threshold level "INFO".}
-
-\item{priority}{(integer) (default 10) can be used as a way to control the order of execution when refreshing data (see \code{sourcoise_refresh()})}
 }
 \value{
 data (list ou ce que le code retourne)

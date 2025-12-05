@@ -59,16 +59,29 @@ sourcoise_refresh <- function(
     .progress = TRUE) {
 
   refresh_start <- Sys.time()
-
+  if(!is.null(what)&&"json_file"%in% names(what)) {
+    what <- sourcoise_status(short = FALSE, clean = FALSE, root=root, quiet=quiet) |>
+      semi_join(what, join_by(json_file))
+    if(nrow(what)==0)
+      return(invisible(list()))
+  }
   if(is.null(what))
-    what <- sourcoise_status(root = root, quiet = quiet)
+    what <- sourcoise_status(short = FALSE, root = root, quiet = quiet)
 
-  if(!force_exec)
+  what <- what |> filter(exists)
+  if(nrow(what)==0)
+    return(invisible(list()))
+
+  if(force_exec) {
+    on.exit(options(sourcoise.refreshing = FALSE))
+    options(sourcoise.refreshing = TRUE)
+  }
+  if(!force_exec) {
     what <- what |>
       dplyr::group_by(.data$src) |>
       dplyr::filter(!any(.data$valid)) |>
       dplyr::ungroup()
-
+  }
   if(nrow(what)==0)
     return(invisible(list()))
 
@@ -78,7 +91,7 @@ sourcoise_refresh <- function(
     dplyr::arrange(dplyr::desc(.data$date)) |>
     dplyr::slice(1) |>
     dplyr::ungroup() |>
-    dplyr::arrange(dplyr::desc(.data$priority))
+    dplyr::arrange(.data$priority)
 
   if(nrow(what)==0)
     return(invisible(list()))
@@ -115,8 +128,7 @@ sourcoise_refresh <- function(
         quiet = TRUE,
         src_in = src_in,
         root = root,
-        log = log,
-        priority = priority)
+        log = log)
 
       if(.progress)
         cli::cli_progress_update(inc = timing, id = idpgr)
@@ -126,12 +138,12 @@ sourcoise_refresh <- function(
         if(src_data$data_date > data_date)
           new <- TRUE else
             new <- FALSE
-        data_size <- glue::glue("{scales::label_bytes()(src_data$size)}")
-        if(new)
-          cli::cli_alert_success(
-          "{msrc} executed in {round(src_data$timing)} s., {.strong new data generated} ({data_size})" ) else
+          data_size <- glue::glue("{scales::label_bytes()(src_data$size)}")
+          if(new)
             cli::cli_alert_success(
-              "{msrc} executed in {round(src_data$timing)} s., same data ({data_size})" )
+              "{msrc} executed in {round(src_data$timing)} s., {.strong new data generated} ({data_size})" ) else
+                cli::cli_alert_success(
+                  "{msrc} executed in {round(src_data$timing)} s., same data ({data_size})" )
       } else {
         cli::cli_alert_danger(
           "{msrc} failed (see log {.file {src_data$log_file}})" )

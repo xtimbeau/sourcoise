@@ -40,7 +40,7 @@ Data returned is:
 \item \code{args}: arguments passed to R script
 \item \code{json_file}: path to the file keeping cache information
 \item \code{qmd_file}: list of path to qmd files calling this script (relevant only for quarto projects)
-\item \code{src_in}: localisaiton of cache option
+\item \code{src_in}: localisation of cache option
 \item \code{data_file}: path to data cached
 \item \code{data_date}: date and time of last save of data
 \item \code{log_file}: path to log file, if logging activated

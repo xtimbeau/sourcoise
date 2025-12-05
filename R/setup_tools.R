@@ -1,10 +1,9 @@
 # calcule les différents chemins et trouve les fichiers/répertoire dont on a besoin
 
 setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
-                          lapse, nocache, limit_mb, grow_cache, log, priority,
+                          lapse, nocache, limit_mb, grow_cache, log,
                           metadata, inform=FALSE, quiet=TRUE) {
   ctxt <- list()
-
   if(is.null(track))
     ctxt$track <- list()
   else
@@ -25,7 +24,6 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
   ctxt$nocache <- nocache
   ctxt$grow_cache <- grow_cache
   ctxt$limit_mb <- limit_mb
-  ctxt$priority <- priority
   ctxt$metadata <- metadata
 
   # on trouve le fichier
@@ -60,6 +58,22 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
       fs::path_norm()
     ctxt$full_cache_rep <- fs::path_join(c(ctxt$root_cache_rep, ctxt$reldirname)) |>
       fs::path_norm()
+    # vérifier que .sourcoise n'est pas dasn le répertoire du source, dans ce cas, c'est celui là qu'on prend
+    sourcoise_file <- fs::path_join(c(ctxt$root, ctxt$reldirname, ".sourcoise"))
+    if(fs::dir_exists(sourcoise_file)) {
+      istheresourcoise <- fs::path_join(c(sourcoise_file, fs::path_file(ctxt$src) |>
+                                            fs::path_ext_remove()))
+      istheresourcoise <- fs::dir_ls(sourcoise_file) |>
+        stringr::str_detect(istheresourcoise) |>
+        any()
+      if(istheresourcoise) {
+        file_path <- fs::path_dir(ctxt$src)
+        ctxt$full_cache_rep <- fs::path_join(c(file_path, ".sourcoise"))
+        wd <- "file"
+        logger::log_warn(
+          "scr_in is 'project' but cache files found in file folder, switching to src_in='file'.
+      If it is not what you want, please delete {.file {ctxt$full_cache_rep}}") }
+    }
   }
   if(src_in == "file") {
     file_path <- fs::path_dir(ctxt$src)
@@ -104,6 +118,11 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
 
   ctxt <- ctxt |>
     hash_context()
+  if(length(ctxt$meta_datas)>0) {
+    ctxt$priority <- extract_priority(ctxt)
+  } else {
+    ctxt$priority <- 10
+  }
 
   return(ctxt)
 }
@@ -114,17 +133,6 @@ hash_context <- function(ctxt) {
 
   ctxt$src_hash <- hash_file(ctxt$src)
   ctxt$arg_hash <- digest::digest(ctxt$args, "crc32")
-  ctxt$track_hash <- 0
-
-  if(length(ctxt$track) > 0) {
-    track_files <- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, .x)))
-    ok_files <- purrr::map_lgl(track_files, fs::file_exists)
-    if(any(ok_files))
-      ctxt$track_hash <- hash_file(as.character(track_files[ok_files]))
-    else {
-      cli::cli_alert_warning("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
-    }
-  }
 
   ctxt$meta_datas <- get_mdatas(ctxt$basename, ctxt$full_cache_rep)
 
@@ -135,13 +143,30 @@ hash_context <- function(ctxt) {
     unique()
   ctxt$new_qmds <- unique(c(ctxt$qmds, ctxt$qmd_file))
 
+  ctxt$track_hash <- 0
+  already_tracked <- purrr::map(ctxt$meta_datas, "track") |>
+    purrr::list_flatten() |>
+    purrr::discard(is.null) |>
+    unlist() |>
+    unique()
+  ctxt$track <- unique(ctxt$track, already_tracked)
+  if(length(ctxt$track) > 0) {
+    track_files <- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, .x)))
+    ok_files <- purrr::map_lgl(track_files, fs::file_exists)
+    ctxt$track <- track_files[ok_files]
+    if(any(ok_files))
+      ctxt$track_hash <- hash_file(as.character(ctxt$track))
+    else {
+      logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
+    }
+  }
   return(ctxt)
 }
 
 startup_log <- function(log, ctxt) {
   if(log==FALSE)
     log <- "OFF"
-  log_dir <- fs::path_join(c(ctxt$root,".sourcoise", "logs"))
+  log_dir <- fs::path_join(c(ctxt$root,".sourcoise_logs"))
   logger::log_threshold(log)
 
   if(log == "OFF") {

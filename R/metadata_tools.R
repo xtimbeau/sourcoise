@@ -113,3 +113,96 @@ get_ddatas <- function(name, data_rep) {
   names(res) <- files
   res
 }
+
+#' Set priority for sourcoise
+#'
+#' The desingated file is set to the priority. Low priority means that when refreshing those files are groing
+#' to be executed first; the reason being that this file is used by other and that you prefer it is refreshed before refreshing other.
+#' However, when refreshing, subcall to sourcoise are executed, unless priority is set to 0
+#'
+#' So, if you want to refresh it first and then not (because it is long to refresh), then, ste it to 0
+#'
+#' Default priority is 10
+#'
+#' @param path the file for which priority is set
+#' @param priority the level of priority (10 is the default)
+#' @param root the root -- use only if you know what it does
+#'
+#' @returns list of json created
+#' @export
+#'
+
+sourcoise_priority <- function(path, priority = 10, root = getOption("sourcoise.root")) {
+  ctxt <- setup_context(
+    path = path,
+    root = root,
+    src_in = "project",
+    exec_wd = NULL,
+    wd = "file",
+    track = list(),
+    args = list(),
+    lapse = "never",
+    nocache = FALSE,
+    grow_cache = Inf,
+    limit_mb = 0,
+    log = FALSE,
+    inform = FALSE,
+    quiet = TRUE,
+    metadata = FALSE)
+  if(!fs::dir_exists(ctxt$full_cache_rep))
+    return(NULL)
+  bbnme <- ctxt$basename |> stringr::str_remove("-[a-f0-9]{8}")
+  pat <- stringr::str_c(bbnme, "-([a-f0-9]{8})_([a-f0-9]{8})-([0-9]+)\\.json")
+  json_files <- fs::dir_info(path = ctxt$full_cache_rep, regexp = pat) |>
+    select(path) |>
+    dplyr::mutate(
+      argsid = stringr::str_extract(.data$path, pat, group=1),
+      uid = stringr::str_extract(.data$path, pat, group=2),
+      cc = stringr::str_extract(.data$path, pat, group=3) |> as.numeric(),
+      date = purrr::map_chr(path, ~jsonlite::read_json(.x) |>
+                              pluck("date") |>
+                              unlist()) |>
+        lubridate::as_datetime())
+  most_recent <- json_files |>
+    group_by(argsid) |>
+    arrange(desc(date)) |>
+    slice(1) |>
+    ungroup()
+  purrr::map(most_recent$argsid, ~{
+    les_metas <- most_recent |>
+      filter(argsid==.x) |>
+      pull(path) |>
+      read_mdata()
+    if(les_metas$priority == priority)
+      return(NULL)
+    les_metas$priority <- priority
+    les_metas$date <- lubridate::now()
+    # on fait un nouveau nom
+    cc <- json_files |>
+      filter(argsid==.x, uid == ctxt$uid) |>
+      pull(cc)
+    if(length(cc)==0)
+      cc <- 0
+    cc <- max(cc) + 1
+    json_fn <- fs::path_join(c(ctxt$full_cache_rep,
+                               str_c(bbnme, "-", .x, "_", ctxt$uid, "-", cc ))) |>
+      fs::path_ext_set("json")
+    jsonlite::write_json(les_metas, path = json_fn)
+    json_fn
+  }) |> unlist()
+}
+
+extract_priority <- function(ctxt) {
+  dates <- purrr::map(ctxt$meta_datas, "date") |>
+    unlist() |>
+    lubridate::as_datetime()
+  mdd <- which.max(dates)
+  return(ctxt$meta_datas[[mdd]][["priority"]])
+}
+
+extract_data_date <- function(ctxt) {
+  dates <- purrr::map(ctxt$meta_datas, "data_date") |>
+    unlist() |>
+    lubridate::as_datetime()
+  return(max(dates))
+}

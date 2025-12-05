@@ -1,5 +1,10 @@
 # sourcoise 0.6.2.9000 (to be 0.7.0)
 
+* when refreshing, execution is forced for subcalls to sourcoise, in order to allow for consistent refresh
+* priority 0 sorce files are executed first and only once when refreshing (exception to previous rule)
+* function to set priority
+* short output of `sourcoise_status()`
+* cleaning (with `sourcoise_status()`) of cached data when source file does not exist any more
 * better handling of error messages, logged and displayed
 * critical errors displayed, such as unfound file
 * not quiet by default
@@ -34,7 +39,7 @@ CRAN test failed
 
 ## ajouts
 
-* le paramètre `priority` permet de controller l'ordre d'exécution dans le cas d'un refresh, afin de traiter les cascades d'exécution.
+* le paramètre `priority` permet de controller l'ordre d'exécution dans le cas d'un refresh, afin de traiter sommairement les cascades d'exécution.
 * simplification des paramètres de `sourcoise()`. Les paramètres enlevés sont fixés globalement par `options()`.
 * la fonction `set_sourcoise_root()` permet de fixer la racine de `sourcoise`.
 * la fonction `sourcoise_meta()` renvoie les métadonnées directement (sans les datas donc).

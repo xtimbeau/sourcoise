@@ -19,7 +19,7 @@
 #' -  `args`: arguments passed to R script
 #' -  `json_file`: path to the file keeping cache information
 #' -  `qmd_file`: list of path to qmd files calling this script (relevant only for quarto projects)
-#' -  `src_in`: localisaiton of cache option
+#' -  `src_in`: localisation of cache option
 #' -  `data_file`: path to data cached
 #' -  `data_date`: date and time of last save of data
 #' -  `log_file`: path to log file, if logging activated
@@ -30,6 +30,7 @@
 #' -  `args_hash`: hash of arguments
 #' -  `data_hash`: hash of data cached
 #'
+#' @param short (boolean) (deafault `TRUE`) return a simplified tibble
 #' @param quiet (boolean) (default `TRUE`) no messages during execution
 #' @param root (string) (default `NULL`) force root to a defined path, advanced and not recommanded use
 #' @param prune (boolean) (default `TRUE`) clean up status to display only on relevant cache. However, does not clean other cache files.
@@ -52,10 +53,11 @@
 #' sourcoise_status()
 
 sourcoise_status <- function(
+    short = TRUE,
     quiet = TRUE,
     root = NULL,
     prune = TRUE,
-    clean = FALSE) {
+    clean = TRUE) {
 
   root <- try_find_root(root, src_in = "project")
   caches_reps <- fs::dir_ls(path = root, regex = "\\.sourcoise$", all = TRUE, recurse = TRUE)
@@ -66,10 +68,12 @@ sourcoise_status <- function(
                       ~fs::dir_ls(.x, glob = "*.json", recurse = TRUE))
   qs2 <- purrr::map(caches_reps,
                     ~fs::dir_ls(.x, glob = "*.qs2", recurse = TRUE))
+
   if(length(roots)>0) {
     cached <- purrr::map_dfr(roots, \(a_root) {
       purrr::map_dfr(jsons[[a_root]], ~{
         dd <- read_mdata(.x)
+        exists <- fs::file_exists(fs::path_join(c(a_root, dd$src)))
         valid <- valid_meta4meta(dd, root = a_root)
         if(is.null(dd$log_file)||length(dd$log_file)==0)
           log_file <- ""
@@ -78,6 +82,7 @@ sourcoise_status <- function(
 
         tibble::tibble(
           src = tolower(dd$src),
+          exists = exists,
           date = lubridate::as_datetime(dd$date),
           valid = valid$valid,
           priority = dd$priority %||% 10,
@@ -92,7 +97,7 @@ sourcoise_status <- function(
           qmd_file = list(dd$qmd_files),
           src_in = dd$src_in,
           data_file = dd$data_file,
-          data_date = dd$data_date,
+          data_date = dd$data_date |> lubridate::as_datetime(),
           file_size = scales::label_bytes()(dd$file_size),
           log_file = log_file,
           root =  a_root,
@@ -104,7 +109,23 @@ sourcoise_status <- function(
       })
     })
 
+    if(nrow(cached)==0) {
+      if(!quiet)
+        cli::cli_alert_info("No cache data")
+      return(tibble::tibble())
+    }
+
     if(clean) {
+      json_lost <- purrr::pmap_chr(
+        cached |> filter(!exists), \(root, json_file, ...) {
+          fs::path_join(c(root, json_file))
+        })
+
+      purrr::walk(json_lost, fs::file_delete)
+
+      cached <- cached |>
+        filter(exists)
+
       qs2_jsoned <- purrr::pmap_chr(cached, \(root, json_file, data_file, ...) {
         dir <- fs::path_join(c(root, json_file)) |>
           fs::path_dir()
@@ -113,6 +134,7 @@ sourcoise_status <- function(
       qs2_orphed <- setdiff(qs2 |> purrr::list_c(), qs2_jsoned)
       purrr::walk(qs2_orphed, fs::file_delete)
     }
+
     if(nrow(cached)>0) {
       cached <- cached |>
         dplyr::arrange(.data$src, dplyr::desc(.data$date))
@@ -123,10 +145,15 @@ sourcoise_status <- function(
           dplyr::filter(.data$date == max(.data$date)) |>
           dplyr::ungroup()
 
+      if(short)
+        return(cached |> select(src, exists, date, data_date, file_size, json_file))
+
       return(cached)
     }
   }
+
   if(!quiet)
     cli::cli_alert_info("No cache data")
+
   return(tibble::tibble())
 }

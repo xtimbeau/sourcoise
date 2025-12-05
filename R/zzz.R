@@ -2,6 +2,7 @@
   op <- options()
   op.sourcoise <- list(
     sourcoise.force_exec = FALSE,
+    sourcoise.refreshing = FALSE,
     sourcoise.prevent_exec = FALSE,
     sourcoise.metadata = FALSE,
     sourcoise.init_fn = NULL,
@@ -13,7 +14,7 @@
     sourcoise.quiet = FALSE,
     sourcoise.root = NULL,
     sourcoise.nocache = FALSE,
-    sourcoise.grow_cache = 5,
+    sourcoise.grow_cache = Inf,
     sourcoise.limit_mb = 50,
     sourcoise.nthreads = 1,
     sourcoise.memoize = TRUE,
