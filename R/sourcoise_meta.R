@@ -47,7 +47,6 @@ sourcoise_meta <- function(path, args=NULL) {
     limit_mb = getOption("sourcoise.limit_mb"),
     log = "OFF",
     inform = FALSE,
-    priority = 10,
     quiet = TRUE,
     metadata = TRUE)
 

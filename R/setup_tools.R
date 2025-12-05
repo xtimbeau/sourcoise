@@ -71,8 +71,9 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
         ctxt$full_cache_rep <- fs::path_join(c(file_path, ".sourcoise"))
         wd <- "file"
         logger::log_warn(
-          "scr_in is 'project' but cache files found in file folder, switching to src_in='file'.
-      If it is not what you want, please delete {.file {ctxt$full_cache_rep}}") }
+          "scr_in is 'project' but cache files found in file folder, switching to src_in='file'.")
+        logger::log_warn("If it is not what you want, please delete {ctxt$full_cache_rep}")
+      }
     }
   }
   if(src_in == "file") {

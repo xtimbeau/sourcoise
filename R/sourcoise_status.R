@@ -117,14 +117,14 @@ sourcoise_status <- function(
 
     if(clean) {
       json_lost <- purrr::pmap_chr(
-        cached |> filter(!exists), \(root, json_file, ...) {
+        cached |> dplyr::filter(!exists), \(root, json_file, ...) {
           fs::path_join(c(root, json_file))
         })
 
       purrr::walk(json_lost, fs::file_delete)
 
       cached <- cached |>
-        filter(exists)
+        dplyr::filter(exists)
 
       qs2_jsoned <- purrr::pmap_chr(cached, \(root, json_file, data_file, ...) {
         dir <- fs::path_join(c(root, json_file)) |>
@@ -146,7 +146,7 @@ sourcoise_status <- function(
           dplyr::ungroup()
 
       if(short)
-        return(cached |> select(src, exists, date, data_date, file_size, json_file))
+        return(cached |> dplyr::select(src, exists, date, data_date, file_size, json_file))
 
       return(cached)
     }

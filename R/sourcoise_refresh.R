@@ -61,14 +61,14 @@ sourcoise_refresh <- function(
   refresh_start <- Sys.time()
   if(!is.null(what)&&"json_file"%in% names(what)) {
     what <- sourcoise_status(short = FALSE, clean = FALSE, root=root, quiet=quiet) |>
-      semi_join(what, join_by(json_file))
+      dplyr::semi_join(what, join_by(json_file))
     if(nrow(what)==0)
       return(invisible(list()))
   }
   if(is.null(what))
     what <- sourcoise_status(short = FALSE, root = root, quiet = quiet)
 
-  what <- what |> filter(exists)
+  what <- what |> dplyr::filter(exists)
   if(nrow(what)==0)
     return(invisible(list()))
 

@@ -23,7 +23,7 @@
 #' sourcoise_status()
 
 sourcoise_clear <- function(
-    what = sourcoise_status(root=root, prune=FALSE),
+    what = sourcoise_status(short = FALSE, root=root, prune=FALSE),
     root = NULL) {
 
   root <- try_find_root(root)

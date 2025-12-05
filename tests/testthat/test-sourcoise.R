@@ -106,7 +106,7 @@ test_that("meta ok when no cache", {
 
 ## sourcoise_status ----------------
 
-status <- sourcoise_status()
+status <- sourcoise_status(short=FALSE)
 
 test_that("sourcoise_status", {
   expect(tibble::is_tibble(status)&nrow(status)>0,
@@ -114,7 +114,7 @@ test_that("sourcoise_status", {
 })
 
 test_that("sourcoise_status", {
-  expect(all(c("src", "root", "args", "track", "lapse") %in% names(status)),
+  expect(all(c("src", "root", "args", "track", "lapse", "json_file") %in% names(status)),
          "status is not well formed")
 })
 
