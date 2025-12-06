@@ -11,6 +11,7 @@ sourcoise_refresh(
   quiet = FALSE,
   init_fn = getOption("sourcoise.init_fn"),
   root = getOption("sourcoise.root"),
+  priotirize = TRUE,
   log = "INFO",
   .progress = TRUE
 )
@@ -27,6 +28,8 @@ sourcoise_refresh(
 \item{init_fn}{(function) (default \code{NULL}) execute a function before sourcing to allow initialization}
 
 \item{root}{(default \code{NULL}) force root to be set, instead of letting the function finding the root, for advanced uses}
+
+\item{priotirize}{(boolean) (defaut \code{TRUE}) will set priority based on pattern of execution}
 
 \item{log}{(character) (default \code{"INFO"}) log levels as in \code{logger::log_threshold()} (c("OFF", "INFO", ...)), comes with a small performance cost}
 
@@ -55,7 +58,8 @@ If packages are loaded inside the script, then this is not needed.
 
 Parameters registered ins \code{sourcoise_status()} such as \code{wd} or \code{args} are used to execute the script.
 
-Defining a \code{priority} in \code{sourcoise()}, will change the order of execution of refresh. This allows to execute first data that will be used then inside another script with \code{sourcoise()}. When a \code{sourcoise("something.r", force_exec=TRUE)} is run, inside calls to \code{sourcoise()} are \emph{not} forced. \code{priority} is a crude way -- yet efficient -- to achieve a correct execution with up to date data. Of course, all calls to \code{sourcoise()} of the same script should set the same level of priority as the last executed will be kept, with no verification done, so left to the responsability of the user.
+Defining a \code{priority} in \code{sourcoise()}, will change the order of execution of refresh. This can be set automatically using \code{priotirize} option.
+After execution of one refresh, by setting higher priority to more used files.
 }
 \examples{
 dir <- tempdir()
