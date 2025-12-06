@@ -136,18 +136,18 @@ sourcoise_status <- function(
     }
 
     if(nrow(cached)>0) {
-      cached <- cached |>
-        dplyr::arrange(.data$src, dplyr::desc(.data$date))
 
       if(prune)
         cached <- cached |>
           dplyr::group_by(.data$src, .data$args) |>
-          dplyr::arrange(desc(.data$date)) |>
-          dplyr::slice(1) |>
+          dplyr::arrange(.data$date) |>
+          dplyr::slice_tail(n=1) |>
           dplyr::ungroup()
-
       if(short)
-        return(cached |> dplyr::select(src, exists, date, data_date, file_size, json_file))
+        cached <- cached |> dplyr::select(src, priority, date, data_date, file_size, json_file)
+
+      cached <- cached |>
+        dplyr::arrange(desc(.data$priority), .data$src, dplyr::desc(.data$date))
 
       return(cached)
     }

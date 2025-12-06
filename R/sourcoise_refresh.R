@@ -65,16 +65,42 @@ sourcoise_refresh <- function(
 
   root_root <- try_find_root(root, src_in = "project")
   startup_log2("INFO", root_root)
-  if(!is.null(what)&&"json_file"%in% names(what)) {
-    what <- sourcoise_status(short = FALSE, clean = FALSE, root=root, quiet=quiet) |>
-      dplyr::semi_join(what, join_by(json_file))
-    if(nrow(what)==0)
-      return(invisible(list()))
+  ww <- sourcoise_status(short = FALSE, clean = FALSE, root=root, quiet=quiet)
+  if(!is.null(what)) {
+    if("character"%in%class(what)) {
+      ww <- ww |>
+        dplyr::filter(map(what, ~stringr::str_detect(ww$src,.x) ) |> reduce(`|`))
+      }
+    if("json_file"%in% names(what)) {
+      ww <- ww |>
+        dplyr::semi_join(what, join_by(json_file))
+    }
+    what <- ww
   }
   if(is.null(what))
-    what <- sourcoise_status(short = FALSE, root = root, quiet = quiet)
+    what <- ww
 
   what <- what |> dplyr::filter(.data$exists)
+
+  if(nrow(what)==0)
+    return(invisible(list()))
+
+  if(!force_exec) {
+    what <- what |>
+      dplyr::group_by(.data$src) |>
+      dplyr::filter(!any(.data$valid)) |>
+      dplyr::ungroup()
+  }
+
+
+  # on en garde qu'un et on trie dans l'ordre des priorités
+  what <- what |>
+    dplyr::group_by(.data$src, .data$args) |>
+    dplyr::arrange(dplyr::desc(.data$date)) |>
+    dplyr::slice(1) |>
+    dplyr::ungroup() |>
+    dplyr::arrange(desc(.data$priority))
+
   if(nrow(what)==0)
     return(invisible(list()))
 
@@ -89,25 +115,6 @@ sourcoise_refresh <- function(
       sourcoise.refreshing.done = list(),
       sourcoise.refreshing.hit = list())
   }
-  if(!force_exec) {
-    what <- what |>
-      dplyr::group_by(.data$src) |>
-      dplyr::filter(!any(.data$valid)) |>
-      dplyr::ungroup()
-  }
-  if(nrow(what)==0)
-    return(invisible(list()))
-
-  # on en garde qu'un et on trie dans l'ordre des priorités
-  what <- what |>
-    dplyr::group_by(.data$src, .data$args) |>
-    dplyr::arrange(dplyr::desc(.data$date)) |>
-    dplyr::slice(1) |>
-    dplyr::ungroup() |>
-    dplyr::arrange(desc(.data$priority))
-
-  if(nrow(what)==0)
-    return(invisible(list()))
 
   logger::log_info("Refreshing {nrow(what)} files")
   if(!is.null(init_fn) && rlang::is_function(init_fn)) {
@@ -193,9 +200,11 @@ sourcoise_refresh <- function(
   if(!quiet)
     cli::cli_alert_info("Total refresh in {dt} seconds for {scales::label_bytes()(tsize)} of data")
   if(priotirize) {
+    allsrcs <- res$src |> unlist() |> fs::path_ext_remove()
     hits <- getOption("sourcoise.refreshing.hit") |> unlist() |> table()
-    nohits <- setdiff(res$src |> unlist() |> fs::path_ext_remove(), names(hits))
+    nohits <- setdiff(allsrcs, names(hits))
     srcs <- c(hits, rlang::set_names(rep(0, length(nohits)), nohits))
+    srcs <- srcs[names(srcs)%in%allsrcs[res$ok=="exec"]]
     purrr::iwalk(srcs, ~sourcoise_priority(.y, 10 + .x))
   }
   invisible(res)
