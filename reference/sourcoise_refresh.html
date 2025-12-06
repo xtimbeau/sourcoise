@@ -51,6 +51,7 @@
 <span>  quiet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  init_fn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"sourcoise.init_fn"</span><span class="op">)</span>,</span>
 <span>  root <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"sourcoise.root"</span><span class="op">)</span>,</span>
+<span>  priotirize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  log <span class="op">=</span> <span class="st">"INFO"</span>,</span>
 <span>  .progress <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -84,6 +85,10 @@
 <dd><p>(default <code>NULL</code>) force root to be set, instead of letting the function finding the root, for advanced uses</p></dd>
 
 
+<dt id="arg-priotirize">priotirize<a class="anchor" aria-label="anchor" href="#arg-priotirize"></a></dt>
+<dd><p>(boolean) (defaut <code>TRUE</code>) will set priority based on pattern of execution</p></dd>
+
+
 <dt id="arg-log">log<a class="anchor" aria-label="anchor" href="#arg-log"></a></dt>
 <dd><p>(character) (default <code>"INFO"</code>) log levels as in <code><a href="https://daroczig.github.io/logger/reference/log_threshold.html" class="external-link">logger::log_threshold()</a></code> (c("OFF", "INFO", ...)), comes with a small performance cost</p></dd>
 
@@ -109,7 +114,8 @@ This allows to refresh the cahe and then render the qmds using the new data.</p>
 <p>It is possible to pass to refresh a function that will be executed before every script. This allows to load packages and declare global variables that can be used in each script.
 If packages are loaded inside the script, then this is not needed.</p>
 <p>Parameters registered ins <code><a href="sourcoise_status.html">sourcoise_status()</a></code> such as <code>wd</code> or <code>args</code> are used to execute the script.</p>
-<p>Defining a <code>priority</code> in <code><a href="sourcoise.html">sourcoise()</a></code>, will change the order of execution of refresh. This allows to execute first data that will be used then inside another script with <code><a href="sourcoise.html">sourcoise()</a></code>. When a <code>sourcoise("something.r", force_exec=TRUE)</code> is run, inside calls to <code><a href="sourcoise.html">sourcoise()</a></code> are <em>not</em> forced. <code>priority</code> is a crude way – yet efficient – to achieve a correct execution with up to date data. Of course, all calls to <code><a href="sourcoise.html">sourcoise()</a></code> of the same script should set the same level of priority as the last executed will be kept, with no verification done, so left to the responsability of the user.</p>
+<p>Defining a <code>priority</code> in <code><a href="sourcoise.html">sourcoise()</a></code>, will change the order of execution of refresh. This can be set automatically using <code>priotirize</code> option.
+After execution of one refresh, by setting higher priority to more used files.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -124,7 +130,7 @@ If packages are loaded inside the script, then this is not needed.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="set_sourcoise_root.html">set_sourcoise_root</a></span><span class="op">(</span><span class="va">dir</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpMFQaps"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpfRkZ1y"</span>
 <span class="r-in"><span><span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/copy.html" class="external-link">file_copy</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>   <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/path_package.html" class="external-link">path_package</a></span><span class="op">(</span><span class="st">"sourcoise"</span>, <span class="st">"some_data.R"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>   <span class="va">dir</span>,</span></span>
@@ -135,7 +141,6 @@ If packages are loaded inside the script, then this is not needed.</p>
 <span class="r-in"><span><span class="fu">sourcoise_refresh</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> some_data.r executed in 0 s. , same data (2 kB)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Total refresh in 0 seconds for 2 kB of data</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in set_names(rep(0, length(nohits)), nohits):</span> could not find function "set_names"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

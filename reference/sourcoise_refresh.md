@@ -13,6 +13,7 @@ sourcoise_refresh(
   quiet = FALSE,
   init_fn = getOption("sourcoise.init_fn"),
   root = getOption("sourcoise.root"),
+  priotirize = TRUE,
   log = "INFO",
   .progress = TRUE
 )
@@ -50,6 +51,11 @@ sourcoise_refresh(
 
   (default `NULL`) force root to be set, instead of letting the function
   finding the root, for advanced uses
+
+- priotirize:
+
+  (boolean) (defaut `TRUE`) will set priority based on pattern of
+  execution
 
 - log:
 
@@ -97,18 +103,9 @@ such as `wd` or `args` are used to execute the script.
 
 Defining a `priority` in
 [`sourcoise()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise.md),
-will change the order of execution of refresh. This allows to execute
-first data that will be used then inside another script with
-[`sourcoise()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise.md).
-When a `sourcoise("something.r", force_exec=TRUE)` is run, inside calls
-to
-[`sourcoise()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise.md)
-are *not* forced. `priority` is a crude way – yet efficient – to achieve
-a correct execution with up to date data. Of course, all calls to
-[`sourcoise()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise.md)
-of the same script should set the same level of priority as the last
-executed will be kept, with no verification done, so left to the
-responsability of the user.
+will change the order of execution of refresh. This can be set
+automatically using `priotirize` option. After execution of one refresh,
+by setting higher priority to more used files.
 
 ## See also
 
@@ -123,7 +120,7 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> [1] "/tmp/RtmpMFQaps"
+#> [1] "/tmp/RtmpfRkZ1y"
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
    dir,
@@ -134,5 +131,4 @@ data <- sourcoise("some_data.R", force_exec = TRUE)
 sourcoise_refresh()
 #> ✔ some_data.r executed in 0 s. , same data (2 kB)
 #> ℹ Total refresh in 0 seconds for 2 kB of data
-#> Error in set_names(rep(0, length(nohits)), nohits): could not find function "set_names"
 ```
