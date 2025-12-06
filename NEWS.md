@@ -1,8 +1,8 @@
 # sourcoise 0.6.2.9000 (to be 0.7.0)
 
-* when refreshing, execution is forced for subcalls to sourcoise, in order to allow for consistent refresh
-* priority 0 sorce files are executed first and only once when refreshing (exception to previous rule)
-* function to set priority
+* when refreshing, execution is forced for subcalls to sourcoise, only once, in order to allow for consistent refresh
+* priority is used to order execution of files when refreshing
+* function to set priority (internal use only)
 * short output of `sourcoise_status()`
 * cleaning (with `sourcoise_status()`) of cached data when source file does not exist any more
 * better handling of error messages, logged and displayed
