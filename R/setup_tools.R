@@ -29,7 +29,7 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
   # on trouve le fichier
   ctxt$name <- remove_ext(path)
   ctxt$paths <- find_project_root()
-  ctxt$root <- try_find_root(root, src_in)
+  ctxt$root <- try_find_root(root, src_in) |> as.character()
 
   ctxt$uid <- digest::digest(ctxt$root, algo = "crc32")
 

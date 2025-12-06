@@ -138,6 +138,10 @@ sourcoise_ <- function(
     grow_cache = getOption("sourcoise.grow_cache"),
     limit_mb = getOption("sourcoise.limit_mb")) {
 
+  refreshing <- getOption("sourcoise.refreshing") %||% FALSE
+  if(refreshing)
+    log <- "INFO"
+
   ctxt <- setup_context(
     path = path,
     root = root,
@@ -163,8 +167,10 @@ sourcoise_ <- function(
                 log_file = ctxt$log_file))
   }
 
-  priority <- ctxt$priority # si priority 0, refreshing sera ignoré
-  force <- nuorf(force_exec) | should_i_do(ctxt$src)
+  priority <- ctxt$priority
+  force <- nuorf(force_exec)
+  if(should_i_do(ctxt$src))
+    force <- TRUE
   prevent <- nuorf(prevent_exec)
   our_data <- list()
 
@@ -237,8 +243,10 @@ should_i_do <- function(src) {
   if(is.null(refreshing) || !refreshing)
     return(FALSE)
   done <- getOption("sourcoise.refreshing.done")
-  if(src %in% done)
-    return(FALSE)
+  src <- src |> fs::path_ext_remove() |> as.character()
+  if(src %in% done) {
+    options(sourcoise.refreshing.hit = c(getOption("sourcoise.refreshing.hit"), src))
+    return(FALSE) }
   options(sourcoise.refreshing.done = c(done, src))
   return(TRUE)
 }
