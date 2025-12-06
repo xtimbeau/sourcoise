@@ -123,7 +123,7 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> [1] "/tmp/RtmpHMEU8i"
+#> [1] "/tmp/RtmpMFQaps"
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
    dir,
@@ -132,6 +132,7 @@ fs::file_copy(
 data <- sourcoise("some_data.R", force_exec = TRUE)
 # we then refresh all caches
 sourcoise_refresh()
-#> ✔ some_data.r executed in 0 s., same data (2 kB)
+#> ✔ some_data.r executed in 0 s. , same data (2 kB)
 #> ℹ Total refresh in 0 seconds for 2 kB of data
+#> Error in set_names(rep(0, length(nohits)), nohits): could not find function "set_names"
 ```

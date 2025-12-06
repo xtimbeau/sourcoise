@@ -39,9 +39,9 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.6.2.9000" id="sourcoise-0629000-to-be-070">sourcoise 0.6.2.9000 (to be 0.7.0)<a class="anchor" aria-label="anchor" href="#sourcoise-0629000-to-be-070"></a></h2>
-<ul><li>when refreshing, execution is forced for subcalls to sourcoise, in order to allow for consistent refresh</li>
-<li>priority 0 sorce files are executed first and only once when refreshing (exception to previous rule)</li>
-<li>function to set priority</li>
+<ul><li>when refreshing, execution is forced for subcalls to sourcoise, only once, in order to allow for consistent refresh</li>
+<li>priority is used to order execution of files when refreshing</li>
+<li>function to set priority (internal use only)</li>
 <li>short output of <code><a href="../reference/sourcoise_status.html">sourcoise_status()</a></code>
 </li>
 <li>cleaning (with <code><a href="../reference/sourcoise_status.html">sourcoise_status()</a></code>) of cached data when source file does not exist any more</li>
