@@ -62,6 +62,9 @@ sourcoise_refresh <- function(
     .progress = TRUE) {
 
   refresh_start <- Sys.time()
+
+  root_root <- try_find_root(root, src_in = "project")
+  startup_log2("INFO", root_root)
   if(!is.null(what)&&"json_file"%in% names(what)) {
     what <- sourcoise_status(short = FALSE, clean = FALSE, root=root, quiet=quiet) |>
       dplyr::semi_join(what, join_by(json_file))
@@ -71,7 +74,7 @@ sourcoise_refresh <- function(
   if(is.null(what))
     what <- sourcoise_status(short = FALSE, root = root, quiet = quiet)
 
-  what <- what |> dplyr::filter(exists)
+  what <- what |> dplyr::filter(.data$exists)
   if(nrow(what)==0)
     return(invisible(list()))
 
@@ -79,12 +82,12 @@ sourcoise_refresh <- function(
     on.exit(
       options(
         sourcoise.refreshing = FALSE,
-        sourcoise.refreshing.done = c(),
-        sourcoise.refreshing.hit = c()))
+        sourcoise.refreshing.done = list(),
+        sourcoise.refreshing.hit = list()))
     options(
       sourcoise.refreshing = TRUE,
-      sourcoise.refreshing.done = c(),
-      sourcoise.refreshing.hit = c())
+      sourcoise.refreshing.done = list(),
+      sourcoise.refreshing.hit = list())
   }
   if(!force_exec) {
     what <- what |>
@@ -119,6 +122,7 @@ sourcoise_refresh <- function(
     cwd <- root
   if(.progress)
     idpgr <- cli::cli_progress_bar("refreshing", total = total_time)
+
   res <- purrr::pmap(
     what,
     function(src, wd, lapse, args, root, track, qmd_file, src_in, timing, log_file, data_date, ...) {
@@ -189,10 +193,10 @@ sourcoise_refresh <- function(
   if(!quiet)
     cli::cli_alert_info("Total refresh in {dt} seconds for {scales::label_bytes()(tsize)} of data")
   if(priotirize) {
-    hits <- getOption("sourcoise.refreshing.hit") |> table()
+    hits <- getOption("sourcoise.refreshing.hit") |> unlist() |> table()
     nohits <- setdiff(res$src |> unlist() |> fs::path_ext_remove(), names(hits))
-    srcs <- c(hits, set_names(rep(0, length(nohits)), nohits))
-    purrr::iwalk(hits, ~sourcoise_priority(.y, 10 + .x))
+    srcs <- c(hits, rlang::set_names(rep(0, length(nohits)), nohits))
+    purrr::iwalk(srcs, ~sourcoise_priority(.y, 10 + .x))
   }
   invisible(res)
 }

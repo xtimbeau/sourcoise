@@ -114,64 +114,58 @@ get_ddatas <- function(name, data_rep) {
   res
 }
 
-#' Set priority for sourcoise
-#'
-#' The desingated file is set to the priority. Low priority means that when refreshing those files are groing
-#' to be executed first; the reason being that this file is used by other and that you prefer it is refreshed before refreshing other.
-#' However, when refreshing, subcall to sourcoise are executed, unless priority is set to 0
-#'
-#' So, if you want to refresh it first and then not (because it is long to refresh), then, ste it to 0
-#'
-#' Default priority is 10
-#'
-#' @param path the file for which priority is set
-#' @param priority the level of priority (10 is the default)
-#' @param root the root -- use only if you know what it does
-#'
-#' @returns list of json created
-#' @export
-#'
-
 sourcoise_priority <- function(path, priority = 10, root = getOption("sourcoise.root")) {
-  ctxt <- setup_context(
-    path = path,
-    root = root,
-    src_in = "project",
-    exec_wd = NULL,
-    wd = "file",
-    track = list(),
-    args = list(),
-    lapse = "never",
-    nocache = FALSE,
-    grow_cache = Inf,
-    limit_mb = 0,
-    log = FALSE,
-    inform = FALSE,
-    quiet = TRUE,
-    metadata = FALSE)
-  if(!fs::dir_exists(ctxt$full_cache_rep))
-    return(NULL)
-  bbnme <- ctxt$basename |> stringr::str_remove("-[a-f0-9]{8}")
+  name <- remove_ext(path)
+  paths <- find_project_root()
+  root <- try_find_root(root, "project") |> as.character()
+
+  uid <- digest::digest(as.character(root), algo = "crc32")
+  src <- fs::path_rel(path, root)
+  bbnme <- fs::path_file(src)
+  reldirname <- fs::path_dir(src)
+  full_cache_rep <- NULL
+  sourcoise_rep <- fs::path_join(c(root, reldirname, ".sourcoise"))
   pat <- stringr::str_c(bbnme, "-([a-f0-9]{8})_([a-f0-9]{8})-([0-9]+)\\.json")
-  json_files <- fs::dir_info(path = ctxt$full_cache_rep, regexp = pat) |>
-    select(path) |>
+  if(fs::dir_exists(sourcoise_rep)) {
+    sourcoises <- fs::dir_ls(sourcoise_rep, regexp = pat)
+    istheresourcoise <- length(sourcoises)>0
+    if(istheresourcoise) {
+      file_path <- fs::path_dir(src)
+      full_cache_rep <- sourcoise_rep
+    }
+  }
+  if(is.null(full_cache_rep)) {
+    sourcoise_rep <- fs::path_join(c(root, ".sourcoise", reldirname))
+    if(fs::dir_exists(sourcoise_rep)) {
+      sourcoises <- fs::dir_ls(sourcoise_rep, regexp = pat)
+      istheresourcoise <- length(sourcoises)>0
+      if(istheresourcoise) {
+        file_path <- fs::path_dir(src)
+        full_cache_rep <- sourcoise_rep
+      }
+    }
+  }
+
+  if(is.null(full_cache_rep))
+    return(NULL)
+
+  json_files <- sourcoises |>
+    tibble::tibble(path = _) |>
     dplyr::mutate(
       argsid = stringr::str_extract(.data$path, pat, group=1),
       uid = stringr::str_extract(.data$path, pat, group=2),
       cc = stringr::str_extract(.data$path, pat, group=3) |> as.numeric(),
-      date = purrr::map_chr(path, ~jsonlite::read_json(.x) |>
-                              pluck("date") |>
-                              unlist()) |>
+      date = purrr::map_chr(path, ~read_mdata(.x) |> purrr::pluck("date")) |>
         lubridate::as_datetime())
   most_recent <- json_files |>
-    group_by(argsid) |>
-    arrange(desc(date)) |>
-    slice(1) |>
-    ungroup()
+    dplyr::group_by(argsid) |>
+    dplyr::arrange(dplyr::desc(date)) |>
+    dplyr::slice(1) |>
+    dplyr::ungroup()
   purrr::map(most_recent$argsid, ~{
     les_metas <- most_recent |>
-      filter(argsid==.x) |>
-      pull(path) |>
+      dplyr::filter(argsid==.x) |>
+      dplyr::pull(path) |>
       read_mdata()
     if(les_metas$priority == priority)
       return(NULL)
@@ -179,13 +173,13 @@ sourcoise_priority <- function(path, priority = 10, root = getOption("sourcoise.
     les_metas$date <- lubridate::now()
     # on fait un nouveau nom
     cc <- json_files |>
-      filter(argsid==.x, uid == ctxt$uid) |>
-      pull(cc)
+      dplyr::filter(argsid==.x, uid == !!uid) |>
+      dplyr::pull(cc)
     if(length(cc)==0)
       cc <- 0
     cc <- max(cc) + 1
-    json_fn <- fs::path_join(c(ctxt$full_cache_rep,
-                               str_c(bbnme, "-", .x, "_", ctxt$uid, "-", cc ))) |>
+    json_fn <- fs::path_join(c(full_cache_rep,
+                               stringr::str_c(bbnme, "-", .x, "_", uid, "-", cc ))) |>
       fs::path_ext_set("json")
     jsonlite::write_json(les_metas, path = json_fn)
     json_fn

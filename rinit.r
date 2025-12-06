@@ -130,7 +130,7 @@ milliards <- function(x, n_signif = 3L) {
 }
 
 f_taux <- function(x) {
-  str_replace(str_c(signif(x,3),"%"), "\\.", ",")
+  stringr::str_replace(str_c(signif(x,3),"%"), "\\.", ",")
 }
 
 if(.Platform$OS.type=="windows")

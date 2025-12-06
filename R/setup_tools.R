@@ -31,9 +31,9 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
   ctxt$paths <- find_project_root()
   ctxt$root <- try_find_root(root, src_in) |> as.character()
 
-  ctxt$uid <- digest::digest(ctxt$root, algo = "crc32")
+  ctxt$uid <- digest::digest(as.character(ctxt$root), algo = "crc32")
 
-  ctxt <- startup_log(log, ctxt)
+  ctxt$log_file <- startup_log2(log, ctxt$root, ctxt$uid)
 
   ctxt[["src"]] <- find_src(ctxt$root, ctxt$name, ctxt$paths)
   if(is.null(ctxt[["src"]])) {
@@ -182,4 +182,24 @@ startup_log <- function(log, ctxt) {
   ctxt$log_file <- fs::path_rel(log_fn, getwd() |> fs::path_abs())
 
   return(ctxt)
+}
+
+startup_log2 <- function(log, root, uid = digest::digest(as.character(root), algo = "crc32")) {
+  if(log==FALSE)
+    log <- "OFF"
+  log_dir <- fs::path_join(c(root,".sourcoise_logs"))
+  logger::log_threshold(log)
+
+  if(log == "OFF") {
+    return(NULL)
+  }
+
+  if(!fs::dir_exists(log_dir))
+    fs::dir_create(log_dir)
+  log_fn <- fs::path_join(c(log_dir, stringr::str_c(uid, "_", lubridate::today() |> as.character()))) |>
+    fs::path_ext_set("log")
+  logger::log_appender(logger::appender_file(log_fn))
+  log_file <- fs::path_rel(log_fn, getwd() |> fs::path_abs())
+
+  return(log_file)
 }

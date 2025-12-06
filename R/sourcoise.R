@@ -180,6 +180,7 @@ sourcoise_ <- function(
       our_data <- cache_data(our_data, ctxt)
       logger::log_success(
         "{ctxt$relname} (forced) in {round(our_data$timing, 2)} sec. ({scales::label_bytes()(our_data$size)})")
+      mark_as_done(ctxt$src)
       return(data_returned(our_data, ctxt))
     }
   }
@@ -247,6 +248,19 @@ should_i_do <- function(src) {
   if(src %in% done) {
     options(sourcoise.refreshing.hit = c(getOption("sourcoise.refreshing.hit"), src))
     return(FALSE) }
-  options(sourcoise.refreshing.done = c(done, src))
   return(TRUE)
+}
+
+mark_as_done <- function(src) {
+  refreshing <- getOption("sourcoise.refreshing")
+  if(is.null(refreshing) || !refreshing)
+    return(NULL)
+  src <- src |>
+    fs::path_ext_remove() |>
+    as.character()
+  done <- getOption("sourcoise.refreshing.done")
+  done <- c(done, src) |> unique()
+  options(
+    sourcoise.refreshing.done = done)
+  return(done)
 }
