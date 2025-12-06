@@ -74,7 +74,8 @@ sourcoise_refresh <- function(
 
   if(force_exec) {
     on.exit(options(sourcoise.refreshing = FALSE))
-    options(sourcoise.refreshing = TRUE)
+    options(sourcoise.refreshing = TRUE,
+            sourcoise.refreshing.done = c())
   }
   if(!force_exec) {
     what <- what |>

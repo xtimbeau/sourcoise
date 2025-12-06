@@ -2,7 +2,6 @@
   op <- options()
   op.sourcoise <- list(
     sourcoise.force_exec = FALSE,
-    sourcoise.refreshing = FALSE,
     sourcoise.prevent_exec = FALSE,
     sourcoise.metadata = FALSE,
     sourcoise.init_fn = NULL,

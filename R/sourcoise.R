@@ -162,8 +162,9 @@ sourcoise_ <- function(
                 ok = FALSE,
                 log_file = ctxt$log_file))
   }
+
   priority <- ctxt$priority # si priority 0, refreshing sera ignoré
-  force <- nuorf(force_exec) | (priority!=0 & getOption("sourcoise.refreshing"))
+  force <- nuorf(force_exec) | should_i_do(ctxt$src)
   prevent <- nuorf(prevent_exec)
   our_data <- list()
 
@@ -229,4 +230,15 @@ nuorf <- function(x) {
   if(x)
     return(TRUE)
   return(FALSE)
+}
+
+should_i_do <- function(src) {
+  refreshing <- getOption("sourcoise.refreshing")
+  if(is.null(refreshing) || !refreshing)
+    return(FALSE)
+  done <- getOption("sourcoise.refreshing.done")
+  if(src %in% done)
+    return(FALSE)
+  options(sourcoise.refreshing.done = c(done, src))
+  return(TRUE)
 }
