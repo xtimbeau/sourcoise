@@ -208,7 +208,7 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> [1] "/tmp/RtmpfRkZ1y"
+#> [1] "/tmp/Rtmpl7nJfq"
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
   dir,
@@ -220,7 +220,7 @@ data <- sourcoise("some_data.R")
 # Performance and mem test
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> [1] "/tmp/RtmpfRkZ1y"
+#> [1] "/tmp/Rtmpl7nJfq"
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
    dir,
@@ -232,7 +232,7 @@ bench::mark(
 #> # A tibble: 2 × 13
 #>   expression      min median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time
 #>   <bch:expr> <bch:tm> <bch:>     <dbl> <bch:byt>    <dbl> <int> <dbl>   <bch:tm>
-#> 1 forced         28ms   28ms      35.7    4.23MB        0     1     0       28ms
-#> 2 cached       16.6ms 16.6ms      60.1  532.26KB        0     1     0     16.6ms
+#> 1 forced       29.7ms 29.7ms      33.6    4.23MB        0     1     0     29.7ms
+#> 2 cached       17.7ms 17.7ms      56.5  532.26KB        0     1     0     17.7ms
 #> # ℹ 4 more variables: result <list>, memory <list>, time <list>, gc <list>
 ```
