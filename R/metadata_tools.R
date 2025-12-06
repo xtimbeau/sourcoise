@@ -155,7 +155,7 @@ sourcoise_priority <- function(path, priority = 10, root = getOption("sourcoise.
       argsid = stringr::str_extract(.data$path, pat, group=1),
       uid = stringr::str_extract(.data$path, pat, group=2),
       cc = stringr::str_extract(.data$path, pat, group=3) |> as.numeric(),
-      date = purrr::map_chr(path, ~read_mdata(.x) |> purrr::pluck("date")) |>
+      date = purrr::map_chr(.data$path, ~read_mdata(.x) |> purrr::pluck("date")) |>
         lubridate::as_datetime())
   most_recent <- json_files |>
     dplyr::group_by(argsid) |>

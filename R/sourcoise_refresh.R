@@ -69,11 +69,11 @@ sourcoise_refresh <- function(
   if(!is.null(what)) {
     if("character"%in%class(what)) {
       ww <- ww |>
-        dplyr::filter(map(what, ~stringr::str_detect(ww$src,.x) ) |> reduce(`|`))
-      }
+        dplyr::filter(purrr::map(what, ~stringr::str_detect(ww$src,.x) ) |> purrr::reduce(`|`))
+    }
     if("json_file"%in% names(what)) {
       ww <- ww |>
-        dplyr::semi_join(what, join_by(json_file))
+        dplyr::semi_join(what, dplyr::join_by(json_file))
     }
     what <- ww
   }
@@ -82,8 +82,11 @@ sourcoise_refresh <- function(
 
   what <- what |> dplyr::filter(.data$exists)
 
-  if(nrow(what)==0)
+  if(nrow(what)==0) {
+    if(!quiet)
+      cli::cli_alert_warning("No source files to refresh")
     return(invisible(list()))
+  }
 
   if(!force_exec) {
     what <- what |>
@@ -91,7 +94,6 @@ sourcoise_refresh <- function(
       dplyr::filter(!any(.data$valid)) |>
       dplyr::ungroup()
   }
-
 
   # on en garde qu'un et on trie dans l'ordre des priorités
   what <- what |>
@@ -101,8 +103,11 @@ sourcoise_refresh <- function(
     dplyr::ungroup() |>
     dplyr::arrange(desc(.data$priority))
 
-  if(nrow(what)==0)
+  if(nrow(what)==0) {
+    if(!quiet)
+      cli::cli_alert_warning("No source files to refresh")
     return(invisible(list()))
+  }
 
   if(force_exec) {
     on.exit(
@@ -116,10 +121,15 @@ sourcoise_refresh <- function(
       sourcoise.refreshing.hit = list())
   }
 
-  logger::log_info("Refreshing {nrow(what)} files")
+  logger::log_info("Refreshing {nrow(what)} source files")
+  if(!quiet)
+    cli::cli_alert_info("Refreshing {nrow(what)} source files")
+
   if(!is.null(init_fn) && rlang::is_function(init_fn)) {
     init_fn()
     logger::log_info("Inializing with init_fn()")
+    if(!quiet)
+      cli::cli_alert_info("Inializing with init_fn()")
   }
 
   total_time <- ceiling(sum(what$timing, na.rm=TRUE))
