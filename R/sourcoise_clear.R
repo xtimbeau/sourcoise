@@ -2,7 +2,7 @@
 #'
 #' removes every json and qs2 files found by `sourcoise_status()` unless a specific tibble (filtered from `sourcoise_status()`) is passed as an argument.
 #'
-#' @param what (--) a tibble such as the one obtained by `sourcoise_status()`, possibly filtered
+#' @param what2keep (--) a string (such as "last", the default) or a tibble such as the one obtained by `sourcoise_status()`, possibly filtered for the files you whish to keep
 #' @param root to force root, not recommended (expert use only)
 #'
 #' @family sourcoise

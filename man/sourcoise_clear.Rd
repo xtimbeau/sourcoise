@@ -4,15 +4,12 @@
 \alias{sourcoise_clear}
 \title{Cleans sourcoise cache}
 \usage{
-sourcoise_clear(
-  what = sourcoise_status(short = FALSE, root = root, prune = FALSE),
-  root = NULL
-)
+sourcoise_clear(what2keep = "last", root = NULL)
 }
 \arguments{
-\item{what}{(--) a tibble such as the one obtained by \code{sourcoise_status()}, possibly filtered}
+\item{what2keep}{(--) a string (such as "last", the default) or a tibble such as the one obtained by \code{sourcoise_status()}, possibly filtered for the files you whish to keep}
 
-\item{root}{to force root, not recommended (expert use)}
+\item{root}{to force root, not recommended (expert use only)}
 }
 \value{
 list of cleared files, plus a side-effect as specified cache files are deleted (no undo possible)
