@@ -1,6 +1,6 @@
 # Changelog
 
-## sourcoise 0.6.2.9000 (to be 1.0.0)
+## sourcoise 1.0.0
 
 - performance of data gathering has been largely improved, thanks to
   `RcppSimdJson` package
