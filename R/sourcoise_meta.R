@@ -1,23 +1,31 @@
-#' Returns sourcoise metadata on a script
+#' Get Sourcoise Metadata for a Script
 #'
-#' quick acces to metadata of the script, data is not fecthed.
+#' Retrieves metadata about a cached script without fetching the actual data. This function
+#' provides quick access to information about script execution, cache status, and related files.
 #'
-#' -    `timing`: time of full script execution
-#' -    `date`: date of last full execution
-#' -    `size`: size of objects returned (in R memory)
-#' -    `args`: args given to sourcoise for the script
-#' -    `lapse`: dely before reexecution
-#' -    `track`: list of files tracked
-#' -    `qmd_file`: list of qmd calling this script
-#' -    `log_file`: last log file
-#' -    `file_size`: size of data cached on disk
-#' -    `data_date`: date of last data save (if no new data when executed, no data is saved)
-#' -    `data_file`: path to data cached (as a qs2 data file)
-#' -    `file`: path to the json file storing metadata (and .sourcoise dir)
-#' @param path (character) path of the script
-#' @param args (named list) arguments of the script if any
+#' @param path Path to the script file (character). Can be an absolute or relative path.
+#' @param args Named list of arguments that were passed to the script, if any. Default is `NULL`.
+#'   This is used to identify the specific cached version when the script was executed with
+#'   different argument sets.
 #'
-#' @returns a named list with cache information
+#' @returns A named list containing cache metadata with the following elements:
+#' \describe{
+#'   \item{ok}{Cache status indicator: "cache ok&valid", "invalid cache", or "no cache data"}
+#'   \item{timing}{Execution time of the full script (duration)}
+#'   \item{date}{Date and time of the last full execution}
+#'   \item{size}{Size of objects returned, measured in R memory}
+#'   \item{args}{Arguments given to sourcoise for the script}
+#'   \item{lapse}{Delay interval before reexecution is triggered}
+#'   \item{track}{List of files being tracked for changes}
+#'   \item{qmd_file}{List of Quarto (.qmd) files calling this script}
+#'   \item{log_file}{Path to the last log file}
+#'   \item{file_size}{Size of cached data on disk}
+#'   \item{data_date}{Date of last data save (note: if no new data is generated during
+#'     execution, no new data file is saved)}
+#'   \item{data_file}{Path to the cached data file (stored as .qs2 format)}
+#'   \item{json_file}{Path to the JSON file storing metadata (located in .sourcoise directory)}
+#' }
+#'
 #' @export
 #'
 #' @examples
@@ -29,8 +37,11 @@
 #'   overwrite = TRUE)
 #' # Force execution (root is set explicitly here, it is normally deduced from project)
 #' data <- sourcoise("some_data.R", force_exec = TRUE)
-#' # Then we access metadata
-#' sourcoise_meta("some_data.R")
+#'
+#' # Access metadata without loading the cached data
+#' meta <- sourcoise_meta("some_data.R")
+#' print(meta$timing)  # View execution time
+#' print(meta$ok)      # Check cache status
 #'
 sourcoise_meta <- function(path, args=NULL) {
   ctxt <- setup_context(

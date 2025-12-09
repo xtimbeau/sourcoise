@@ -1,4 +1,5 @@
 #' @importFrom rlang .data
+#' @noRd
 cache_data <- function(data, ctxt) {
   pat <- stringr::str_c(ctxt$basename, "_([a-f0-9]{8})-([0-9]+)\\.json")
   files <- tibble::tibble()
@@ -89,6 +90,7 @@ cache_data <- function(data, ctxt) {
 }
 
 #' @importFrom rlang .data
+#' @noRd
 prune_cache <- function(ctxt) {
   if(is.infinite(ctxt$grow_cache))
     return(NULL)
@@ -121,6 +123,7 @@ prune_cache <- function(ctxt) {
 
 # pick les meilleures données en cache
 #' @importFrom rlang %||%
+#' @noRd
 pick_gooddata <- function(good_datas, ctxt) {
   dates <- purrr::map(good_datas, "date") |>
     unlist() |>

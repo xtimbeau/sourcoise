@@ -1,54 +1,55 @@
-Package: sourcoise
 Type: Package
+Package: sourcoise
 Title: Source a Script and Cache
 Version: 0.6.2.9000
-Authors@R: c(
-    person(
-      "Xavier", "Timbeau",
-      email = "xavier.timbeau@sciencespo.fr",
-      role = c("aut", "cre", "cph")
-    )
-  )
-Description: Provides a function that behaves nearly as base::source() but implements a caching mechanism on disk, project based.
-    It allows to quasi source() R scripts that gather data but can fail or consume to much time to respond even if nothing new is expected.
-    It comes with tools to check and execute on demand or when cache is invalid the script.
+Authors@R: 
+    person("Xavier", "Timbeau", , "xavier.timbeau@sciencespo.fr", role = c("aut", "cre", "cph"))
+Description: Provides a function that behaves nearly as base::source() but
+    implements a caching mechanism on disk, project based.  It allows to
+    quasi source() R scripts that gather data but can fail or consume to
+    much time to respond even if nothing new is expected.  It comes with
+    tools to check and execute on demand or when cache is invalid the
+    script.
 License: MIT + file LICENSE
+URL: https://xtimbeau.github.io/sourcoise/,
+    https://github.com/xtimbeau/sourcoise
+BugReports: https://github.com/xtimbeau/sourcoise/issues
+Depends:
+    R (>= 4.2.0)
+Imports:
+    cli,
+    digest,
+    dplyr,
+    fs,
+    glue,
+    jsonlite,
+    knitr,
+    lobstr,
+    logger,
+    lubridate,
+    memoise,
+    purrr,
+    qs2,
+    quarto,
+    RcppSimdJson,
+    rlang,
+    rprojroot,
+    scales,
+    stringr,
+    tibble,
+    tidyr,
+    utils
+Suggests:
+    bench,
+    rmarkdown,
+    testthat (>= 3.0.0),
+    insee
+VignetteBuilder:
+    quarto
+Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
-URL: https://xtimbeau.github.io/sourcoise/, https://github.com/xtimbeau/sourcoise
-Depends:
-  R (>= 4.2.0)
-Imports:
-  fs,
-  qs2, 
-  cli,
-  purrr,
-  digest,
-  dplyr,
-  tidyr,
-  RcppSimdJson,  
-  lubridate,
-  tibble,
-  jsonlite,
-  lobstr,
-  stringr,
-  glue,
-  rprojroot,
-  rlang,
-  scales,
-  logger
-Suggests:
-  knitr,
-  insee,
-  memoise,
-  quarto,
-  bench,
-  testthat (>= 3.0.0)
-VignetteBuilder:
-  quarto
-Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 SystemRequirements: Quarto command line tools
     (https://github.com/quarto-dev/quarto-cli).
-BugReports: https://github.com/xtimbeau/sourcoise/issues

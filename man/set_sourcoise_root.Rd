@@ -2,24 +2,40 @@
 % Please edit documentation in R/setroot.R
 \name{set_sourcoise_root}
 \alias{set_sourcoise_root}
-\title{Force root}
+\title{Set the Root Directory for Sourcoise}
 \usage{
 set_sourcoise_root(root = NULL, quiet = TRUE)
 }
 \arguments{
-\item{root}{(default \code{NULL}, character) path of the root}
+\item{root}{Path to the desired root directory. If \code{NULL} (default), sourcoise will
+attempt to automatically detect the project root. Can be an absolute or relative path.}
 
-\item{quiet}{(default \code{TRUE} boolean) displays messages}
+\item{quiet}{Logical value indicating whether to suppress messages during root detection.
+Default is \code{TRUE} (messages suppressed).}
 }
 \value{
-root set (character)
+The root path that was set (character string), invisibly returned by
+\code{try_find_root()}.
 }
 \description{
-\code{sourcoise()} mechanism to find root of the project automatically can be bypassed.
-This function is equivalent to setting the \code{sourcoise.root} option, except for storage of cache at the level of the file. To allow thus behaviour, root should be set to \code{NULL}.
+This function allows you to manually set the root directory for the sourcoise package,
+bypassing the automatic root detection mechanism used by \code{sourcoise()}. Setting the root
+directory affects where sourcoise looks for files and stores cache data.
+}
+\details{
+By default, sourcoise automatically detects the project root. This function is equivalent
+to setting the \code{sourcoise.root} option directly, except when dealing with file-level cache
+storage. To enable file-level cache storage behavior, set root to \code{NULL}.
 }
 \examples{
+# Set root to a temporary directory
 dir <- tempdir()
 set_sourcoise_root(dir)
+
+# Reset to automatic detection
+set_sourcoise_root(NULL)
+
+# Set root with messages enabled
+set_sourcoise_root(dir, quiet = FALSE)
 
 }

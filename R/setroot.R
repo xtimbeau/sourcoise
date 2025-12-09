@@ -1,17 +1,33 @@
-#' Force root
+#' Set the Root Directory for Sourcoise
 #'
-#' `sourcoise()` mechanism to find root of the project automatically can be bypassed.
-#' This function is equivalent to setting the `sourcoise.root` option, except for storage of cache at the level of the file. To allow thus behaviour, root should be set to `NULL`.
+#' This function allows you to manually set the root directory for the sourcoise package,
+#' bypassing the automatic root detection mechanism used by `sourcoise()`. Setting the root
+#' directory affects where sourcoise looks for files and stores cache data.
 #'
-#' @param root (default `NULL`, character) path of the root
-#' @param quiet (default `TRUE` boolean) displays messages
+#' By default, sourcoise automatically detects the project root. This function is equivalent
+#' to setting the `sourcoise.root` option directly, except when dealing with file-level cache
+#' storage. To enable file-level cache storage behavior, set root to `NULL`.
 #'
-#' @returns root set (character)
+#' @param root Path to the desired root directory. If `NULL` (default), sourcoise will
+#'   attempt to automatically detect the project root. Can be an absolute or relative path.
+#' @param quiet Logical value indicating whether to suppress messages during root detection.
+#'   Default is `TRUE` (messages suppressed).
+#'
+#' @returns The root path that was set (character string), invisibly returned by
+#'   `try_find_root()`.
+#'
 #' @export
 #'
 #' @examples
+#' # Set root to a temporary directory
 #' dir <- tempdir()
 #' set_sourcoise_root(dir)
+#'
+#' # Reset to automatic detection
+#' set_sourcoise_root(NULL)
+#'
+#' # Set root with messages enabled
+#' set_sourcoise_root(dir, quiet = FALSE)
 #'
 
 set_sourcoise_root <- function(root=NULL, quiet = TRUE) {

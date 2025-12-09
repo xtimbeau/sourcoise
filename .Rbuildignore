@@ -16,3 +16,6 @@ rinit.r
 .covrignore
 .travis.yml
 ^revdep$
+^dev$
+^doc$
+^Meta$
