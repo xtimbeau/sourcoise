@@ -1,4 +1,4 @@
-# sourcoise 0.6.2.9000 (to be 1.0.0)
+# sourcoise 1.0.0
 
 * performance of data gathering has been largely improved, thanks to `RcppSimdJson` package
 * performance in case of a large number of cached files has been largely improved thanks to a early selection of candidates
@@ -34,7 +34,7 @@ CRAN test failed
 * enregistre correctement le chemin du log si le cache est invalide.
 * les arguments sont employés (par un *hash*) pour différencier les caches, ce qui permet de les utiliser sans problème.
 * le log est maintenant spécifique à chaque utilisateur.
-* cas où le nom de fichier comporte un "." (ne considère pas ça comme une extension).
+* cas où le nom de fichier comporte un "." (ne considère pas ça comme une extension). 
 * cas où il n'y a pas de projet (root=wd dans ce cas) et `sourcoise()` fonctionne (merci François G.).
 * nommage correct du fichier si il n'y a pas d'arguments.
 * différencie bien les scripts selon les arguments lors de `status` ou `refresh`

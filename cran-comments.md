@@ -1,20 +1,15 @@
-## Update of the package, version 0.6.2
+## Update of the package, version 1.0.0
 
-Various bugs have been corrected and documented in news
+Various bugs have been corrected and are documented in news.
 
-Automated checks failed in previous submission.
-I changed tests from testthat that appears to be faulty.
+The package is more mature and has been extensively tested.
 
-## R CMD check results 
+Critical performance aspects have been optimized.
 
-── R CMD check results ──────────────────────────────────────────────────────────────────────────────── sourcoise 0.6.2 ────
-Duration: 1m 21.7s
+Checks are nearly perfectly fine, except the NOTE for timestamps.
 
-❯ checking for future file timestamps ... NOTE
-  unable to verify current time
+## R CMD check results
 
-0 errors ✔ | 0 warnings ✔ | 1 note ✖*
+0 errors | 0 warnings | 1 note
 
-R CMD check succeeded
-
-* note is about timestamps
+* This is a new release.
