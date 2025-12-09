@@ -38,13 +38,16 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.6.2.9000" id="sourcoise-0629000-to-be-070">sourcoise 0.6.2.9000 (to be 0.7.0)<a class="anchor" aria-label="anchor" href="#sourcoise-0629000-to-be-070"></a></h2>
-<ul><li>when refreshing, execution is forced for subcalls to sourcoise, only once, in order to allow for consistent refresh</li>
+<h2 class="pkg-version" data-toc-text="0.6.2.9000" id="sourcoise-0629000-to-be-100">sourcoise 0.6.2.9000 (to be 1.0.0)<a class="anchor" aria-label="anchor" href="#sourcoise-0629000-to-be-100"></a></h2>
+<ul><li>performance of data gathering has been largely improved, thanks to <code>RcppSimdJson</code> package</li>
+<li>performance in case of a large number of cached files has been largely improved thanks to a early selection of candidates</li>
+<li>helpers have been introduced to select easily in <code>sourcoise_refresh</code> what will be refreshed</li>
+<li>when refreshing, execution is forced for subcalls to sourcoise, only once, in order to allow for consistent refresh</li>
 <li>priority is used to order execution of files when refreshing</li>
 <li>function to set priority (internal use only)</li>
 <li>short output of <code><a href="../reference/sourcoise_status.html">sourcoise_status()</a></code>
 </li>
-<li>cleaning (with <code><a href="../reference/sourcoise_status.html">sourcoise_status()</a></code>) of cached data when source file does not exist any more</li>
+<li>cleaning (with <code><a href="../reference/sourcoise_clear.html">sourcoise_clear()</a></code> and <code><a href="../reference/sourcoise_clear_all.html">sourcoise_clear_all()</a></code>) of cached data when source file does not exist any more</li>
 <li>better handling of error messages, logged and displayed</li>
 <li>critical errors displayed, such as unfound file</li>
 <li>not quiet by default</li>
@@ -55,6 +58,7 @@
 <code>lobstr::object_size</code> fails on S7 object, this is treated as an exception</li>
 <li>
 <code>sourcoise_refresh</code> warns when an error occurs and diplays the error</li>
+<li>multiple minor bugs have been solved</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.6.1" id="sourcoise-061">sourcoise 0.6.1<a class="anchor" aria-label="anchor" href="#sourcoise-061"></a></h2><p class="text-muted">CRAN release: 2025-05-24</p>

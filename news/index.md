@@ -1,7 +1,13 @@
 # Changelog
 
-## sourcoise 0.6.2.9000 (to be 0.7.0)
+## sourcoise 0.6.2.9000 (to be 1.0.0)
 
+- performance of data gathering has been largely improved, thanks to
+  `RcppSimdJson` package
+- performance in case of a large number of cached files has been largely
+  improved thanks to a early selection of candidates
+- helpers have been introduced to select easily in `sourcoise_refresh`
+  what will be refreshed
 - when refreshing, execution is forced for subcalls to sourcoise, only
   once, in order to allow for consistent refresh
 - priority is used to order execution of files when refreshing
@@ -9,7 +15,9 @@
 - short output of
   [`sourcoise_status()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_status.md)
 - cleaning (with
-  [`sourcoise_status()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_status.md))
+  [`sourcoise_clear()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_clear.md)
+  and
+  [`sourcoise_clear_all()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_clear_all.md))
   of cached data when source file does not exist any more
 - better handling of error messages, logged and displayed
 - critical errors displayed, such as unfound file
@@ -20,6 +28,7 @@
 - `lobstr::object_size` fails on S7 object, this is treated as an
   exception
 - `sourcoise_refresh` warns when an error occurs and diplays the error
+- multiple minor bugs have been solved
 
 ## sourcoise 0.6.1
 

@@ -45,7 +45,7 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> /tmp/RtmpSfGZ9j
+#> /tmp/RtmpHGm86s
 fs::file_copy(
     fs::path_package("sourcoise", "some_data.R"),
     dir,
@@ -59,5 +59,5 @@ sourcoise_status()
 #> # A tibble: 1 × 6
 #>   src       priority date                data_date           file_size json_file
 #>   <chr>        <int> <dttm>              <dttm>              <chr>     <chr>    
-#> 1 some_dat…       10 2025-12-09 17:16:34 2025-12-09 17:16:32 242 B     .sourcoi…
+#> 1 some_dat…       10 2025-12-09 18:16:05 2025-12-09 18:16:03 242 B     .sourcoi…
 ```
