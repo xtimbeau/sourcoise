@@ -1,6 +1,6 @@
 dir <- tempdir()
 set_sourcoise_root(dir)
-sourcoise_clear()
+sourcoise_clear_all()
 fs::file_copy(
   fs::path_package("sourcoise", "ipch", "prix_insee.R"),
   dir,
@@ -129,7 +129,7 @@ test_that("sourcoise_refresh", {
 
 ## sourcoise_clear ----------------
 
-sourcoise_clear()
+sourcoise_clear_all()
 status <- sourcoise_status()
 
 

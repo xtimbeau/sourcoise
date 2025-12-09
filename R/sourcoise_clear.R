@@ -2,7 +2,7 @@
 #'
 #' removes every json and qs2 files found by `sourcoise_status()` unless a specific tibble (filtered from `sourcoise_status()`) is passed as an argument.
 #'
-#' @param what2keep (--) a string (such as "last", the default) or a tibble such as the one obtained by `sourcoise_status()`, possibly filtered for the files you whish to keep
+#' @param what2keep (--) a string (such as "last", the default or "nothing" clears all or "all" removes only non sourcoise files) or a tibble such as the one obtained by `sourcoise_status()`, possibly filtered for the files you whish to keep
 #' @param root to force root, not recommended (expert use only)
 #'
 #' @family sourcoise
@@ -21,40 +21,61 @@
 #' # we then clear all caches
 #' sourcoise_clear()
 #' sourcoise_status()
+#' @importFrom rlang .data
 
 sourcoise_clear <- function(
-    what2keep = "last",
+    what2keep = "all",
     root = NULL) {
-
-  root <- try_find_root(root)
-
-  sure_delete <- function(fn) {
-    if(fs::file_exists(fn))
-      fs::file_delete(fn)
+  clean_caches(root=root)
+  if(what2keep=="all") {
+    return(character(0))
   }
-  ww <- sourcoise_status(short = FALSE, prune = FALSE)
-
-  if(what2keep=="last") {
-    pat <- "(.+)-([a-f0-9]{8})_([a-f0-9]{8})-([0-9]+)\\.json"
-    what2keep <- ww |>
-      dplyr::mutate(
-        bn = stringr::str_extract(.data$json_file, pattern = pat, group = 1),
-        argsid = stringr::str_extract(.data$json_file, pat, group=2),
-        uid = stringr::str_extract(.data$json_file, pat, group=3),
-        cc = stringr::str_extract(.data$json_file, pat, group=4) |> as.numeric(),
-        date = purrr::map_chr(.data$json_file, ~read_mdata(.x) |> purrr::pluck("date")) |>
-          lubridate::as_datetime() ) |>
-      dplyr::group_by(src, argsid) |>
-      dplyr::arrange(.data$date, .data$cc) |>
-      dplyr::slice_tail(n=1) |>
+  fc <- ls_cache_files(root)
+  if(length(fc$json)==0)
+    return(character(0))
+  if(what2keep=="nothing") {
+    ww <- list(json_file = list(), data_file = list())
+  }
+  if(what2keep=="recent") {
+    ww <- get_metadata(root, filter="recent") |>
+      dplyr::group_by(root, basename, argsid, uid) |>
+      dplyr::filter(index==max(index)) |>
       dplyr::ungroup()
   }
-
-  json2del <- setdiff(ww[["json_file"]], what2keep[["json_file"]])
-  qs22del <- setdiff(ww[["data_file"]], what2keep[["data_file"]])
+  json2del <- setdiff(fc[["jsons"]] |> unlist()  |> unname(), ww[["json_file"]])
+  qs22del <- setdiff(fc[["qs2"]] |> unlist() |> unname(), ww[["data_file"]])
   purrr::walk(json2del, sure_delete)
   purrr::walk(qs22del, sure_delete)
   c(json2del, qs22del)
+}
+
+
+#' Cleans sourcoise cache
+#'
+#' removes every json and qs2 files found by `sourcoise_status()`.
+#'
+#' @param root to force root, not recommended (expert use only)
+#'
+#' @family sourcoise
+#'
+#' @return list of cleared files, plus a side-effect as specified cache files are deleted (no undo possible)
+#' @export
+#' @examplesIf rlang::is_installed("insee")
+#' dir <- tempdir()
+#' set_sourcoise_root(dir)
+#' fs::file_copy(
+#'     fs::path_package("sourcoise", "some_data.R"),
+#'     dir,
+#'     overwrite = TRUE)
+#' # Force execution
+#' data <- sourcoise("some_data.R", force_exec = TRUE)
+#' # we then clear all caches
+#' sourcoise_clear_all()
+#' sourcoise_status()
+#' @importFrom rlang .data
+
+sourcoise_clear_all <- function(root = NULL) {
+  sourcoise_clear(what2keep = "nothing", root=root)
 }
 
 #' Resets sourcoise
@@ -82,7 +103,7 @@ sourcoise_reset <- function(
 
   root <- try_find_root(root)
 
-  caches_reps <- fs::dir_ls(path = root, regex = "\\.sourcoise$", all = TRUE, recurse = TRUE)
+  caches_reps <- fs::dir_ls(path = root, regex = "\\.sourcoise", type = "directory", all = TRUE, recurse = TRUE)
 
   purrr::walk(caches_reps, ~fs::dir_delete(.x))
 

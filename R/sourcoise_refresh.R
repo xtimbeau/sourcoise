@@ -65,7 +65,7 @@ sourcoise_refresh <- function(
 
   root_root <- try_find_root(root, src_in = "project")
   startup_log2("INFO", root_root)
-  ww <- sourcoise_status(short = FALSE, clean = FALSE, root=root, quiet=quiet)
+  ww <- sourcoise_status(short = FALSE, prune = TRUE, root=root, quiet=quiet)
   if(!is.null(what)) {
     if("character"%in%class(what)) {
       ww <- ww |>
@@ -101,7 +101,7 @@ sourcoise_refresh <- function(
     dplyr::arrange(dplyr::desc(.data$date)) |>
     dplyr::slice(1) |>
     dplyr::ungroup() |>
-    dplyr::arrange(desc(.data$priority))
+    dplyr::arrange(dplyr::desc(.data$priority))
 
   if(nrow(what)==0) {
     if(!quiet)
@@ -152,12 +152,11 @@ sourcoise_refresh <- function(
         exec_wd <- fs::path_join(c(root, fs::path_dir(qmd_file[[1]]))) |> fs::path_norm()
       src_todo <- fs::path_join(c(root, src)) |> fs::path_ext_remove()
       done <- src_todo %in% getOption("sourcoise.refreshing.done")
-
       src_data <- sourcoise_(
         path = src,
         force_exec = force_exec,
-        track = track,
-        args = args,
+        track = track ,
+        args = args |> as.list(),
         wd = wd,
         lapse = lapse,
         metadata = TRUE,

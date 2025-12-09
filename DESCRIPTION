@@ -17,7 +17,7 @@ Encoding: UTF-8
 LazyData: true
 URL: https://xtimbeau.github.io/sourcoise/, https://github.com/xtimbeau/sourcoise
 Depends:
-  R (>= 4.1.0)
+  R (>= 4.5.0)
 Imports:
   fs,
   qs2, 
@@ -25,6 +25,8 @@ Imports:
   purrr,
   digest,
   dplyr,
+  tidyr,
+  RcppSimdJson,  
   lubridate,
   tibble,
   jsonlite,

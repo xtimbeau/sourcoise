@@ -77,6 +77,7 @@ sourcoise_refresh()
 Other sourcoise: 
 \code{\link{sourcoise}()},
 \code{\link{sourcoise_clear}()},
+\code{\link{sourcoise_clear_all}()},
 \code{\link{sourcoise_reset}()},
 \code{\link{sourcoise_status}()}
 }

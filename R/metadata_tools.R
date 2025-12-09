@@ -60,6 +60,18 @@ hash_file <- function(path) {
   })
 }
 
+hash_tracks <- function(tracks, root) {
+  purrr::map2(tracks, root, \(.t, .r) {
+    if(length(.t)==0|!any(is.na(.t)))
+      return(0)
+    track_files <- purrr::map(.t, ~fs::path_join(c(.r, .x)))
+    ok_files <- purrr::map_lgl(track_files, fs::file_exists)
+    if(any(ok_files))
+      return(hash_file(as.character(track_files[ok_files])))
+    return(0)
+  })
+}
+
 get_datas <- function(name, data_rep) {
   m <- get_mdatas(name, data_rep)
   dn <- names(m) |>
@@ -73,12 +85,15 @@ get_datas <- function(name, data_rep) {
 }
 
 get_mdatas <- function(name, data_rep) {
-  name_allid <- stringr::str_remove(name, "-([a-f0-9]){8}")
-  pat <- stringr::str_c(name_allid, "-([a-f0-9]{8})_([a-f0-9]{8})-([0-9]+).json")
-  files <- list()
-  if(fs::dir_exists(data_rep))
-    files <- fs::dir_ls(path = data_rep, regexp = pat, fail=FALSE, ignore.case = TRUE)
-  purrr::map(files, read_mdata)
+  sn <- stringr::str_split(name, "-")[[1]]
+  qm <- fast_metadata(cache_reps = data_rep, bn = sn[[1]], argsid = sn[[2]])
+  if(nrow(qm)==0)
+    return(list())
+  qm <- qm |>
+    dplyr::group_by(uid) |>
+    dplyr::filter(index == max(index)) |>
+    dplyr::ungroup()
+  purrr::map(qm$json_file, read_mdata)
 
   # mdatas <- RcppSimdJson::fload(files)
   # if(length(files)==1)
@@ -99,8 +114,7 @@ read_mdata <- function(path) {
     l$json_file <- path
     return(l)
   }
-  logger::log_error("{path} is not a json file, {l$error$message} [deleting json]")
-  fs::file_delete(path)
+  sure_delete(path)
   l <- list()
 }
 
@@ -152,10 +166,10 @@ sourcoise_priority <- function(path, priority = 10, root = getOption("sourcoise.
   json_files <- sourcoises |>
     tibble::tibble(path = _) |>
     dplyr::mutate(
-      argsid = stringr::str_extract(.data$path, pat, group=1),
-      uid = stringr::str_extract(.data$path, pat, group=2),
-      cc = stringr::str_extract(.data$path, pat, group=3) |> as.numeric(),
-      date = purrr::map_chr(.data$path, ~read_mdata(.x) |> purrr::pluck("date")) |>
+      argsid = stringr::str_extract(path, pat, group=1),
+      uid = stringr::str_extract(path, pat, group=2),
+      cc = stringr::str_extract(path, pat, group=3) |> as.numeric(),
+      date = purrr::map_chr(path, ~read_mdata(.x) |> purrr::pluck("date")) |>
         lubridate::as_datetime())
   most_recent <- json_files |>
     dplyr::group_by(argsid) |>
@@ -200,3 +214,223 @@ extract_data_date <- function(ctxt) {
     lubridate::as_datetime()
   return(max(dates))
 }
+
+sure_delete <- function(path) {
+  if(fs::file_exists(path))
+    fs::file_delete(path)
+}
+
+exists_file <- function(file, root) {
+  purrr::map2_lgl(file, root, \(.f, .r) {
+    fs::file_exists(fs::path_join(c(.r, .f)))
+  })
+}
+
+valid_lapse <- function(lapse, date) {
+  maintenant <- lubridate::now()
+  purrr::map2_lgl(lapse, date, \(.l, .d) {
+    if(.l == "never")
+      return(TRUE)
+    lapse <- what_lapse(.l)
+    maintenant - lubridate::as_datetime(.d) <= lapse
+  })
+}
+
+ls_cache_files <- function(root=NULL, uid = NULL, bn = NULL, argsid = NULL, cache_reps = NULL) {
+  if(is.null(cache_reps)) {
+    root <- try_find_root(root)
+    cache_reps <- fs::dir_ls(path = root, regex = "\\.sourcoise$", all = TRUE, recurse = TRUE)
+  }
+  roots <- fs::path_dir(cache_reps) |> as.character()
+  cache_reps <- cache_reps |> purrr::keep(~fs::dir_exists(.x))
+  if(length(cache_reps)==0)
+    return(list())
+  if(length(roots)==0)
+    return(NULL)
+  if(is.null(uid))
+    uid <- "[a-f0-9]{8}"
+  if(is.null(bn))
+    bn <- ".+"
+  if(is.null(argsid))
+    argsid <- "[a-f0-9]{8}"
+  cache_reps <- rlang::set_names(cache_reps, roots)
+  jpat <- "({bn})-({argsid})_({uid})-([0-9]+)\\.json" |> glue::glue()
+  dpat <- "({bn})-({argsid})_([a-f0-9]{{32}})\\.qs2" |> glue::glue()
+  jsons <- purrr::map(cache_reps,
+                      ~fs::dir_ls(.x,  regexp = jpat, recurse = TRUE))
+  qs2 <- purrr::map(cache_reps,
+                    ~fs::dir_ls(.x, regexp = dpat, recurse = TRUE))
+  return(list(qs2=qs2,
+              jsons=jsons,
+              cache_reps = cache_reps,
+              roots = roots|> as.character()))
+}
+
+clean_caches <- function(root=NULL, cache_reps = NULL) {
+  root <- try_find_root(root)
+  if(is.null(cache_reps))
+    cache_reps <- fs::dir_ls(path = root, regex = "\\.sourcoise$",
+                             type = "directory", all = TRUE, recurse = TRUE)
+  caches <- ls_cache_files(root, cache_reps = cache_reps)
+  allfiles <- purrr::map(cache_reps,
+                         ~fs::dir_ls(.x, type = "file", recurse = TRUE))
+  if(length(allfiles)==0)
+    return(NULL)
+  outfiles <- purrr::list_c(allfiles) |>
+    setdiff(purrr::list_c(caches$jsons)) |>
+    setdiff(purrr::list_c(caches$qs2))
+  if(length(outfiles)>0)
+    fs::file_delete(outfiles)
+  return(outfiles)
+}
+
+fast_metadata <- function(root=NULL, uid = NULL, bn = NULL,
+                          argsid = NULL, cache_reps = NULL, quiet = FALSE) {
+  files <- ls_cache_files(root=root, uid = uid, bn = bn,
+                          argsid = argsid, cache_reps = cache_reps)
+  if(length(files$json)==0)
+    return(tibble::tibble())
+  pat <- "(.+)/\\.sourcoise/(.+)-([a-f0-9]{8})_([a-f0-9]{8})-([0-9]+)\\.json"
+
+  tibble::tibble(json_file = files$jsons |> purrr::flatten_chr() |> unname()) |>
+    dplyr::mutate(
+      root = stringr::str_extract(json_file, pat, group=1),
+      basename = stringr::str_extract(json_file, pat, group=2),
+      argsid = stringr::str_extract(json_file, pat, group=3),
+      uid = stringr::str_extract(json_file, pat, group=4),
+      index = stringr::str_extract(json_file, pat, group=5) |> as.numeric(),
+      short_json_file = stringr::str_remove(json_file, stringr::str_c("^", root, "/")) ) |>
+    dplyr::relocate(basename, argsid, uid, index,
+                    root, short_json_file, json_file) |>
+    dplyr::arrange(basename, argsid, uid, dplyr::desc(index))
+}
+
+get_metadata <- function(root=NULL, uid = NULL,
+                         bn = NULL, argsid = NULL, cache_reps = NULL,
+                         filter = "recent", quiet = FALSE) {
+  qm <- fast_metadata(root=root, uid = uid, bn = bn,
+                      argsid = argsid, cache_reps = cache_reps)
+
+  if(nrow(qm)==0) {
+    if(!quiet)
+      cli::cli_alert_info("No cache data")
+    return(tibble::tibble())
+  }
+
+  if(filter == "recent")
+    qm <- qm |>
+      dplyr::group_by(root, basename, argsid, uid) |>
+      dplyr::filter(index==max(index)) |>
+      dplyr::ungroup()
+
+  if(nrow(qm)==0) {
+    if(!quiet)
+      cli::cli_alert_info("No cache data")
+    return(tibble::tibble())
+  }
+
+  # metas <- purrr::map2_dfr(qm$root, qm$json_file, \(a_root, a_json) {
+  #   jsonlite::read_json(a_json, simplifyVector = TRUE) |> purrr::flatten() }) |>
+  #   dplyr::mutate(root = qm$root, cache_rep = stringr::str_c(root, "/.sourcoise"))
+  jsons_raw <- RcppSimdJson::fload(qm$json_file, always_list = TRUE)
+  n1 <- names(jsons_raw[[1]])
+  # cette méthode permet de lire les listes
+  simplifies <- rlang::set_names(rep(NA, length(n1)), n1)
+  simplifies[c("args", "track", "qmd_file")] <- FALSE
+  metas <- jsons_raw |>
+    purrr::list_transpose(simplify = simplifies |> as.list(), default = NULL) |>
+    purrr::imap(~ tibble::enframe(.x) |>
+                  dplyr::rename({{.y}}:= value) |>
+                  dplyr::select(-name) ) |>
+    dplyr::bind_cols() |>
+    dplyr::mutate(
+      name = qm$json_file,
+      root = qm$root,
+      cache_rep = stringr::str_c(root, "/.sourcoise")) |>
+    dplyr::relocate(name)
+
+  if(nrow(metas) == 0) {
+    if(!quiet)
+      cli::cli_alert_info("No cache data")
+    return(tibble::tibble())
+  }
+
+  if(! "args" %in% names(metas))
+    metas <- metas |> dplyr::mutate(args = NA_character_)
+  if(! "log_file" %in% names(metas))
+    metas <- metas |> dplyr::mutate(log_file = NA_character_)
+  if(! "args" %in% names(metas))
+    metas <- metas |> dplyr::mutate(args = NA_character_)
+  if(! "track" %in% names(metas))
+    metas <- metas |> dplyr::mutate(track = NA_character_)
+  if(! "qmd_file" %in% names(metas))
+    metas <- metas |> dplyr::mutate(qmd_file = NA_character_)
+
+  metas <- metas |>
+    dplyr::mutate(
+      src_exist = exists_file(src, root),
+      full_cache_rep = purrr::map2_chr(cache_rep, fs::path_dir(src),
+                                       ~fs::path_join(c(.x, .y))),
+      data_exist = exists_file(data_file,
+                               full_cache_rep))
+  sources <- metas |>
+    dplyr::distinct(src, root) |>
+    dplyr::mutate(
+      ffn = stringr::str_c(root,"/", src),
+      cur_src_hash = hash_file(ffn) ) |>
+    dplyr::select(root, src, cur_src_hash)
+  metas <- metas |>
+    dplyr::left_join(sources, dplyr::join_by(src, root))
+  args <- metas |>
+    dplyr::distinct(args) |>
+    tidyr::drop_na() |>
+    dplyr::mutate(cur_arg_hash =  purrr::map_chr(args, ~digest::digest(.x, "crc32")))
+  if(nrow(args)>0)
+    metas <- metas |>
+    dplyr::left_join(args, dplyr::join_by(args)) else
+      metas <- metas |> dplyr::mutate(cur_arg_hash =  NA_character_)
+  tracks <- metas |>
+    tidyr::drop_na(track) |>
+    dplyr::distinct(root, track) |>
+    dplyr::mutate(
+      cur_track_hash = hash_tracks(track, root) )
+  if(nrow(tracks)>0)
+    metas <- metas |>
+    dplyr::left_join(tracks, dplyr::join_by(root, track)) else
+      metas <- metas |> dplyr::mutate(cur_track_hash = NA_character_)
+  metas <- metas |>
+    dplyr::mutate(valid_lapse = valid_lapse(lapse, date))
+  metas <- metas |>
+    dplyr::mutate(
+      cur_arg_hash = ifelse(is.na(cur_arg_hash),
+                            digest::digest(list(), algo = "crc32"),
+                            cur_arg_hash),
+      cur_track_hash = ifelse(is.na(cur_track_hash),
+                              0,
+                              cur_track_hash),
+      log_file = ifelse(purrr::map_lgl(log_file, length), "", log_file))
+  metas <- metas |>
+    dplyr::mutate(
+      valid_src = cur_src_hash == src_hash,
+      valid_args = cur_arg_hash == arg_hash,
+      valid_track = track_hash == cur_track_hash,
+      valid = valid_src &
+        valid_args &
+        valid_lapse &
+        valid_track &
+        src_exist &
+        data_exist)
+  metas |>
+    dplyr::transmute(
+      src,
+      exists = src_exist,
+      date = lubridate::as_datetime(date),
+      valid, priority, uid, index = cc,
+      timing, size, lapse, wd, args,
+      json_file, qmd_file, src_in, data_file,
+      data_date = lubridate::as_datetime(data_date),
+      file_size = scales::label_bytes()(file_size),
+      log_file, root, src_hash, track_hash,
+      track, arg_hash, data_hash)
+}
+

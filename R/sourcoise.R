@@ -195,7 +195,7 @@ sourcoise_ <- function(
       return(list(error = "No cache&prevent", ok = FALSE, log_file = ctxt$log_file))
     }
     if(length(our_data)==0)
-      our_data <- exec_source(ctxt)
+      our_data <- super_exec_source(ctxt)
     if(our_data$ok=="exec") {
       our_data <- cache_data(our_data, ctxt)
       logger::log_success(

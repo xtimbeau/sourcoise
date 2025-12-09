@@ -77,7 +77,6 @@ cache_data <- function(data, ctxt) {
     }
     les_metas$data_file <- data$data_file <- fs::path_file(fnd)
     data$data_date <- les_metas$data_date
-
     jsonlite::write_json(les_metas, path = data$json_file)
     prune_cache(ctxt)
   }
@@ -107,14 +106,10 @@ prune_cache <- function(ctxt) {
     dplyr::slice_head(n=ctxt$grow_cache)
   datas_out <- setdiff(datas, datapairs$data_file)
   json_in <- pairs |>
-    semi_join(datapairs, join_by(data_file)) |>
-    pull(json_file)
+    dplyr::semi_join(datapairs, dplyr::join_by(data_file)) |>
+    dplyr::pull(json_file)
   jsons_out <- setdiff(jsons, json_in)
 
-  sure_delete <- function(fn) {
-    if(fs::file_exists(fn))
-      fs::file_delete(fn)
-  }
   purrr::walk(jsons_out, ~ sure_delete(.x))
   purrr::walk(datas_out, ~ sure_delete(fs::path_join(c(ctxt$full_cache_rep, .x))))
 }
@@ -132,8 +127,10 @@ pick_gooddata <- function(good_datas, ctxt) {
 
   ggd_lapse <- good_good_data$lapse %||% "never"
   ggd_wd <- good_good_data$wd %||% "file"
-  ggd_qmds <- setequal(good_good_data$qmd_file, ctxt$new_qmds)
-  ggd_track <- setequal(good_good_data$track, ctxt$track)
+  ggd_qmds <- setequal(good_good_data$qmd_file ,
+                       ctxt$new_qmds )
+  ggd_track <- setequal(good_good_data$track ,
+                        ctxt$track )
   ggd_src_in <- ctxt$src_in == good_good_data$src_in %||% "project"
 
   if(ggd_lapse != ctxt$lapse | ggd_wd != ctxt$wd | !ggd_qmds | !ggd_track | !ggd_src_in) {
@@ -143,6 +140,7 @@ pick_gooddata <- function(good_datas, ctxt) {
     newmdata$wd <- ctxt$wd
     newmdata$qmd_file <- ctxt$new_qmds
     newmdata$track <- ctxt$track
+    newmdata$args <- ctxt$args
     newmdata$src_in <- ctxt$src_in
     newmdata$log_file <- ctxt$log_file
     newmdata$json_file <- fnm

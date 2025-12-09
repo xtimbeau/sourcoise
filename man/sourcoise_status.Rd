@@ -4,13 +4,7 @@
 \alias{sourcoise_status}
 \title{Cache status of sourcoise}
 \usage{
-sourcoise_status(
-  short = TRUE,
-  quiet = TRUE,
-  root = NULL,
-  prune = TRUE,
-  clean = TRUE
-)
+sourcoise_status(short = TRUE, quiet = TRUE, root = NULL, prune = TRUE)
 }
 \arguments{
 \item{short}{(boolean) (deafault \code{TRUE}) return a simplified tibble}
@@ -20,8 +14,6 @@ sourcoise_status(
 \item{root}{(string) (default \code{NULL}) force root to a defined path, advanced and not recommanded use}
 
 \item{prune}{(boolean) (default \code{TRUE}) clean up status to display only on relevant cache. However, does not clean other cache files.}
-
-\item{clean}{(boolean) (default \code{FALSE}) check if some data files have not json referring to them and cleans if any.}
 }
 \value{
 tibble of cached files (see details for structure)
@@ -78,6 +70,7 @@ sourcoise_status()
 Other sourcoise: 
 \code{\link{sourcoise}()},
 \code{\link{sourcoise_clear}()},
+\code{\link{sourcoise_clear_all}()},
 \code{\link{sourcoise_refresh}()},
 \code{\link{sourcoise_reset}()}
 }

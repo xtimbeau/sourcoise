@@ -1,7 +1,7 @@
 dir <- tempdir()
 set_sourcoise_root(dir)
 
-sourcoise_clear()
+sourcoise_clear_all()
 
 fs::file_copy(
   fs::path_package("sourcoise", "synthetic.R"),

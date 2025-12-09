@@ -3,6 +3,7 @@
 export(set_sourcoise_root)
 export(sourcoise)
 export(sourcoise_clear)
+export(sourcoise_clear_all)
 export(sourcoise_meta)
 export(sourcoise_refresh)
 export(sourcoise_reset)

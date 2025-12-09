@@ -9,12 +9,12 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
   else
     ctxt$track <- track
 
-  if(is.null(args))
+  if(length(args)==0)
     ctxt$args <- list()
   else
     ctxt$args <- args
 
-  ctxt$argid <- digest::digest(args, algo = "crc32")
+  ctxt$argid <- digest::digest(ctxt$args, algo = "crc32")
 
   ctxt$lapse <- lapse
   ctxt$quiet <- quiet
@@ -58,7 +58,8 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
       fs::path_norm()
     ctxt$full_cache_rep <- fs::path_join(c(ctxt$root_cache_rep, ctxt$reldirname)) |>
       fs::path_norm()
-    # vérifier que .sourcoise n'est pas dasn le répertoire du source, dans ce cas, c'est celui là qu'on prend
+    # vérifier que .sourcoise n'est pas dans le répertoire du source,
+    # dans ce cas, c'est celui là qu'on prend
     sourcoise_file <- fs::path_join(c(ctxt$root, ctxt$reldirname, ".sourcoise"))
     if(fs::dir_exists(sourcoise_file)) {
       istheresourcoise <- fs::path_join(c(sourcoise_file, fs::path_file(ctxt$src) |>
@@ -116,7 +117,6 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
     }
   }
   logger::log_debug("wd: {ctxt[['exec_wd']]}")
-
   ctxt <- ctxt |>
     hash_context()
   if(length(ctxt$meta_datas)>0) {
@@ -131,13 +131,12 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
 # calcule les hashs et ajoute les métadonnées au contexte
 
 hash_context <- function(ctxt) {
-
   ctxt$src_hash <- hash_file(ctxt$src)
-  ctxt$arg_hash <- digest::digest(ctxt$args, "crc32")
+  ctxt$arg_hash <- ctxt$argid
 
   ctxt$meta_datas <- get_mdatas(ctxt$basename, ctxt$full_cache_rep)
 
-  ctxt$qmds <- purrr::map(ctxt$meta_datas, "qmd_file") |>
+  ctxt$qmds <- purrr::map(ctxt$meta_datas, ~.x[["qmd_file"]]) |>
     purrr::list_flatten() |>
     purrr::discard(is.null) |>
     unlist() |>
@@ -145,22 +144,23 @@ hash_context <- function(ctxt) {
   ctxt$new_qmds <- unique(c(ctxt$qmds, ctxt$qmd_file))
 
   ctxt$track_hash <- 0
-  already_tracked <- purrr::map(ctxt$meta_datas, "track") |>
+  already_tracked <- purrr::map(ctxt$meta_datas, ~.x[["track"]] ) |>
     purrr::list_flatten() |>
     purrr::discard(is.null) |>
     unlist() |>
     unique()
-  ctxt$track <- unique(ctxt$track, already_tracked)
-  if(length(ctxt$track) > 0) {
-    track_files <- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, .x)))
+  tracked <- unique(ctxt$track, already_tracked)
+  if(length(tracked) > 0) {
+    track_files <- purrr::map(track, ~fs::path_join(c(ctxt$root, .x)))
     ok_files <- purrr::map_lgl(track_files, fs::file_exists)
-    ctxt$track <- track_files[ok_files]
+    tracked <- track_files[ok_files]
     if(any(ok_files))
-      ctxt$track_hash <- hash_file(as.character(ctxt$track))
+      ctxt$track_hash <- hash_file(as.character(ctxt$track)) |> digest::digest(algo = "sha1")
     else {
       logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
     }
   }
+  ctxt$track <- tracked
   return(ctxt)
 }
 
