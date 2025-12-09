@@ -66,6 +66,7 @@ sourcoise_refresh <- function(
   root_root <- try_find_root(root, src_in = "project")
   startup_log2("INFO", root_root)
   ww <- sourcoise_status(short = FALSE, prune = TRUE, root=root, quiet=quiet)
+  n_sources <- nrow(ww)
   if(!is.null(what)) {
     if("character"%in%class(what)) {
       ww <- ww |>
@@ -215,7 +216,8 @@ sourcoise_refresh <- function(
   tsize <- res$size |> unlist() |>  sum(na.rm=TRUE)
   if(!quiet)
     cli::cli_alert_info("Total refresh in {dt} seconds for {scales::label_bytes()(tsize)} of data")
-  if(priotirize) {
+
+  if(priotirize & nrow(what)==n_sources) {
     allsrcs <- res$src |> unlist() |> fs::path_ext_remove()
     hits <- getOption("sourcoise.refreshing.hit") |> unlist() |> table()
     nohits <- setdiff(allsrcs, names(hits))

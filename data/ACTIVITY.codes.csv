@@ -1,0 +1,150 @@
+code;libelle français;libelle anglais
+_T;Total;Total
+138G_C10A;Transformation et conservation de la viande et préparation de produits à base de viande;Processing and preserving of meat and production of meat products
+138G_C10B;Transformation et conservation de poisson, de crustacés et de mollusques;Processing and preserving of fish, crustaceans and molluscs
+138G_C10C;Transformation et conservation de fruits et légumes;Processing and preserving of fruit and vegetables
+138G_C10D;Fabrication d’huiles et graisses végétales et animales;Manufacture of vegetable and animal oils and fats
+138G_C10E;Fabrication de produits laitiers;Manufacture of dairy products
+138G_C10F;"Travail des grains ; fabrication de produits amylacés";Manufacture of grain mill products, starches and starch products
+138G_C10G;Fabrication de produits de boulangerie-pâtisserie et de pâtes alimentaires;Manufacture of bakery and farinaceous products
+138G_C10H;Fabrication d'autres produits alimentaires;Manufacture of other food products
+138G_C10K;Fabrication d'aliments pour animaux;Manufacture of prepared animal feeds
+138G_C11Z;Fabrication de boissons;Manufacture of beverages
+138G_C12Z;Fabrication de produits à base de tabac;Manufacture of tobacco products
+A;Agriculture, sylviculture et pêche;Agriculture, forestry and fishing
+A01;Culture et production animale, chasse et services annexes;Crop and animal production, hunting and related service activities
+A02;Sylviculture et exploitation forestière;Forestry and logging
+A03;Pêche et aquaculture;Fishing and aquaculture
+B;Industries extractives;Mining and quarrying
+B_D_E;Industries extractives, énergie, eau, gestion des déchets et dépollution;"Mining and quarrying ; Electricity, gas, steam and air conditioning supply; Water supply; sewerage, waste management and remediation activities"
+B05;Extraction de houille et de lignite;Mining of coal and lignite
+B06;Extraction d'hydrocarbures;Extraction of crude petroleum and natural gas
+B07;Extraction de minerais métalliques;Mining of metal ores
+B08;Autres industries extractives;Other mining and quarrying
+B09;Services de soutien aux industries extractives;Mining support service activities
+BTE;Industrie manufacturière, industries extractives et autres;Industry (except construction)
+C;Industrie manufacturière;Manufacturing
+C_OTH;Autres industries manufacturières (C15, C23, C27, C31, C32, C33);Other manufacturing (C15, C23, C27, C31, C32, C33)
+C10;Industries alimentaires;Manufacture of food products
+C10T12;Fabrication de denrées alimentaires, de boissons et de produits à base de tabac;"Manufacture of food products; beverages and tobacco products"
+C11;Fabrication de boissons;Manufacture of beverages
+C12;Fabrication de produits à base de tabac;Manufacture of tobacco products
+C13;Fabrication de textiles;Manufacture of textiles
+C13T15;Fabrication de textiles, industries de l'habillement, industrie du cuir et de la chaussure;Manufacture of textiles, wearing apparel, leather and related products
+C14;Industrie de l'habillement;Manufacture of wearing apparel
+C15;Industrie du cuir et de la chaussure;Manufacture of leather and related products
+C16;"Travail du bois et fabrication d'articles en bois et en liège, à l'exception des meubles ; fabrication d'articles en vannerie et sparterie";"Manufacture of wood and of products of wood and cork, except furniture; manufacture of articles of straw and plaiting materials"
+C16T18;Travail du bois, industries du papier et imprimerie;"Manufacture of wood and of products of wood and cork, except furniture; manufacture of articles of straw and plaiting materials; manufacture of paper and paper products; printing and reproduction of recorded media"
+C17;Industrie du papier et du carton;Manufacture of paper and paper products
+C18;Imprimerie et reproduction d'enregistrements;Printing and reproduction of recorded media
+C19;Cokéfaction et raffinage;Manufacture of coke and refined petroleum products
+C20;Industrie chimique;Manufacture of chemicals and chemical products
+C21;Industrie pharmaceutique;Manufacture of basic pharmaceutical products and pharmaceutical preparations
+C22;Fabrication de produits en caoutchouc et en plastique;Manufacture of rubber and plastic products
+C22_23;Fabrication de produits en caoutchouc et en plastique ainsi que d'autres produits minéraux non métalliques;Manufacture of rubber and plastic products and other non-metallic mineral products
+C23;Fabrication d'autres produits minéraux non métalliques;Manufacture of other non-metallic mineral products
+C24;Métallurgie;Manufacture of basic metals
+C24_25;Métallurgie et fabrication de produits métalliques à l'exception des machines et des équipements;Manufacture of basic metals and fabricated metal products, except machinery and equipment
+C25;Fabrication de produits métalliques, à l'exception des machines et des équipements;Manufacture of fabricated metal products, except machinery and equipment
+C26;Fabrication de produits informatiques, électroniques et optiques;Manufacture of computer, electronic and optical products
+C26T28;Fabrication de produits informatiques, électroniques et optiques, d'équipements électriques, et de machines et équipements n.c.a.;Manufacture of  computer, electronic and optical products, electrical equipment, and machinery and equipment n.e.c.
+C27;Fabrication d'équipements électriques;Manufacture of electrical equipment
+C28;Fabrication de machines et équipements n.c.a.;Manufacture of machinery and equipment n.e.c.
+C29;Industrie automobile;Manufacture of motor vehicles, trailers and semi-trailers
+C29_30;Fabrication de matériels de transport;Manufacture of motor vehicles, trailers, semi-trailers and of other transport equipment
+C30;Fabrication d'autres matériels de transport;Manufacture of other transport equipment
+C31;Fabrication de meubles;Manufacture of furniture
+C31_32;Autres industries manufacturières n.c.a.;"Manufacture of furniture; other manufacturing"
+C31T33;"Autres industries manufacturières ; réparation et installation de machines et d'équipements";"Manufacture of furniture; jewellery, musical instruments, toys, etc.; repair and installation of machinery and equipment"
+C32;Autres industries manufacturières;Other manufacturing
+C33;Réparation et installation de machines et d'équipements;Repair and installation of machinery and equipment
+D;Production et distribution d'électricité, de gaz, de vapeur et d'air conditionné;Electricity, gas, steam and air conditioning supply
+D35;Production et distribution d'électricité, de gaz, de vapeur et d'air conditionné;Electricity, gas, steam and air conditioning supply
+E;"Production et distribution d'eau ; assainissement, gestion des déchets et dépollution";"Water supply ; sewerage, waste management and remediation activities"
+E36;Captage, traitement et distribution d'eau;Water collection, treatment and supply
+E37;Collecte et traitement des eaux usées;Sewerage
+E37T39;Collecte et traitement des eaux usées, traitement des déchets et dépollution;Sewerage, waste management, remediation activities
+E38;"Collecte, traitement et élimination des déchets ; récupération";"Waste collection, treatment and disposal activities ; materials recovery"
+E39;Dépollution et autres services de gestion des déchets;Remediation activities and other waste management services
+F;Construction;Construction
+F41;Construction de bâtiments;Construction of buildings
+F42;Génie civil;Civil engineering
+F43;Travaux de construction spécialisés;Specialised construction activities
+G;"Commerce ; réparation d'automobiles et de motocycles";"Wholesale and retail trade ; repair of motor vehicles and motorcycles"
+G45;Commerce et réparation d'automobiles et de motocycles;Wholesale and retail trade and repair of motor vehicles and motorcycles
+G46;Commerce de gros, à l'exception des automobiles et des motocycles;Wholesale trade, except of motor vehicles and motorcycles
+G47;Commerce de détail, à l'exception des automobiles et des motocycles;Retail trade, except of motor vehicles and motorcycles
+GTI;Commerce de gros et de détail, transports, hébergement et restauration;"Wholesale and retail trade; repair of motor vehicles and motorcycles; transportation and storage; accommodation and food service activities"
+GTN_RTU;Services principalement marchands;Market services - Services excluding public administration, education, health and social services - sections G to N and R to U
+H;Transports et entreposage;Transportation and storage
+H49;Transports terrestres et transport par conduites;Land transport and transport via pipelines
+H50;Transports par eau;Water transport
+H51;Transports aériens;Air transport
+H52;Entreposage et services auxiliaires des transports;Warehousing and support activities for transportation
+H53;Activités de poste et de courrier;Postal and courier activities
+I;Hébergement et restauration;Accommodation and food service activities
+I55;Hébergement;Accommodation
+I56;Restauration;Food and beverage service activities
+J;Information et communication;Information and communication
+J58;Édition;Publishing activities
+J58T60;Édition, audiovisuel et diffusion;"Publishing, motion picture, video, television programme production; sound recording, programming and broadcasting activities"
+J59;"Production de films cinématographiques, de vidéo et de programmes de télévision ; enregistrement sonore et édition musicale";Motion picture, video and television programme production, sound recording and music publishing activities
+J59_60;"Production de films cinématographiques, de vidéo et de programmes de télévision ; enregistrement sonore et édition musicale ; programmation et diffusion";"Motion picture, video, television programme production; sound recording, programming and broadcasting activities"
+J60;Programmation et diffusion;Programming and broadcasting activities
+J61;Télécommunications;Telecommunications
+J62;Programmation, conseil et autres activités informatiques;Computer programming, consultancy and related activities
+J62_63;"Programmation, conseil et autres activités informatiques ; services d'information";Computer programming, consultancy, and information service activities
+J63;Services d'information;Information service activities
+K;Activités financières et d'assurance;Financial and insurance activities
+K64;Activités des services financiers, hors assurance et caisses de retraite;Financial service activities, except insurance and pension funding
+K65;Assurance;Insurance, reinsurance and pension funding, except compulsory social security
+K66;Activités auxiliaires de services financiers et d'assurance;Activities auxiliary to financial services and insurance activities
+L;Activités immobilières;Real estate activities
+L68;Activités immobilières;Real estate activities
+L68A;Loyers imputés des logements occupés par leur propriétaire;Imputed rents of owner-occupied dwellings
+M;Activités spécialisées, scientifiques et techniques;Professional, scientific and technical activities
+M_N;Activités spécialisées, scientifiques et techniques et activités de services administratifs et de soutien;"Professional, scientific and technical activities; administrative and support service activities"
+M69;Activités juridiques et comptables;Legal and accounting activities
+M69_70;"Activités juridiques et comptables ; conseil de gestion ; activités des sièges sociaux";"Legal and accounting activities; activities of head offices; management consultancy activities"
+M69T71;Activités juridiques, comptables, de gestion, d'architecture, d'ingénierie, de contrôle et d'analyses techniques;"Legal and accounting activities; activities of head offices; management consultancy activities; architectural and engineering activities; technical testing and analysis"
+M70;"Activités des sièges sociaux ; conseil de gestion";"Activities of head offices ; management consultancy activities"
+M71;"Activités d'architecture et d'ingénierie ; activités de contrôle et analyses techniques";"Architectural and engineering activities; technical testing and analysis"
+M72;Recherche-développement scientifique;Scientific research and development
+M73;Publicité et études de marché;Advertising and market research
+M73T75;"Publicité et études de marché ; autres activités spécialisées, scientifiques et techniques ; activités vétérinaires";"Advertising and market research; other professional, scientific and technical activities; veterinary activities"
+M74;Autres activités spécialisées, scientifiques et techniques;Other professional, scientific and technical activities
+M74_75;"Autres activités spécialisées, scientifiques et techniques ; activités vétérinaires";"Other professional, scientific and technical activities; veterinary activities"
+M75;Activités vétérinaires;Veterinary activities
+N;Activités de services administratifs et de soutien;Administrative and support service activities
+N77;Activités de location et location-bail;Rental and leasing activities
+N78;Activités liées à l'emploi;Employment activities
+N79;Activités des agences de voyage, voyagistes, services de réservation et activités connexes;Travel agency, tour operator and other reservation service and related activities
+N80;Enquêtes et sécurité;Security and investigation activities
+N80T82;"Enquêtes et sécurité ; services relatifs aux bâtiments et aménagement paysager ; autres activités de soutien";Security and investigation, service and landscape, office administrative and support activities
+N81;Services relatifs aux bâtiments et aménagement paysager;Services to buildings and landscape activities
+N82;Activités administratives et autres activités de soutien aux entreprises;Office administrative, office support and other business support activities
+O;Administration publique;"Public administration and defence ; compulsory social security"
+O84;"Administration publique et défense ; sécurité sociale obligatoire";"Public administration and defence ; compulsory social security"
+OTQ;Administration publique, défense, enseignement, santé humaine et action sociale;Public administration, defence, education, human health and social work activities
+P;Enseignement;Education
+P85;Enseignement;Education
+Q;Santé humaine et action sociale;Human health and social work activities
+Q86;Activités pour la santé humaine;Human health activities
+Q87;Hébergement médico-social et social;Residential care activities
+Q87_88;Hébergement médico-social et social et action sociale sans hébergement;Residential care activities and social work activities without accommodation
+Q88;Action sociale sans hébergement;Social work activities without accommodation
+R;Arts, spectacles et activités récréatives;Arts, entertainment and recreation
+R90;Activités créatives, artistiques et de spectacle;Creative, arts and entertainment activities
+R90T92;Arts, divertissement et musées;"Creative, arts and entertainment activities; libraries, archives, museums and other cultural activities; gambling and betting activities"
+R91;Bibliothèques, archives, musées et autres activités culturelles;Libraries, archives, museums and other cultural activities
+R92;Organisation de jeux de hasard et d'argent;Gambling and betting activities
+R93;Activités sportives, récréatives et de loisirs;Sports activities and amusement and recreation activities
+RTU;"Arts, divertissement et loisirs ; autres activités de services ; activités des ménages, des organismes et organisations extraterritoriaux";"Arts, entertainment and recreation; other service activities; activities of household and extra-territorial organizations and bodies"
+S;Autres activités de services;Other service activities
+S94;Activités des organisations associatives;Activities of membership organisations
+S95;Réparation d'ordinateurs et de biens personnels et domestiques;Repair of computers and personal and household goods
+S96;Autres services personnels;Other personal service activities
+T;"Activités des ménages en tant qu'employeurs ; activités indifférenciées des ménages en tant que producteurs de biens et services pour usage propre";"Activities of households as employers ; undifferentiated goods- and services-producing activities of households for own use"
+T97;Activités des ménages en tant qu'employeurs de personnel domestique;Activities of households as employers of domestic personnel
+U;Activités extra-territoriales;Activities of extraterritorial organisations and bodies
+U99;Activités des organisations et organismes extraterritoriaux;Activities of extraterritorial organisations and bodies
