@@ -25,7 +25,7 @@ try_find_src <- function(root, name) {
 try_find_root <- function(root=NULL, src_in = getOption("sourcoise.src_in"), quiet = TRUE) {
   if(!is.null(root)) {
     if(fs::dir_exists(root))
-      return(root)
+      return(root |> fs::path_abs())
     root <- NULL
   }
   if(!is.null(getOption("sourcoise.root"))) {
@@ -38,19 +38,19 @@ try_find_root <- function(root=NULL, src_in = getOption("sourcoise.src_in"), qui
       root <- safe_find_root(
         rprojroot::is_quarto_project | rprojroot::is_r_package | rprojroot::is_rstudio_project)
       if(is.null(root$error))
-        return(root$result |> fs::path_abs() |> fs::path_norm())
+        return(root$result |> fs::path_abs())
       else {
         if(!quiet)
           cli::cli_alert_warning("{root$error}")
         return(getwd())
       }
     }
-    return(Sys.getenv("QUARTO_PROJECT_DIR") |> fs::path_abs() |> fs::path_norm())
+    return(Sys.getenv("QUARTO_PROJECT_DIR") |> fs::path_abs())
   }
 
   if(src_in == "file") {
     paths <- find_project_root(NULL, NULL)
-    return( fs::path_join(c(paths$project_path, paths$doc_path)) |> fs::path_norm() )
+    return( fs::path_join(c(paths$project_path, paths$doc_path)) |> fs::path_abs() )
   }
   getwd()
 }

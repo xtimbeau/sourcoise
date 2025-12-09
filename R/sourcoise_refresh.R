@@ -152,6 +152,7 @@ sourcoise_refresh <- function(
         exec_wd <- fs::path_join(c(root, fs::path_dir(qmd_file[[1]]))) |> fs::path_norm()
       src_todo <- fs::path_join(c(root, src)) |> fs::path_ext_remove()
       done <- src_todo %in% getOption("sourcoise.refreshing.done")
+
       src_data <- sourcoise_(
         path = src,
         force_exec = force_exec,

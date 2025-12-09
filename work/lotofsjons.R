@@ -1,8 +1,9 @@
 set_sourcoise_root("~/sourcoise")
+sourcoise_clear_all()
 
 library(tidyverse)
 
-purrr::walk(1:1000,  ~sourcoise("work/noerror3.r", force=TRUE))
+purrr::walk(1:100,  ~sourcoise("work/noerror3.r", force=TRUE))
 
 bench::mark(
   {
