@@ -54,7 +54,7 @@ a named list with cache information
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> /tmp/Rtmp4vaRSI
+#> /tmp/Rtmp8wSNDI
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
   dir,
@@ -70,7 +70,7 @@ sourcoise_meta("some_data.R")
 #> [1] 7e-04
 #> 
 #> $date
-#> [1] "2025-12-09 11:06:43"
+#> [1] "2025-12-09 15:00:17"
 #> 
 #> $size
 #> [1] 1720
@@ -87,19 +87,19 @@ sourcoise_meta("some_data.R")
 #> $qmd_file
 #> named list()
 #> 
-#> $log_file
-#> named list()
+#> $<NA>
+#> NULL
 #> 
 #> $file_size
 #> [1] 242
 #> 
 #> $data_date
-#> [1] "2025-12-09 11:06:43.872034"
+#> [1] "2025-12-09 15:00:17.720758"
 #> 
 #> $data_file
 #> [1] "some_data-4262323b_f92a79811b1d8866b336be3b35cd7f50.qs2"
 #> 
 #> $json_file
-#> [1] "/tmp/Rtmp4vaRSI/.sourcoise/some_data-4262323b_a29eec33-1.json"
+#> [1] "/tmp/Rtmp8wSNDI/.sourcoise/some_data-4262323b_a2a1eb50-1.json"
 #> 
 ```
