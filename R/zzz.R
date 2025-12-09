@@ -19,7 +19,7 @@
     sourcoise.memoize = TRUE,
     sourcoise.encoding = "UTF-8"
   )
-  utils::globalVariables(".data")
+
   toset <- !(names(op.sourcoise) %in% names(op))
   if (any(toset)) options(op.sourcoise[toset])
 
@@ -33,3 +33,5 @@ utils::globalVariables(c("json_file", "index", "short_json_file", "uid",  "src",
                          "valid_args", "valid_track", "src_exist", "data_exist", "valid", "priority",
                          "cc", "timing", "size", "wd",  "qmd_file", "src_in", "data_date", "file_size",
                          "data_hash", "uid", "argsid", "src",  "json_file", "name"))
+
+utils::globalVariables(c(".data"))

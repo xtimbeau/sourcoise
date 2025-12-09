@@ -5,6 +5,14 @@ library(tidyverse)
 
 purrr::walk(1:100,  ~sourcoise("work/noerror3.r", force=TRUE))
 
+sourcoise("work/noerror.r")
+sourcoise("work/commun.r")
+sourcoise("work/error.r")
+
+sourcoise_status(short=FALSE)
+sourcoise_refresh()
+sourcoise_status(short=FALSE)
+
 bench::mark(
   {
     jsons <- fs::dir_ls(".sourcoise/work", glob = "*.json")

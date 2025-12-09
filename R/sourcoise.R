@@ -245,7 +245,7 @@ should_i_do <- function(src) {
     return(FALSE)
   done <- getOption("sourcoise.refreshing.done")
   src <- src |> fs::path_ext_remove() |> as.character()
-  if(src %in% done) {
+  if(src %in% done | !(src %in% getOption("sourcoise.refreshing.2do"))) {
     options(sourcoise.refreshing.hit = c(getOption("sourcoise.refreshing.hit"), src))
     return(FALSE) }
   return(TRUE)
@@ -260,7 +260,6 @@ mark_as_done <- function(src) {
     as.character()
   done <- getOption("sourcoise.refreshing.done")
   done <- c(done, src) |> unique()
-  options(
-    sourcoise.refreshing.done = done)
+  options(sourcoise.refreshing.done =  done)
   return(done)
 }

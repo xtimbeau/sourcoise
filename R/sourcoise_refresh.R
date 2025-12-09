@@ -113,13 +113,15 @@ sourcoise_refresh <- function(
     on.exit(
       options(
         sourcoise.refreshing = FALSE,
+        sourcoise.refreshing.2do = list(),
         sourcoise.refreshing.done = list(),
-        sourcoise.refreshing.hit = list()))
+        sourcoise.refreshing.hit = list() ) )
     options(
       sourcoise.refreshing = TRUE,
+      sourcoise.refreshing.2do = what[["src"]],
       sourcoise.refreshing.done = list(),
       sourcoise.refreshing.hit = list())
-  }
+      }
 
   logger::log_info("Refreshing {nrow(what)} source files")
   if(!quiet)
@@ -127,14 +129,14 @@ sourcoise_refresh <- function(
 
   if(!is.null(init_fn) && rlang::is_function(init_fn)) {
     init_fn()
-    logger::log_info("Inializing with init_fn()")
+    logger::log_info("Initializing with init_fn()")
     if(!quiet)
-      cli::cli_alert_info("Inializing with init_fn()")
+      cli::cli_alert_info("Initializing with init_fn()")
   }
 
   total_time <- ceiling(sum(what$timing, na.rm=TRUE))
   if(is.null(root))
-    cwd <- getwd() |> fs::path_abs()
+    cwd <- getwd() |> path_abs()
   else
     cwd <- root
   if(.progress)
@@ -145,7 +147,7 @@ sourcoise_refresh <- function(
     function(src, wd, lapse, args, root, track, qmd_file, src_in, timing, log_file, data_date, ...) {
       exec_wd <- getwd()
       if(wd=="project")
-        exec_wd <- root |> fs::path_norm()
+        exec_wd <- root
       if(wd=="file")
         exec_wd <- fs::path_join(c(root, fs::path_dir(src))) |> fs::path_norm()
       if(wd=="qmd")
@@ -175,7 +177,8 @@ sourcoise_refresh <- function(
           new <- TRUE else
             new <- FALSE
           data_size <- glue::glue("{scales::label_bytes()(src_data$size)}")
-          msg <- glue::glue("{msrc} executed in {round(src_data$timing)} s. {ifelse(done, 'cached during refresh', '' )}")
+          msg <- glue::glue(
+            "{msrc} executed in {round(src_data$timing)} s. {ifelse(done, 'cached during refresh', '' )}")
           if(new)
             cli::cli_alert_success(
               "{msg}, {.strong new data generated} ({data_size})" ) else
@@ -197,7 +200,10 @@ sourcoise_refresh <- function(
       if(!is.null(src_data$error))
         list(src = fs::path_join(c(root, src)), ok = "error", timing = NA, size = NA)
       else
-        list(src = fs::path_join(c(root, src)), ok = src_data$ok, timing = src_data$timing, size = src_data$size)
+        list(src = fs::path_join(c(root, src)),
+             ok = src_data$ok,
+             timing = src_data$timing,
+             size = src_data$size)
     }
   )
 
@@ -218,4 +224,4 @@ sourcoise_refresh <- function(
     purrr::iwalk(srcs, ~sourcoise_priority(.y, 10 + .x))
   }
   invisible(res)
-}
+  }

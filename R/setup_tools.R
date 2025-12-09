@@ -133,7 +133,6 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
 hash_context <- function(ctxt) {
   ctxt$src_hash <- hash_file(ctxt$src)
   ctxt$arg_hash <- ctxt$argid
-
   ctxt$meta_datas <- get_mdatas(ctxt$basename, ctxt$full_cache_rep)
 
   ctxt$qmds <- purrr::map(ctxt$meta_datas, ~.x[["qmd_file"]]) |>
@@ -179,7 +178,7 @@ startup_log <- function(log, ctxt) {
   log_fn <- fs::path_join(c(log_dir, stringr::str_c(ctxt$uid, "_", lubridate::today() |> as.character()))) |>
     fs::path_ext_set("log")
   logger::log_appender(logger::appender_file(log_fn))
-  ctxt$log_file <- fs::path_rel(log_fn, getwd() |> fs::path_abs())
+  ctxt$log_file <- fs::path_rel(log_fn, getwd() |> path_abs())
 
   return(ctxt)
 }
@@ -187,7 +186,8 @@ startup_log <- function(log, ctxt) {
 startup_log2 <- function(log, root, uid = digest::digest(as.character(root), algo = "crc32")) {
   if(log==FALSE)
     log <- "OFF"
-  log_dir <- fs::path_join(c(root,".sourcoise_logs"))
+  log_dir <- fs::path_join(c(root,".sourcoise_logs")) |>
+    path_abs()
   logger::log_threshold(log)
 
   if(log == "OFF") {
@@ -199,7 +199,7 @@ startup_log2 <- function(log, root, uid = digest::digest(as.character(root), alg
   log_fn <- fs::path_join(c(log_dir, stringr::str_c(uid, "_", lubridate::today() |> as.character()))) |>
     fs::path_ext_set("log")
   logger::log_appender(logger::appender_file(log_fn))
-  log_file <- fs::path_rel(log_fn, getwd() |> fs::path_abs())
+  log_file <- fs::path_rel(log_fn, getwd() |> path_abs())
 
   return(log_file)
 }

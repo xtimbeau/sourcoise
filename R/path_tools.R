@@ -25,12 +25,11 @@ try_find_src <- function(root, name) {
 try_find_root <- function(root=NULL, src_in = getOption("sourcoise.src_in"), quiet = TRUE) {
   if(!is.null(root)) {
     if(fs::dir_exists(root))
-      return(root |> fs::path_abs())
-    root <- NULL
+      return(root |> path_abs())
   }
   if(!is.null(getOption("sourcoise.root"))) {
     if(fs::dir_exists(getOption("sourcoise.root")))
-      return(getOption("sourcoise.root"))
+      return(getOption("sourcoise.root") |> path_abs())
   }
   if(src_in == "project") {
     if(Sys.getenv("QUARTO_PROJECT_DIR") == "") {
@@ -38,19 +37,19 @@ try_find_root <- function(root=NULL, src_in = getOption("sourcoise.src_in"), qui
       root <- safe_find_root(
         rprojroot::is_quarto_project | rprojroot::is_r_package | rprojroot::is_rstudio_project)
       if(is.null(root$error))
-        return(root$result |> fs::path_abs())
+        return(root$result |> path_abs())
       else {
         if(!quiet)
           cli::cli_alert_warning("{root$error}")
-        return(getwd())
+        return(getwd() |> path_abs())
       }
     }
-    return(Sys.getenv("QUARTO_PROJECT_DIR") |> fs::path_abs())
+    return(Sys.getenv("QUARTO_PROJECT_DIR") |> path_abs())
   }
 
   if(src_in == "file") {
     paths <- find_project_root(NULL, NULL)
-    return( fs::path_join(c(paths$project_path, paths$doc_path)) |> fs::path_abs() )
+    return( fs::path_join(c(paths$project_path, paths$doc_path)) |> path_abs() )
   }
   getwd()
 }
@@ -61,10 +60,10 @@ find_project_root <- function(project_path = NULL, doc_path = NULL) {
   if(is.null(doc_path)) {
     if(Sys.getenv("QUARTO_DOCUMENT_PATH") != "" | quarto::is_using_quarto()) {
       in_quarto <- TRUE
-      doc_path <- Sys.getenv("QUARTO_DOCUMENT_PATH") |> fs::path_abs() |> fs::path_norm()
+      doc_path <- Sys.getenv("QUARTO_DOCUMENT_PATH") |> path_abs()
     }
     else
-      doc_path <- getwd() |> fs::path_abs() |> fs::path_norm()
+      doc_path <- getwd() |> path_abs() |> fs::path_norm()
   }
   if(is.null(project_path)) {
     project_path <- Sys.getenv("QUARTO_PROJECT_DIR")
@@ -80,7 +79,10 @@ find_project_root <- function(project_path = NULL, doc_path = NULL) {
       project_path <- project_path$result
     }
   }
-  project_path <- project_path |> fs::path_norm() |> fs::path_abs()
-  doc_path <- doc_path |> fs::path_norm() |> fs::path_abs() |> fs::path_rel(project_path)
+  project_path <- project_path |> fs::path_norm() |> path_abs()
+  doc_path <- doc_path |> path_abs() |> fs::path_rel(project_path)
   return(list(project_path = project_path, doc_path = doc_path, in_quarto = in_quarto))
 }
+
+path_abs <- function(path)
+  path |> fs::path_expand() |> fs::path_abs()

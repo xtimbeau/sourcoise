@@ -47,9 +47,11 @@ cache_data <- function(data, ctxt) {
   data$id <- stringr::str_c(ctxt$uid, "-", cc)
   data$uid <- ctxt$uid
   data$cc <- cc
-  data$json_file <- fs::path_join(
-    c(ctxt$full_cache_rep,
-      stringr::str_c(ctxt$basename, "_", stringr::str_c(data$id, ".json"))))
+  json_fn <-
+    fs::path_join(c(ctxt$full_cache_rep,
+                    stringr::str_c(ctxt$basename, "_", stringr::str_c(data$id, ".json")))) |>
+    path_abs()
+  data$json_file <- json_fn
   if(!ctxt$nocache) {
     les_metas <- data
     les_metas$data <- NULL
@@ -76,8 +78,11 @@ cache_data <- function(data, ctxt) {
       les_metas$data_date <- exists_data_date
     }
     les_metas$data_file <- data$data_file <- fs::path_file(fnd)
+    if(!is.null(ctxt$log_file))
+      les_metas$log_file <- ctxt$log_file |> fs::path_rel(ctxt$root)
     data$data_date <- les_metas$data_date
-    jsonlite::write_json(les_metas, path = data$json_file)
+    les_metas$json_file <- fs::path_rel(json_fn, ctxt$root)
+    jsonlite::write_json(les_metas, path = json_fn)
     prune_cache(ctxt)
   }
   return(data)
@@ -143,7 +148,7 @@ pick_gooddata <- function(good_datas, ctxt) {
     newmdata$args <- ctxt$args
     newmdata$src_in <- ctxt$src_in
     newmdata$log_file <- ctxt$log_file
-    newmdata$json_file <- fnm
+    newmdata$json_file <- fnm |> fs::path_rel(ctxt$root)
     jsonlite::write_json(newmdata, path = fnm)
   }
 

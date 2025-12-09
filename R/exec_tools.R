@@ -96,8 +96,7 @@ super_exec_source <- function(ctxt) {
         wd = ctxt$wd,
         qmd_file = ctxt$new_qmds,
         src_in = ctxt$src_in,
-        ok = "exec",
-        log_file = ctxt$log_file))
+        ok = "exec"))
   }
   data <- res$result
   if(!"S7_object"%in%class(data))
@@ -119,6 +118,5 @@ super_exec_source <- function(ctxt) {
     wd = ctxt$wd,
     qmd_file = ctxt$new_qmds,
     src_in = ctxt$src_in,
-    ok = "exec",
-    log_file = ctxt$log_file)
+    ok = "exec")
 }

@@ -195,6 +195,7 @@ sourcoise_priority <- function(path, priority = 10, root = getOption("sourcoise.
     json_fn <- fs::path_join(c(full_cache_rep,
                                stringr::str_c(bbnme, "-", .x, "_", uid, "-", cc ))) |>
       fs::path_ext_set("json")
+    les_metas$json_file <- json_fn |> fs::path_rel(root)
     jsonlite::write_json(les_metas, path = json_fn)
     json_fn
   }) |> unlist()
