@@ -8,6 +8,10 @@ Critical performance aspects have been optimized.
 
 Checks are nearly perfectly fine, except the NOTE for timestamps.
 
+## revdepcheck results 
+
+No revdep to signal.
+
 ## R CMD check results
 
 0 errors | 0 warnings | 1 note

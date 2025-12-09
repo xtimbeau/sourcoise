@@ -18,7 +18,7 @@ data <- sourcoise("prix_insee.R", force_exec = TRUE, metadata = TRUE)
 
 test_that("We get data", {
   expect(
-    identical(x=names(data$data), y=c("ipcha", "ipchm", "ipch")),
+    identical(x=names(data$data), y=c("y", "ipch", "DATE", "ipch", "IDBANK", "DATE", "ipch" )),
     "Execution is wrong")
 })
 cache_dir <- NULL
@@ -139,7 +139,7 @@ test_that("sourcoise_status", {
 })
 
 sourcoise_reset()
-if(!is.null(cache_dir))
+if(!is.null(cache_dir))1
   test_that("sourcoise_reset", {
     expect(!fs::dir_exists(cache_dir),
            "cache dir was not removed")
