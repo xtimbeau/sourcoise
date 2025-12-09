@@ -7,13 +7,7 @@ with this data.
 ## Usage
 
 ``` r
-sourcoise_status(
-  short = TRUE,
-  quiet = TRUE,
-  root = NULL,
-  prune = TRUE,
-  clean = TRUE
-)
+sourcoise_status(short = TRUE, quiet = TRUE, root = NULL, prune = TRUE)
 ```
 
 ## Arguments
@@ -35,11 +29,6 @@ sourcoise_status(
 
   (boolean) (default `TRUE`) clean up status to display only on relevant
   cache. However, does not clean other cache files.
-
-- clean:
-
-  (boolean) (default `FALSE`) check if some data files have not json
-  referring to them and cleans if any.
 
 ## Value
 
@@ -106,6 +95,7 @@ Data returned is:
 Other sourcoise:
 [`sourcoise()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise.md),
 [`sourcoise_clear()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_clear.md),
+[`sourcoise_clear_all()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_clear_all.md),
 [`sourcoise_refresh()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_refresh.md),
 [`sourcoise_reset()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_reset.md)
 
@@ -114,7 +104,7 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> [1] "/tmp/Rtmprb6yE0"
+#> [1] "/tmp/RtmpuHG5sJ"
 fs::file_copy(
     fs::path_package("sourcoise", "some_data.R"),
     dir,
@@ -124,7 +114,7 @@ data <- sourcoise("some_data.R", force_exec = TRUE)
 # status returns the cache status
 sourcoise_status()
 #> # A tibble: 1 × 6
-#>   src      priority date                data_date           file_size json_file 
-#>   <chr>       <int> <dttm>              <dttm>              <chr>     <fs::path>
-#> 1 some_da…       10 2025-12-06 17:59:57 2025-12-06 17:59:57 242 B     …55-1.json
+#>   src       priority date                data_date           file_size json_file
+#>   <chr>        <int> <dttm>              <dttm>              <chr>     <chr>    
+#> 1 some_dat…       10 2025-12-09 10:34:32 2025-12-09 10:34:32 242 B     /tmp/Rtm…
 ```

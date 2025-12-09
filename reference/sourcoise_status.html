@@ -47,13 +47,7 @@ and return a tibble with this data.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sourcoise_status</span><span class="op">(</span></span>
-<span>  short <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  quiet <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  root <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  prune <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  clean <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sourcoise_status</span><span class="op">(</span>short <span class="op">=</span> <span class="cn">TRUE</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span>, root <span class="op">=</span> <span class="cn">NULL</span>, prune <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -74,10 +68,6 @@ and return a tibble with this data.</p>
 
 <dt id="arg-prune">prune<a class="anchor" aria-label="anchor" href="#arg-prune"></a></dt>
 <dd><p>(boolean) (default <code>TRUE</code>) clean up status to display only on relevant cache. However, does not clean other cache files.</p></dd>
-
-
-<dt id="arg-clean">clean<a class="anchor" aria-label="anchor" href="#arg-clean"></a></dt>
-<dd><p>(boolean) (default <code>FALSE</code>) check if some data files have not json referring to them and cleans if any.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -116,6 +106,7 @@ So modifying the result of <code>sourcoise_status()</code> can produce complex b
     <div class="dont-index"><p>Other sourcoise:
 <code><a href="sourcoise.html">sourcoise()</a></code>,
 <code><a href="sourcoise_clear.html">sourcoise_clear()</a></code>,
+<code><a href="sourcoise_clear_all.html">sourcoise_clear_all()</a></code>,
 <code><a href="sourcoise_refresh.html">sourcoise_refresh()</a></code>,
 <code><a href="sourcoise_reset.html">sourcoise_reset()</a></code></p></div>
     </div>
@@ -124,7 +115,7 @@ So modifying the result of <code>sourcoise_status()</code> can produce complex b
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="set_sourcoise_root.html">set_sourcoise_root</a></span><span class="op">(</span><span class="va">dir</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmprb6yE0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpuHG5sJ"</span>
 <span class="r-in"><span><span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/copy.html" class="external-link">file_copy</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/path_package.html" class="external-link">path_package</a></span><span class="op">(</span><span class="st">"sourcoise"</span>, <span class="st">"some_data.R"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    <span class="va">dir</span>,</span></span>
@@ -134,9 +125,9 @@ So modifying the result of <code>sourcoise_status()</code> can produce complex b
 <span class="r-in"><span><span class="co"># status returns the cache status</span></span></span>
 <span class="r-in"><span><span class="fu">sourcoise_status</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   src      priority date                data_date           file_size json_file </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;fs::path&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> some_da…       10 2025-12-06 <span style="color: #949494;">17:59:57</span> 2025-12-06 <span style="color: #949494;">17:59:57</span> 242 B     …55-1.json</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   src       priority date                data_date           file_size json_file</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> some_dat…       10 2025-12-09 <span style="color: #949494;">10:34:32</span> 2025-12-09 <span style="color: #949494;">10:34:32</span> 242 B     /tmp/Rtm…</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

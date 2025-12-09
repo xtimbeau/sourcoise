@@ -199,6 +199,7 @@ different result (such as a random generator).
 
 Other sourcoise:
 [`sourcoise_clear()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_clear.md),
+[`sourcoise_clear_all()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_clear_all.md),
 [`sourcoise_refresh()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_refresh.md),
 [`sourcoise_reset()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_reset.md),
 [`sourcoise_status()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_status.md)
@@ -208,7 +209,7 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> [1] "/tmp/Rtmprb6yE0"
+#> [1] "/tmp/RtmpuHG5sJ"
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
   dir,
@@ -220,7 +221,7 @@ data <- sourcoise("some_data.R")
 # Performance and mem test
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> [1] "/tmp/Rtmprb6yE0"
+#> [1] "/tmp/RtmpuHG5sJ"
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
    dir,
@@ -229,10 +230,11 @@ bench::mark(
  forced = data <- sourcoise("some_data.R", force_exec = TRUE),
  cached = data <- sourcoise("some_data.R"),
  max_iterations = 1)
+#> Warning: Some expressions had a GC in every iteration; so filtering is disabled.
 #> # A tibble: 2 × 13
 #>   expression      min median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time
 #>   <bch:expr> <bch:tm> <bch:>     <dbl> <bch:byt>    <dbl> <int> <dbl>   <bch:tm>
-#> 1 forced       27.8ms 27.8ms      36.0    4.23MB        0     1     0     27.8ms
-#> 2 cached       16.8ms 16.8ms      59.5  532.26KB        0     1     0     16.8ms
+#> 1 forced       43.5ms 43.5ms      23.0     767KB      0       1     0     43.5ms
+#> 2 cached       43.3ms 43.3ms      23.1     337KB     23.1     1     1     43.3ms
 #> # ℹ 4 more variables: result <list>, memory <list>, time <list>, gc <list>
 ```

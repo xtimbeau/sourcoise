@@ -112,6 +112,7 @@ by setting higher priority to more used files.
 Other sourcoise:
 [`sourcoise()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise.md),
 [`sourcoise_clear()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_clear.md),
+[`sourcoise_clear_all()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_clear_all.md),
 [`sourcoise_reset()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_reset.md),
 [`sourcoise_status()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_status.md)
 
@@ -120,7 +121,7 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> [1] "/tmp/Rtmprb6yE0"
+#> [1] "/tmp/RtmpuHG5sJ"
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
    dir,
@@ -130,6 +131,6 @@ data <- sourcoise("some_data.R", force_exec = TRUE)
 # we then refresh all caches
 sourcoise_refresh()
 #> ℹ Refreshing 1 source files
-#> ✔ some_data.r executed in 0 s. , same data (2 kB)
+#> ✔ some_data.R executed in 0 s. , same data (2 kB)
 #> ℹ Total refresh in 0 seconds for 2 kB of data
 ```

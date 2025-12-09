@@ -1,6 +1,5 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://xtimbeau.github.io/sourcoise/404.html</loc></url>
-<url><loc>https://xtimbeau.github.io/sourcoise/CLAUDE.html</loc></url>
 <url><loc>https://xtimbeau.github.io/sourcoise/LICENSE-text.html</loc></url>
 <url><loc>https://xtimbeau.github.io/sourcoise/LICENSE.html</loc></url>
 <url><loc>https://xtimbeau.github.io/sourcoise/articles/advanced.html</loc></url>
@@ -14,6 +13,7 @@
 <url><loc>https://xtimbeau.github.io/sourcoise/reference/set_sourcoise_root.html</loc></url>
 <url><loc>https://xtimbeau.github.io/sourcoise/reference/sourcoise.html</loc></url>
 <url><loc>https://xtimbeau.github.io/sourcoise/reference/sourcoise_clear.html</loc></url>
+<url><loc>https://xtimbeau.github.io/sourcoise/reference/sourcoise_clear_all.html</loc></url>
 <url><loc>https://xtimbeau.github.io/sourcoise/reference/sourcoise_meta.html</loc></url>
 <url><loc>https://xtimbeau.github.io/sourcoise/reference/sourcoise_refresh.html</loc></url>
 <url><loc>https://xtimbeau.github.io/sourcoise/reference/sourcoise_reset.html</loc></url>

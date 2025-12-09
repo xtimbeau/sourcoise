@@ -24,6 +24,7 @@ side effect, no undo possible)
 Other sourcoise:
 [`sourcoise()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise.md),
 [`sourcoise_clear()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_clear.md),
+[`sourcoise_clear_all()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_clear_all.md),
 [`sourcoise_refresh()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_refresh.md),
 [`sourcoise_status()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_status.md)
 
@@ -32,7 +33,7 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> [1] "/tmp/Rtmprb6yE0"
+#> [1] "/tmp/RtmpuHG5sJ"
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
    dir,

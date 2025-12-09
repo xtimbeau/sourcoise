@@ -8,6 +8,8 @@
   : sources R script and caches results on disk
 - [`sourcoise_clear()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_clear.md)
   : Cleans sourcoise cache
+- [`sourcoise_clear_all()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_clear_all.md)
+  : Cleans sourcoise cache
 - [`sourcoise_meta()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_meta.md)
   : Returns sourcoise metadata on a script
 - [`sourcoise_refresh()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_refresh.md)
