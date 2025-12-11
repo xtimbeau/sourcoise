@@ -2,6 +2,8 @@
 
 ## sourcoise 1.0.0
 
+CRAN release: 2025-12-09
+
 - performance of data gathering has been largely improved, thanks to
   `RcppSimdJson` package
 - performance in case of a large number of cached files has been largely

@@ -87,7 +87,7 @@ A named list containing cache metadata with the following elements:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> /tmp/RtmpJDBv4k
+#> /tmp/RtmpJn3hH1
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
   dir,
@@ -98,7 +98,7 @@ data <- sourcoise("some_data.R", force_exec = TRUE)
 # Access metadata without loading the cached data
 meta <- sourcoise_meta("some_data.R")
 print(meta$timing)  # View execution time
-#> [1] 6e-04
+#> [1] 8e-04
 print(meta$ok)      # Check cache status
 #> [1] "cache ok&valid"
 ```
