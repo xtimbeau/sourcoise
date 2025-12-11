@@ -44,39 +44,35 @@
 #' print(meta$ok)      # Check cache status
 #'
 sourcoise_meta <- function(path, args=NULL) {
-  ctxt <- setup_context(
-    path = path,
-    root = getOption("sourcoise.root"),
-    src_in = getOption("sourcoise.src_in"),
-    exec_wd = NULL,
-    wd = getOption("sourcoise.wd"),
-    track = NULL,
-    args = args,
-    lapse = "never",
-    nocache = FALSE,
-    grow_cache = getOption("sourcoise.grow_cache"),
-    limit_mb = getOption("sourcoise.limit_mb"),
-    log = "OFF",
-    inform = FALSE,
-    quiet = TRUE,
-    metadata = TRUE)
+  if(is.null(args))
+    args <- list()
+  argsid <- digest::digest(args, algo = "crc32")
+  metas <- fast_metadata(bn = path |> fs::path_ext_remove(), argsid = argsid)
+  if(nrow(metas)==0)
+    return(list(ok = "file not found"))
+  metas <- metas |>
+    dplyr::group_by(uid) |>
+    dplyr::filter(index == max(index))
+  mm <- fast_read_mdata(metas$json_file)
+  if(nrow(mm)==0)
+    return(list(ok = "metadata not found"))
+  mm <- mm |>
+    dplyr::filter(date == max(date)) |>
+    dplyr::slice(1) |>
+    as.list()
 
-  ctxt <- valid_metas(ctxt)
+  cache_rep <- fs::path_dir(mm$name)
+  root <- cache_rep |> fs::path_dir()
+  src <- fs::path_join(c(root, mm$src))
+  src_hash <- hash_file(src)
+  track_hash <- hash_tracks(mm$track |> unlist(), root)
+  data_exists <- fs::file_exists(fs::path_join(c(cache_rep, mm$data_file)))
+  valid <- src_hash == mm$src_hash &
+    track_hash == mm$track_hash &
+    data_exists
 
-  good_datas <- ctxt$meta_datas |> purrr::keep(~.x$valid)
-  if(length(good_datas)==0)
-    if(length(ctxt$meta_datas)>=1) {
-      nogood_data <- ctxt$meta_datas[which.max(purrr::map_chr(ctxt$meta_datas, "data_date") |> as.Date())]
-      nogood_data$ok <- "invalid cache"
-      return(nogood_data[c("ok", "timing", "date", "size", "args",
-                               "lapse", "track", "qmd_file", "log_file", "file_size",
-                               "data_date", "data_file", "json_file")])
-    } else
-    return(list(ok="no cache data"))
-
-  good_datas[[1]]$ok <- "cache ok&valid"
-
-  return(good_datas[[1]][c("ok", "timing", "date", "size", "args",
-                           "lapse", "track", "qmd_file", "log_file", "file_size",
-                           "data_date", "data_file", "json_file")])
+  if(valid)
+    mm$ok <- "cache ok&valid" else
+      mm$ok <- "invalid cache"
+  return(mm)
 }

@@ -1,0 +1,6 @@
+INFO [2025-12-11 17:49:14] Refreshing 3 source files
+SUCCESS [2025-12-11 17:49:14] commun.r (forced) in 0 sec. (0 B)
+SUCCESS [2025-12-11 17:49:14] commun.R valid cache (0 B)
+SUCCESS [2025-12-11 17:49:14] noerror3.R valid cache (9 kB)
+SUCCESS [2025-12-11 17:49:14] noerror.r (forced) in 0.19 sec. (367 kB)
+SUCCESS [2025-12-11 17:49:14] noerror3.r (forced) in 0 sec. (9 kB)

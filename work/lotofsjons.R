@@ -1,11 +1,11 @@
-set_sourcoise_root("~/sourcoise")
+set_sourcoise_root("~/sourcoise/work")
 sourcoise_clear_all()
 
 library(tidyverse)
 
 purrr::walk(1:100,  ~sourcoise("work/noerror3.r", force=TRUE))
 
-sourcoise("work/noerror.r")
+sourcoise("work/noerror.r") |> bench::mark()
 sourcoise("work/commun.r")
 sourcoise("work/error.r")
 

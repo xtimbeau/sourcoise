@@ -93,25 +93,31 @@ L'exécution "vraie" du scirpt `r` en exemple (`prix_insee.r`), sur un Macbook A
 
 ``` r
 library(bench)
-library(fs)
-library(sourcoise)
-file_copy(
-    path_package("sourcoise", "ipch", "prix_insee.r"),
-    "/tmp/prix_insee.r",
-    overwrite = TRUE)
-data <- sourcoise("prix_insee.r", root="/tmp")
-mark(cache = sourcoise("prix_insee.r", root="/tmp"),
-            no_cache = sourcoise("prix_insee.r", root  = "/tmp", force_exec = TRUE),
-            direct = data)
-#>   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
+    library(fs)
+    library(sourcoise)
+    tmp <- tempdir()
+    set_sourcoise_root(tmp)
+#> /var/folders/sr/zcvrvtss0w75m9m9g2t0zrcr0000gn/T/Rtmp4ygd80
+    setwd(tmp)
+    file_copy(
+        path_package("sourcoise", "ipch", "prix_insee.r"),
+        "prix_insee.r",
+        overwrite = TRUE)
+    data <- sourcoise("prix_insee.r")
+    mark(cache = sourcoise("prix_insee.r",),
+         no_cache = sourcoise("prix_insee.r", force_exec = TRUE),
+         direct = data)
+#> Warning: Some expressions had a GC in every iteration; so filtering is
+#> disabled.
 #> # A tibble: 3 × 6
-#>   expression      min   median    `itr/sec` mem_alloc `gc/sec`
-#>   <bch:expr> <bch:tm> <bch:tm>        <dbl> <bch:byt>    <dbl>
-#> 1 cache        5.61ms   5.75ms        171.    171.5KB     9.92
-#> 2 no_cache    31.62ms  35.45ms         28.0    25.6MB    11.2 
-#> 3 direct            0      1ns 1370228815.         0B     0
+#>   expression      min   median `itr/sec` mem_alloc `gc/sec`
+#>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
+#> 1 cache        6.81ms   7.33ms   1.27e+2    5.01MB   33.7  
+#> 2 no_cache      1.01s    1.01s   9.88e-1    1.17MB    0.988
+#> 3 direct            0      1ns   1.34e+9        0B    0
 ```
-<sup>Created on 2025-03-10 with [reprex v2.1.1](https://reprex.tidyverse.org)</sup>
+
+<sup>Created on 2025-12-11 with [reprex v2.1.1](https://reprex.tidyverse.org)</sup>
 
 ## Le *workflow* avec sourcoise
 

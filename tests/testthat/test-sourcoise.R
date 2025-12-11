@@ -78,7 +78,7 @@ test_that("sourcoise_meta", {
 })
 
 test_that("meta ok when no cache", {
-  expect(sourcoise_meta("toto.R")$ok == "no cache data",
+  expect(sourcoise_meta("toto.R")$ok == "file not found",
          "meta fails when nothing found")
 })
 

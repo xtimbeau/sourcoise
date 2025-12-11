@@ -30,7 +30,7 @@ sourcoise_clear <- function(
   if(what2keep=="all") {
     return(character(0))
   }
-  fc <- ls_cache_files(root)
+  fc <- ls_cache_files(root, qs2=TRUE)
   if(length(fc$json)==0)
     return(character(0))
   if(what2keep=="nothing") {

@@ -95,7 +95,7 @@ prune_cache <- function(ctxt) {
   if(is.infinite(ctxt$grow_cache))
     return(NULL)
 
-  md <- get_mdatas(ctxt$basename, ctxt$full_cache_rep)
+  md <- get_mdatas(ctxt$basename, ctxt$full_cache_rep)$meta1
 
   pairs <- purrr::imap_dfr(
     md,
@@ -130,7 +130,7 @@ pick_gooddata <- function(good_datas, ctxt) {
     lubridate::as_datetime()
   mdd <- which.max(dates)
   good_good_data <- good_datas[[mdd]]
-  fnm <- names(good_datas)[[mdd]]
+  fnm <- good_datas[[mdd]][["json_file"]]
   fnd <- fs::path_join(c(ctxt$full_cache_rep, good_good_data$data_file))
 
   ggd_lapse <- good_good_data$lapse %||% "never"
@@ -164,6 +164,20 @@ pick_gooddata <- function(good_datas, ctxt) {
 
   return(good_good_data)
 }
+
+read_valid <- function(ctxt) {
+  data <- ctxt$meta1
+  fnd <- fs::path_join(c(ctxt$full_cache_rep, ctxt$meta1$data_file))
+  data$ok <- "cache"
+  data$error <- NULL
+  if(getOption("sourcoise.memoize"))
+    data$data <- read_data_from_cache(fnd)
+  else
+    data$data <- qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
+
+  return(data)
+}
+
 
 read_data_from_cache <- function(fnd) {
   qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))

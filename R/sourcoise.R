@@ -185,11 +185,21 @@ sourcoise_ <- function(
     }
   }
 
-  ctxt <- valid_metas(ctxt)
+  ctxt <- valid_meta1(ctxt)
 
-  good_datas <- ctxt$meta_datas |> purrr::keep(~.x$valid)
+  if(ctxt$meta_valid$valid) {
+    return_data <- read_valid(ctxt)
+    logger::log_success("{ctxt$relname} valid cache ({scales::label_bytes()(return_data$size)})")
+    if(length(our_data)!=0 && our_data$ok == FALSE ) {
+      logger::log_error("  but {ctxt$relname} failed")
+      if(!ctxt$quiet)
+        cli::cli_alert(our_data$error|> errorCondition())
+    }
+    return(data_returned(return_data, ctxt))
+  }
 
-  if(length(good_datas)==0) {
+
+  if(!ctxt$meta_valid$valid) {
     if(prevent) {
       logger::log_fatal("No cached data, execution prevented")
       return(list(error = "No cache&prevent", ok = FALSE, log_file = ctxt$log_file))
@@ -203,6 +213,7 @@ sourcoise_ <- function(
 
       return(data_returned(our_data, ctxt))
     } else {
+      ctxt$meta_datas <- get_all_metadata(ctxt)
       if(length(ctxt$meta_datas)==0) {
         logger::log_error("{ctxt$relname} failed, no cache")
         if(!ctxt$quiet)
@@ -214,14 +225,6 @@ sourcoise_ <- function(
       msg <-
         "{ctxt$relname} failed, returning invalid cache ({scales::label_bytes()(return_data$size)})"
       logger::log_warn(msg)
-      if(!ctxt$quiet)
-        cli::cli_alert(our_data$error|> errorCondition())
-    }
-  } else {
-    return_data <- pick_gooddata(good_datas, ctxt)
-    logger::log_success("{ctxt$relname} valid cache ({scales::label_bytes()(return_data$size)})")
-    if(length(our_data)!=0 && our_data$ok == FALSE ) {
-      logger::log_error("  but {ctxt$relname} failed")
       if(!ctxt$quiet)
         cli::cli_alert(our_data$error|> errorCondition())
     }
