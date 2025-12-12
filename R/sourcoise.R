@@ -201,33 +201,41 @@ sourcoise_ <- function(
 
   if(!ctxt$meta_valid$valid) {
     if(prevent) {
+      if(length(ctxt$meta_datas)==0) {
       logger::log_fatal("No cached data, execution prevented")
       return(list(error = "No valid cache&prevent", ok = FALSE, log_file = ctxt$log_file))
+      }
+      return_data <- pick_gooddata(ctxt$meta_datas, ctxt)
+      return_data$error <- "prevented&cache invalid"
+      msg <-
+        "{ctxt$relname} failed, returning invalid cache ({scales::label_bytes()(return_data$size)})"
+      logger::log_warn(msg)
     }
     if(length(our_data)==0)
       our_data <- super_exec_source(ctxt)
+
     if(our_data$ok=="exec") {
       our_data <- cache_data(our_data, ctxt)
       logger::log_success(
         "{ctxt$relname} (exec. no cache found) in {round(our_data$timing, 2)} sec. ({scales::label_bytes()(our_data$size)})")
       return(data_returned(our_data, ctxt))
     }
-      ctxt$meta_datas <- get_all_metadata(ctxt)
-      if(length(ctxt$meta_datas)==0) {
-        logger::log_error("{ctxt$relname} failed, no cache")
-        if(!ctxt$quiet)
-          cli::cli_alert(our_data$error |> errorCondition())
-        return(data_returned(our_data, ctxt))
-      }
-      return_data <- pick_gooddata(ctxt$meta_datas, ctxt)
-      return_data$error <- our_data$error
-      msg <-
-        "{ctxt$relname} failed, returning invalid cache ({scales::label_bytes()(return_data$size)})"
-      logger::log_warn(msg)
+    ctxt$meta_datas <- get_all_metadata(ctxt)
+    if(length(ctxt$meta_datas)==0) {
+      logger::log_error("{ctxt$relname} failed, no cache")
       if(!ctxt$quiet)
-        cli::cli_alert(our_data$error|> errorCondition())
+        cli::cli_alert(our_data$error |> errorCondition())
+      return(data_returned(our_data, ctxt))
     }
+    return_data <- pick_gooddata(ctxt$meta_datas, ctxt)
+    return_data$error <- our_data$error
+    msg <-
+      "{ctxt$relname} failed, returning invalid cache ({scales::label_bytes()(return_data$size)})"
+    logger::log_warn(msg)
+    if(!ctxt$quiet)
+      cli::cli_alert(our_data$error|> errorCondition())
   }
+
 
   return(data_returned(return_data, ctxt))
 }
