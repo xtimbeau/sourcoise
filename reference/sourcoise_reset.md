@@ -33,7 +33,7 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> /tmp/RtmpEqYq72
+#> /tmp/Rtmp4DcgLO
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
    dir,
