@@ -165,10 +165,31 @@ pick_gooddata <- function(good_datas, ctxt) {
   return(good_good_data)
 }
 
-read_valid <- function(ctxt) {
+read_meta1 <- function(ctxt) {
   data <- ctxt$meta1
   fnd <- fs::path_join(c(ctxt$full_cache_rep, ctxt$meta1$data_file))
+  if(!fs::file_exists(fnd))
+    return(NULL)
   data$ok <- "cache"
+  data$error <- NULL
+  if(getOption("sourcoise.memoize"))
+    data$data <- read_data_from_cache(fnd)
+  else
+    data$data <- qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
+  return(data)
+}
+
+read_metas <- function(ctxt) {
+  all_metas <- get_all_metadata(ctxt)
+  if(nrow(all_metas)==0)
+    return(NULL)
+  all_metas <- all_metas |>
+    dplyr::filter(data_date == max(data_date)) |>
+    dplyr::slice(1) |>
+    as.list()
+  data <- ctxt$meta1
+  fnd <- fs::path_join(c(fs::path_dir(all_metas$name), all_metas$data_file))
+  data$ok <- "invalid cache"
   data$error <- NULL
   if(getOption("sourcoise.memoize"))
     data$data <- read_data_from_cache(fnd)
@@ -177,7 +198,6 @@ read_valid <- function(ctxt) {
 
   return(data)
 }
-
 
 read_data_from_cache <- function(fnd) {
   qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))

@@ -154,32 +154,9 @@ get_all_metadata <- function(ctxt) {
   if(length(ctxt$metas$json_file)==0) {
     ctxt$all_metas <- tibble::tibble()
     return(ctxt) }
-  ctxt$all_metas <- fast_read_mdata(ctxt$metas$json_file)
 
-  ctxt$qmds <- ctxt$all_metas |>
-    purrr::pluck("qmd_file") |>
-    unlist() |>
-    unique()
-  ctxt$new_qmds <- unique(c(ctxt$qmds, ctxt$qmd_file))
+  fast_read_mdata(ctxt$metas$json_file)
 
-  ctxt$track_hash <- 0
-  already_tracked <- ctxt$all_metas  |>
-    purrr::pluck("track") |>
-    unlist() |>
-    unique()
-  tracked <- unique(ctxt$track, already_tracked)
-  if(length(tracked) > 0) {
-    track_files <- purrr::map(tracked, ~fs::path_join(c(ctxt$root, .x)))
-    ok_files <- purrr::map_lgl(track_files, fs::file_exists)
-    tracked <- track_files[ok_files]
-    if(any(ok_files))
-      ctxt$track_hash <- hash_file(as.character(ctxt$track)) |> digest::digest(algo = "sha1")
-    else {
-      logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
-    }
-  }
-  ctxt$track <- tracked
-  return(ctxt)
 }
 
 ctxt_json_history <- function(ctxt) {
