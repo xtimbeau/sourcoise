@@ -169,7 +169,7 @@ sourcoise_ <- function(
 
   priority <- ctxt$priority
   force <- nuorf(force_exec)
-  if(should_i_do(ctxt$src))
+  if(should_i_do(ctxt$name))
     force <- TRUE
   prevent <- nuorf(prevent_exec)
   our_data <- list()
@@ -180,7 +180,7 @@ sourcoise_ <- function(
       our_data <- cache_data(our_data, ctxt)
       logger::log_success(
         "{ctxt$relname} (forced) in {round(our_data$timing, 2)} sec. ({scales::label_bytes()(our_data$size)})")
-      mark_as_done(ctxt$src)
+      mark_as_done(ctxt$name)
       return(data_returned(our_data, ctxt))
     }
   }
@@ -202,7 +202,7 @@ sourcoise_ <- function(
   if(!ctxt$meta_valid$valid) {
     if(prevent) {
       logger::log_fatal("No cached data, execution prevented")
-      return(list(error = "No cache&prevent", ok = FALSE, log_file = ctxt$log_file))
+      return(list(error = "No valid cache&prevent", ok = FALSE, log_file = ctxt$log_file))
     }
     if(length(our_data)==0)
       our_data <- super_exec_source(ctxt)
@@ -210,9 +210,8 @@ sourcoise_ <- function(
       our_data <- cache_data(our_data, ctxt)
       logger::log_success(
         "{ctxt$relname} (exec. no cache found) in {round(our_data$timing, 2)} sec. ({scales::label_bytes()(our_data$size)})")
-
       return(data_returned(our_data, ctxt))
-    } else {
+    }
       ctxt$meta_datas <- get_all_metadata(ctxt)
       if(length(ctxt$meta_datas)==0) {
         logger::log_error("{ctxt$relname} failed, no cache")
@@ -247,7 +246,6 @@ should_i_do <- function(src) {
   if(is.null(refreshing) || !refreshing)
     return(FALSE)
   done <- getOption("sourcoise.refreshing.done")
-  src <- src |> fs::path_ext_remove() |> as.character()
   if(src %in% done | !(src %in% getOption("sourcoise.refreshing.2do"))) {
     options(sourcoise.refreshing.hit = c(getOption("sourcoise.refreshing.hit"), src))
     return(FALSE) }

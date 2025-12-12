@@ -343,7 +343,6 @@ clean_caches <- function(root=NULL, cache_reps = NULL) {
 
 fast_metadata <- function(root=NULL, uid = NULL, bn = NULL,
                           argsid = NULL, cache_reps = NULL, quiet = FALSE) {
-
   files <- ls_cache_files(root=root, uid = uid, bn = bn,
                           argsid = argsid, cache_reps = cache_reps)
   if(length(files$json)==0)
@@ -401,6 +400,7 @@ get_metadata <- function(root=NULL, uid = NULL,
     dplyr::bind_cols() |>
     dplyr::mutate(
       name = qm$json_file,
+      json_file = qm$short_json_file,
       root = qm$root,
       cache_rep = stringr::str_c(root, "/.sourcoise")) |>
     dplyr::relocate(name)

@@ -151,6 +151,9 @@ hash_context <- function(ctxt) {
 }
 
 get_all_metadata <- function(ctxt) {
+  if(length(ctxt$metas$json_file)==0) {
+    ctxt$all_metas <- tibble::tibble()
+    return(ctxt) }
   ctxt$all_metas <- fast_read_mdata(ctxt$metas$json_file)
 
   ctxt$qmds <- ctxt$all_metas |>

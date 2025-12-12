@@ -1,0 +1,25 @@
+INFO [2025-12-11 22:11:35] Refreshing 7 source files
+WARN [2025-12-11 22:11:36] scr_in is 'project' but cache files found in file folder, switching to src_in='file'.
+WARN [2025-12-11 22:11:36] If it is not what you want, please delete /Users/xt/github/sourcoise/work/.sourcoise
+SUCCESS [2025-12-11 22:11:36] work/commun.R (forced) in 0 sec. (0 B)
+WARN [2025-12-11 22:11:36] scr_in is 'project' but cache files found in file folder, switching to src_in='file'.
+WARN [2025-12-11 22:11:36] If it is not what you want, please delete /Users/xt/github/sourcoise/work/.sourcoise
+SUCCESS [2025-12-11 22:11:36] work/noerror3.R (forced) in 0 sec. (9 kB)
+SUCCESS [2025-12-11 22:11:36] noerror.r (forced) in 0.16 sec. (367 kB)
+SUCCESS [2025-12-11 22:11:37] inst/ipch/prix_insee.r (forced) in 1 sec. (12 kB)
+WARN [2025-12-11 22:11:37] scr_in is 'project' but cache files found in file folder, switching to src_in='file'.
+WARN [2025-12-11 22:11:37] If it is not what you want, please delete /Users/xt/github/sourcoise/work/.sourcoise
+SUCCESS [2025-12-11 22:12:13] work/commun.r (forced) in 0 sec. (0 B)
+WARN [2025-12-11 22:12:13] scr_in is 'project' but cache files found in file folder, switching to src_in='file'.
+WARN [2025-12-11 22:12:13] If it is not what you want, please delete /Users/xt/github/sourcoise/work/.sourcoise
+WARN [2025-12-11 22:12:13] scr_in is 'project' but cache files found in file folder, switching to src_in='file'.
+WARN [2025-12-11 22:12:13] If it is not what you want, please delete /Users/xt/github/sourcoise/work/.sourcoise
+SUCCESS [2025-12-11 22:12:40] work/commun.R (exec. no cache found) in 0 sec. (0 B)
+WARN [2025-12-11 22:12:40] scr_in is 'project' but cache files found in file folder, switching to src_in='file'.
+WARN [2025-12-11 22:12:40] If it is not what you want, please delete /Users/xt/github/sourcoise/work/.sourcoise
+SUCCESS [2025-12-11 22:12:52] work/noerror3.R (exec. no cache found) in 0 sec. (9 kB)
+SUCCESS [2025-12-11 22:12:52] work/noerror.r (forced) in 38.91 sec. (367 kB)
+WARN [2025-12-11 22:12:52] scr_in is 'project' but cache files found in file folder, switching to src_in='file'.
+WARN [2025-12-11 22:12:52] If it is not what you want, please delete /Users/xt/github/sourcoise/work/.sourcoise
+SUCCESS [2025-12-11 22:12:56] work/noerror3.r (forced) in 0 sec. (9 kB)
+INFO [2025-12-11 22:13:28] Refreshing 7 source files
