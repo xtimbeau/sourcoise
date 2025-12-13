@@ -82,10 +82,11 @@ super_exec_source <- function(ctxt) {
   timing <- difftime(Sys.time() , start, units = "secs") |> as.numeric()
   setwd(current_wd)
   if(!is.null(res$error)) {
+    error <-  rlang::cnd_message(res$error)
     return(
       list(
         ok=FALSE,
-        error = res$error,
+        error = error,
         args =ctxt$args,
         lapse = ctxt$lapse,
         src = ctxt$relname,
@@ -95,8 +96,7 @@ super_exec_source <- function(ctxt) {
         track = ctxt$track,
         wd = ctxt$wd,
         qmd_file = ctxt$new_qmds,
-        src_in = ctxt$src_in,
-        ok = "exec"))
+        src_in = ctxt$src_in) )
   }
   data <- res$result
   if(!"S7_object"%in%class(data))
@@ -105,6 +105,7 @@ super_exec_source <- function(ctxt) {
     size <- utils::object.size(data) |> as.numeric()
   list(
     data = data,
+    error = NULL,
     timing = timing,
     date = lubridate::now(),
     size = size,

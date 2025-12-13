@@ -186,22 +186,23 @@ sourcoise_ <- function(
   }
 
   ctxt <- valid_meta1(ctxt)
-
   if(ctxt$meta_valid$valid) {
     return_data <- read_meta1(ctxt)
     logger::log_success("{ctxt$relname} valid cache ({scales::label_bytes()(return_data$size)})")
     if(length(our_data)!=0 && our_data$ok == FALSE ) {
       logger::log_error("  but {ctxt$relname} failed")
+      logger::log_error(our_data$error |> cli::ansi_strip() |> logger::skip_formatter())
       if(!ctxt$quiet)
-        cli::cli_alert(our_data$error|> errorCondition())
+        cli::cli_verbatim(our_data$error)
     }
+    mark_as_done(ctxt$name)
     return(data_returned(return_data, ctxt))
   }
 
   if(!prevent) {
+
     if(length(our_data)==0)
       our_data <- super_exec_source(ctxt)
-
     if(our_data$ok=="exec") {
       our_data <- cache_data(our_data, ctxt)
       logger::log_success(
@@ -209,12 +210,13 @@ sourcoise_ <- function(
       return(data_returned(our_data, ctxt))
     }
   }
+
   return_data <- read_meta1(ctxt)
-  if(is.null(return_data))
+  if(is.null(return_data$data))
     return_data <- read_metas(ctxt)
 
   if(prevent) {
-    if(!is.null(return_data)) {
+    if(!is.null(return_data$data)) {
       return_data$ok <- "invalid cache"
       return_data$error <- NULL
       return(data_returned(return_data, ctxt))
@@ -226,17 +228,20 @@ sourcoise_ <- function(
       log_file = ctxt$log_file))
   }
 
-  if(!is.null(return_data)) {
+  if(!is.null(return_data$data)) {
     return_data$ok <- "invalid cache&exec error"
     return_data$error <- our_data$error
+
     if(!ctxt$quiet)
-      cli::cli_alert(our_data$error |> errorCondition())
+      cli::cli_verbatim(our_data$error )
+    logger::log_error(our_data$error |> cli::ansi_strip() |> logger::skip_formatter())
     return(data_returned(return_data, ctxt))
   }
 
   logger::log_error("{ctxt$relname} failed&no cache")
   if(!ctxt$quiet)
-    cli::cli_alert(our_data$error |> errorCondition())
+    cli::cli_verbatim(our_data$error)
+  logger::log_error(our_data$error |> cli::ansi_strip() |> logger::skip_formatter())
   return(list(
     ok = "failed&no cache",
     error = our_data$error

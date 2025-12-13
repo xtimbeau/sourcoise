@@ -124,7 +124,7 @@ sourcoise_refresh <- function(
         dplyr::pull() |> unlist(),
       sourcoise.refreshing.done = list(),
       sourcoise.refreshing.hit = list())
-      }
+  }
 
   logger::log_info("Refreshing {nrow(what)} source files")
   if(!quiet)
@@ -138,10 +138,7 @@ sourcoise_refresh <- function(
   }
 
   total_time <- ceiling(sum(what$timing, na.rm=TRUE))
-  if(is.null(root))
-    cwd <- getwd() |> path_abs()
-  else
-    cwd <- root
+  cwd <- getwd() |> path_abs()
   if(.progress)
     idpgr <- cli::cli_progress_bar("refreshing", total = total_time)
 
@@ -190,7 +187,7 @@ sourcoise_refresh <- function(
       } else {
         cli::cli_alert_danger(
           "{msrc} failed (see log {.file {src_data$log_file}})" )
-        cli::cli_alert(src_data$error|> errorCondition())
+        cli::cli_verbatim(src_data$error)
       }
 
       if(unfreeze)
@@ -228,4 +225,4 @@ sourcoise_refresh <- function(
     purrr::iwalk(srcs, ~sourcoise_priority(.y, 10 + .x))
   }
   invisible(res)
-  }
+}
