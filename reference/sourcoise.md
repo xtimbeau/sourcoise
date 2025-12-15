@@ -209,19 +209,81 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> /tmp/RtmpKW0JHk
+#> /tmp/RtmprFG60F
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
   dir,
   overwrite = TRUE)
 # Force execution (root is set explicitly here, it is normally deduced from project)
 data <- sourcoise("some_data.R", force_exec = TRUE)
+#> Called from: hash_context(ctxt)
+#> debug: ctxt$src_hash <- hash_file(ctxt$src)
+#> debug: ctxt$arg_hash <- ctxt$argid
+#> debug: mm <- get_mdatas(ctxt$basename, ctxt$full_cache_rep)
+#> debug: ctxt$meta1 <- mm$meta1
+#> debug: ctxt$metas <- mm$metas
+#> debug: ctxt$track <- unique(unlist(c(ctxt$track, ctxt$meta1$track)))
+#> debug: ctxt$track_hash <- 0
+#> debug: if (length(ctxt$track) > 0) {
+#>     track_files <- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, 
+#>         .x)))
+#>     ok_files <- purrr::map_lgl(track_files, fs::file_exists)
+#>     tracked <- track_files[ok_files]
+#>     if (any(ok_files)) 
+#>         ctxt$track_hash <- digest::digest(hash_file(as.character(ctxt$track)), 
+#>             algo = "sha1")
+#>     else {
+#>         logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
+#>     }
+#> }
+#> debug: track_files <- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, 
+#>     .x)))
+#> debug: ok_files <- purrr::map_lgl(track_files, fs::file_exists)
+#> debug: tracked <- track_files[ok_files]
+#> debug: if (any(ok_files)) ctxt$track_hash <- digest::digest(hash_file(as.character(ctxt$track)), 
+#>     algo = "sha1") else {
+#>     logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
+#> }
+#> debug: logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
+#> debug: ctxt$qmd_file <- c(ctxt$meta1$qmd_file, ctxt$qmd_file)
+#> debug: return(ctxt)
 # The second time cache is used
 data <- sourcoise("some_data.R")
+#> Called from: hash_context(ctxt)
+#> debug: ctxt$src_hash <- hash_file(ctxt$src)
+#> debug: ctxt$arg_hash <- ctxt$argid
+#> debug: mm <- get_mdatas(ctxt$basename, ctxt$full_cache_rep)
+#> debug: ctxt$meta1 <- mm$meta1
+#> debug: ctxt$metas <- mm$metas
+#> debug: ctxt$track <- unique(unlist(c(ctxt$track, ctxt$meta1$track)))
+#> debug: ctxt$track_hash <- 0
+#> debug: if (length(ctxt$track) > 0) {
+#>     track_files <- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, 
+#>         .x)))
+#>     ok_files <- purrr::map_lgl(track_files, fs::file_exists)
+#>     tracked <- track_files[ok_files]
+#>     if (any(ok_files)) 
+#>         ctxt$track_hash <- digest::digest(hash_file(as.character(ctxt$track)), 
+#>             algo = "sha1")
+#>     else {
+#>         logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
+#>     }
+#> }
+#> debug: track_files <- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, 
+#>     .x)))
+#> debug: ok_files <- purrr::map_lgl(track_files, fs::file_exists)
+#> debug: tracked <- track_files[ok_files]
+#> debug: if (any(ok_files)) ctxt$track_hash <- digest::digest(hash_file(as.character(ctxt$track)), 
+#>     algo = "sha1") else {
+#>     logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
+#> }
+#> debug: logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
+#> debug: ctxt$qmd_file <- c(ctxt$meta1$qmd_file, ctxt$qmd_file)
+#> debug: return(ctxt)
 # Performance and mem test
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> /tmp/RtmpKW0JHk
+#> /tmp/RtmprFG60F
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
    dir,
@@ -230,10 +292,135 @@ bench::mark(
  forced = data <- sourcoise("some_data.R", force_exec = TRUE),
  cached = data <- sourcoise("some_data.R"),
  max_iterations = 1)
+#> Called from: hash_context(ctxt)
+#> debug: ctxt$src_hash <- hash_file(ctxt$src)
+#> debug: ctxt$arg_hash <- ctxt$argid
+#> debug: mm <- get_mdatas(ctxt$basename, ctxt$full_cache_rep)
+#> debug: ctxt$meta1 <- mm$meta1
+#> debug: ctxt$metas <- mm$metas
+#> debug: ctxt$track <- unique(unlist(c(ctxt$track, ctxt$meta1$track)))
+#> debug: ctxt$track_hash <- 0
+#> debug: if (length(ctxt$track) > 0) {
+#>     track_files <- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, 
+#>         .x)))
+#>     ok_files <- purrr::map_lgl(track_files, fs::file_exists)
+#>     tracked <- track_files[ok_files]
+#>     if (any(ok_files)) 
+#>         ctxt$track_hash <- digest::digest(hash_file(as.character(ctxt$track)), 
+#>             algo = "sha1")
+#>     else {
+#>         logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
+#>     }
+#> }
+#> debug: track_files <- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, 
+#>     .x)))
+#> debug: ok_files <- purrr::map_lgl(track_files, fs::file_exists)
+#> debug: tracked <- track_files[ok_files]
+#> debug: if (any(ok_files)) ctxt$track_hash <- digest::digest(hash_file(as.character(ctxt$track)), 
+#>     algo = "sha1") else {
+#>     logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
+#> }
+#> debug: logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
+#> debug: ctxt$qmd_file <- c(ctxt$meta1$qmd_file, ctxt$qmd_file)
+#> debug: return(ctxt)
+#> Called from: hash_context(ctxt)
+#> debug: ctxt$src_hash <- hash_file(ctxt$src)
+#> debug: ctxt$arg_hash <- ctxt$argid
+#> debug: mm <- get_mdatas(ctxt$basename, ctxt$full_cache_rep)
+#> debug: ctxt$meta1 <- mm$meta1
+#> debug: ctxt$metas <- mm$metas
+#> debug: ctxt$track <- unique(unlist(c(ctxt$track, ctxt$meta1$track)))
+#> debug: ctxt$track_hash <- 0
+#> debug: if (length(ctxt$track) > 0) {
+#>     track_files <- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, 
+#>         .x)))
+#>     ok_files <- purrr::map_lgl(track_files, fs::file_exists)
+#>     tracked <- track_files[ok_files]
+#>     if (any(ok_files)) 
+#>         ctxt$track_hash <- digest::digest(hash_file(as.character(ctxt$track)), 
+#>             algo = "sha1")
+#>     else {
+#>         logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
+#>     }
+#> }
+#> debug: track_files <- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, 
+#>     .x)))
+#> debug: ok_files <- purrr::map_lgl(track_files, fs::file_exists)
+#> debug: tracked <- track_files[ok_files]
+#> debug: if (any(ok_files)) ctxt$track_hash <- digest::digest(hash_file(as.character(ctxt$track)), 
+#>     algo = "sha1") else {
+#>     logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
+#> }
+#> debug: logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
+#> debug: ctxt$qmd_file <- c(ctxt$meta1$qmd_file, ctxt$qmd_file)
+#> debug: return(ctxt)
+#> Called from: hash_context(ctxt)
+#> debug: ctxt$src_hash <- hash_file(ctxt$src)
+#> debug: ctxt$arg_hash <- ctxt$argid
+#> debug: mm <- get_mdatas(ctxt$basename, ctxt$full_cache_rep)
+#> debug: ctxt$meta1 <- mm$meta1
+#> debug: ctxt$metas <- mm$metas
+#> debug: ctxt$track <- unique(unlist(c(ctxt$track, ctxt$meta1$track)))
+#> debug: ctxt$track_hash <- 0
+#> debug: if (length(ctxt$track) > 0) {
+#>     track_files <- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, 
+#>         .x)))
+#>     ok_files <- purrr::map_lgl(track_files, fs::file_exists)
+#>     tracked <- track_files[ok_files]
+#>     if (any(ok_files)) 
+#>         ctxt$track_hash <- digest::digest(hash_file(as.character(ctxt$track)), 
+#>             algo = "sha1")
+#>     else {
+#>         logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
+#>     }
+#> }
+#> debug: track_files <- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, 
+#>     .x)))
+#> debug: ok_files <- purrr::map_lgl(track_files, fs::file_exists)
+#> debug: tracked <- track_files[ok_files]
+#> debug: if (any(ok_files)) ctxt$track_hash <- digest::digest(hash_file(as.character(ctxt$track)), 
+#>     algo = "sha1") else {
+#>     logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
+#> }
+#> debug: logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
+#> debug: ctxt$qmd_file <- c(ctxt$meta1$qmd_file, ctxt$qmd_file)
+#> debug: return(ctxt)
+#> Called from: hash_context(ctxt)
+#> debug: ctxt$src_hash <- hash_file(ctxt$src)
+#> debug: ctxt$arg_hash <- ctxt$argid
+#> debug: mm <- get_mdatas(ctxt$basename, ctxt$full_cache_rep)
+#> debug: ctxt$meta1 <- mm$meta1
+#> debug: ctxt$metas <- mm$metas
+#> debug: ctxt$track <- unique(unlist(c(ctxt$track, ctxt$meta1$track)))
+#> debug: ctxt$track_hash <- 0
+#> debug: if (length(ctxt$track) > 0) {
+#>     track_files <- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, 
+#>         .x)))
+#>     ok_files <- purrr::map_lgl(track_files, fs::file_exists)
+#>     tracked <- track_files[ok_files]
+#>     if (any(ok_files)) 
+#>         ctxt$track_hash <- digest::digest(hash_file(as.character(ctxt$track)), 
+#>             algo = "sha1")
+#>     else {
+#>         logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
+#>     }
+#> }
+#> debug: track_files <- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, 
+#>     .x)))
+#> debug: ok_files <- purrr::map_lgl(track_files, fs::file_exists)
+#> debug: tracked <- track_files[ok_files]
+#> debug: if (any(ok_files)) ctxt$track_hash <- digest::digest(hash_file(as.character(ctxt$track)), 
+#>     algo = "sha1") else {
+#>     logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
+#> }
+#> debug: logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
+#> debug: ctxt$qmd_file <- c(ctxt$meta1$qmd_file, ctxt$qmd_file)
+#> debug: return(ctxt)
+#> Warning: Some expressions had a GC in every iteration; so filtering is disabled.
 #> # A tibble: 2 × 13
 #>   expression      min median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time
 #>   <bch:expr> <bch:tm> <bch:>     <dbl> <bch:byt>    <dbl> <int> <dbl>   <bch:tm>
-#> 1 forced       31.8ms 31.8ms      31.4     708KB        0     1     0     31.8ms
-#> 2 cached       15.4ms 15.4ms      64.9     197KB        0     1     0     15.4ms
+#> 1 forced       46.8ms 46.8ms      21.4     708KB     21.4     1     1     46.8ms
+#> 2 cached       16.8ms 16.8ms      59.7     197KB      0       1     0     16.8ms
 #> # ℹ 4 more variables: result <list>, memory <list>, time <list>, gc <list>
 ```
