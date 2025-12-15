@@ -124,7 +124,7 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
 # calcule les hashs et ajoute les métadonnées au contexte
 
 hash_context <- function(ctxt) {
-
+browser()
   ctxt$src_hash <- hash_file(ctxt$src)
   ctxt$arg_hash <- ctxt$argid
 
