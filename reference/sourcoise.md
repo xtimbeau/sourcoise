@@ -209,19 +209,27 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> /tmp/Rtmp4DcgLO
+#> /tmp/RtmpLY1YKh
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
   dir,
   overwrite = TRUE)
 # Force execution (root is set explicitly here, it is normally deduced from project)
 data <- sourcoise("some_data.R", force_exec = TRUE)
+#> Error in purrr::map(cache_reps, ~fs::dir_ls(.x, regexp = jpat, recurse = TRUE)): ℹ In index: 1.
+#> ℹ With name: /tmp/RtmpLY1YKh.
+#> Caused by error:
+#> ! [ENOENT] Failed to search directory '/tmp/RtmpLY1YKh/.sourcoise': no such file or directory
 # The second time cache is used
 data <- sourcoise("some_data.R")
+#> Error in purrr::map(cache_reps, ~fs::dir_ls(.x, regexp = jpat, recurse = TRUE)): ℹ In index: 1.
+#> ℹ With name: /tmp/RtmpLY1YKh.
+#> Caused by error:
+#> ! [ENOENT] Failed to search directory '/tmp/RtmpLY1YKh/.sourcoise': no such file or directory
 # Performance and mem test
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> /tmp/Rtmp4DcgLO
+#> /tmp/RtmpLY1YKh
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
    dir,
@@ -230,11 +238,8 @@ bench::mark(
  forced = data <- sourcoise("some_data.R", force_exec = TRUE),
  cached = data <- sourcoise("some_data.R"),
  max_iterations = 1)
-#> Warning: Some expressions had a GC in every iteration; so filtering is disabled.
-#> # A tibble: 2 × 13
-#>   expression      min median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time
-#>   <bch:expr> <bch:tm> <bch:>     <dbl> <bch:byt>    <dbl> <int> <dbl>   <bch:tm>
-#> 1 forced       46.8ms 46.8ms      21.4     748KB     21.4     1     1     46.8ms
-#> 2 cached         16ms   16ms      62.4     261KB      0       1     0       16ms
-#> # ℹ 4 more variables: result <list>, memory <list>, time <list>, gc <list>
+#> Error in purrr::map(cache_reps, ~fs::dir_ls(.x, regexp = jpat, recurse = TRUE)): ℹ In index: 1.
+#> ℹ With name: /tmp/RtmpLY1YKh.
+#> Caused by error:
+#> ! [ENOENT] Failed to search directory '/tmp/RtmpLY1YKh/.sourcoise': no such file or directory
 ```

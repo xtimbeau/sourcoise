@@ -44,13 +44,13 @@ cache storage behavior, set root to `NULL`.
 # Set root to a temporary directory
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> /tmp/Rtmp4DcgLO
+#> /tmp/RtmpLY1YKh
 
 # Reset to automatic detection
 set_sourcoise_root(NULL)
-#> /tmp/Rtmp4DcgLO
+#> /tmp/RtmpLY1YKh
 
 # Set root with messages enabled
 set_sourcoise_root(dir, quiet = FALSE)
-#> /tmp/Rtmp4DcgLO
+#> /tmp/RtmpLY1YKh
 ```

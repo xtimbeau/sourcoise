@@ -87,18 +87,22 @@ A named list containing cache metadata with the following elements:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> /tmp/Rtmp4DcgLO
+#> /tmp/RtmpLY1YKh
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
   dir,
   overwrite = TRUE)
 # Force execution (root is set explicitly here, it is normally deduced from project)
 data <- sourcoise("some_data.R", force_exec = TRUE)
+#> Error in purrr::map(cache_reps, ~fs::dir_ls(.x, regexp = jpat, recurse = TRUE)): ℹ In index: 1.
+#> ℹ With name: /tmp/RtmpLY1YKh.
+#> Caused by error:
+#> ! [ENOENT] Failed to search directory '/tmp/RtmpLY1YKh/.sourcoise': no such file or directory
 
 # Access metadata without loading the cached data
 meta <- sourcoise_meta("some_data.R")
 print(meta$timing)  # View execution time
-#> [1] 7e-04
+#> NULL
 print(meta$ok)      # Check cache status
-#> [1] "cache ok&valid"
+#> [1] "file not found"
 ```

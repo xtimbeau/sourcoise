@@ -1,5 +1,12 @@
 # Changelog
 
+## sourcoise 1.0.0.9002
+
+- errors messages are safer and better and logged systematically when
+  refreshing
+- circulation in execution cases is safer
+- performance improvment when data is cached (30%)
+
 ## sourcoise 1.0.0
 
 CRAN release: 2025-12-09
