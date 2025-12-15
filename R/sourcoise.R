@@ -190,6 +190,7 @@ sourcoise_ <- function(
     return_data <- read_meta1(ctxt)
     logger::log_success("{ctxt$relname} valid cache ({scales::label_bytes()(return_data$size)})")
     if(length(our_data)!=0 && our_data$ok == FALSE ) {
+      our_data$error <- our_data$error %||% "Cascade error"
       logger::log_error("  but {ctxt$relname} failed")
       logger::log_error(our_data$error |> cli::ansi_strip() |> logger::skip_formatter())
       if(!ctxt$quiet)
@@ -230,7 +231,8 @@ sourcoise_ <- function(
 
   if(!is.null(return_data$data)) {
     return_data$ok <- "invalid cache&exec error"
-    return_data$error <- our_data$error
+    our_data$error <- our_data$error  %||% "cascade error"
+    return_data$error <- our_data$error  %||% "cascade error"
 
     if(!ctxt$quiet)
       cli::cli_verbatim(our_data$error )
