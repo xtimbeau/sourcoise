@@ -173,12 +173,12 @@ sourcoise_refresh <- function(
 
       msrc <- fs::path_join(c(root, src)) |> fs::path_rel(cwd)
       if( src_data$ok == "exec" | done ) {
-        if(src_data$data_date > data_date)
+        if(lubridate::as_datetime(src_data$data_date) > lubridate::as_datetime(data_date))
           new <- TRUE else
             new <- FALSE
           data_size <- glue::glue("{scales::label_bytes()(src_data$size)}")
           msg <- glue::glue(
-            "{msrc} executed in {round(src_data$timing)} s. {ifelse(done, 'cached during refresh', '' )}")
+            "{msrc} executed in {round(src_data$timing)} s.{ifelse(done, ' cached during refresh', '' )}")
           if(new)
             cli::cli_alert_success(
               "{msg}, {.strong new data generated} ({data_size})" ) else
