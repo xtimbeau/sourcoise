@@ -165,81 +165,19 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="set_sourcoise_root.html">set_sourcoise_root</a></span><span class="op">(</span><span class="va">dir</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/RtmprFG60F</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/RtmpwuSm4C</span></span>
 <span class="r-in"><span><span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/copy.html" class="external-link">file_copy</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>   <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/path_package.html" class="external-link">path_package</a></span><span class="op">(</span><span class="st">"sourcoise"</span>, <span class="st">"some_data.R"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  <span class="va">dir</span>,</span></span>
 <span class="r-in"><span>  overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Force execution (root is set explicitly here, it is normally deduced from project)</span></span></span>
 <span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">sourcoise</span><span class="op">(</span><span class="st">"some_data.R"</span>, force_exec <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: hash_context(ctxt)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$src_hash &lt;- hash_file(ctxt$src)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$arg_hash &lt;- ctxt$argid</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: mm &lt;- get_mdatas(ctxt$basename, ctxt$full_cache_rep)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$meta1 &lt;- mm$meta1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$metas &lt;- mm$metas</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$track &lt;- unique(unlist(c(ctxt$track, ctxt$meta1$track)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$track_hash &lt;- 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (length(ctxt$track) &gt; 0) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     track_files &lt;- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         .x)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ok_files &lt;- purrr::map_lgl(track_files, fs::file_exists)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     tracked &lt;- track_files[ok_files]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (any(ok_files)) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         ctxt$track_hash &lt;- digest::digest(hash_file(as.character(ctxt$track)), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             algo = "sha1")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: track_files &lt;- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     .x)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ok_files &lt;- purrr::map_lgl(track_files, fs::file_exists)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: tracked &lt;- track_files[ok_files]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (any(ok_files)) ctxt$track_hash &lt;- digest::digest(hash_file(as.character(ctxt$track)), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     algo = "sha1") else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$qmd_file &lt;- c(ctxt$meta1$qmd_file, ctxt$qmd_file)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: return(ctxt)</span>
 <span class="r-in"><span><span class="co"># The second time cache is used</span></span></span>
 <span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">sourcoise</span><span class="op">(</span><span class="st">"some_data.R"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: hash_context(ctxt)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$src_hash &lt;- hash_file(ctxt$src)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$arg_hash &lt;- ctxt$argid</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: mm &lt;- get_mdatas(ctxt$basename, ctxt$full_cache_rep)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$meta1 &lt;- mm$meta1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$metas &lt;- mm$metas</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$track &lt;- unique(unlist(c(ctxt$track, ctxt$meta1$track)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$track_hash &lt;- 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (length(ctxt$track) &gt; 0) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     track_files &lt;- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         .x)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ok_files &lt;- purrr::map_lgl(track_files, fs::file_exists)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     tracked &lt;- track_files[ok_files]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (any(ok_files)) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         ctxt$track_hash &lt;- digest::digest(hash_file(as.character(ctxt$track)), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             algo = "sha1")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: track_files &lt;- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     .x)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ok_files &lt;- purrr::map_lgl(track_files, fs::file_exists)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: tracked &lt;- track_files[ok_files]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (any(ok_files)) ctxt$track_hash &lt;- digest::digest(hash_file(as.character(ctxt$track)), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     algo = "sha1") else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$qmd_file &lt;- c(ctxt$meta1$qmd_file, ctxt$qmd_file)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: return(ctxt)</span>
 <span class="r-in"><span><span class="co"># Performance and mem test</span></span></span>
 <span class="r-in"><span><span class="va">dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="set_sourcoise_root.html">set_sourcoise_root</a></span><span class="op">(</span><span class="va">dir</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/RtmprFG60F</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/RtmpwuSm4C</span></span>
 <span class="r-in"><span><span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/copy.html" class="external-link">file_copy</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>   <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/path_package.html" class="external-link">path_package</a></span><span class="op">(</span><span class="st">"sourcoise"</span>, <span class="st">"some_data.R"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>   <span class="va">dir</span>,</span></span>
@@ -248,136 +186,11 @@
 <span class="r-in"><span> forced <span class="op">=</span> <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">sourcoise</span><span class="op">(</span><span class="st">"some_data.R"</span>, force_exec <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span> cached <span class="op">=</span> <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">sourcoise</span><span class="op">(</span><span class="st">"some_data.R"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span> max_iterations <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: hash_context(ctxt)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$src_hash &lt;- hash_file(ctxt$src)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$arg_hash &lt;- ctxt$argid</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: mm &lt;- get_mdatas(ctxt$basename, ctxt$full_cache_rep)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$meta1 &lt;- mm$meta1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$metas &lt;- mm$metas</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$track &lt;- unique(unlist(c(ctxt$track, ctxt$meta1$track)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$track_hash &lt;- 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (length(ctxt$track) &gt; 0) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     track_files &lt;- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         .x)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ok_files &lt;- purrr::map_lgl(track_files, fs::file_exists)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     tracked &lt;- track_files[ok_files]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (any(ok_files)) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         ctxt$track_hash &lt;- digest::digest(hash_file(as.character(ctxt$track)), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             algo = "sha1")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: track_files &lt;- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     .x)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ok_files &lt;- purrr::map_lgl(track_files, fs::file_exists)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: tracked &lt;- track_files[ok_files]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (any(ok_files)) ctxt$track_hash &lt;- digest::digest(hash_file(as.character(ctxt$track)), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     algo = "sha1") else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$qmd_file &lt;- c(ctxt$meta1$qmd_file, ctxt$qmd_file)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: return(ctxt)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: hash_context(ctxt)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$src_hash &lt;- hash_file(ctxt$src)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$arg_hash &lt;- ctxt$argid</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: mm &lt;- get_mdatas(ctxt$basename, ctxt$full_cache_rep)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$meta1 &lt;- mm$meta1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$metas &lt;- mm$metas</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$track &lt;- unique(unlist(c(ctxt$track, ctxt$meta1$track)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$track_hash &lt;- 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (length(ctxt$track) &gt; 0) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     track_files &lt;- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         .x)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ok_files &lt;- purrr::map_lgl(track_files, fs::file_exists)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     tracked &lt;- track_files[ok_files]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (any(ok_files)) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         ctxt$track_hash &lt;- digest::digest(hash_file(as.character(ctxt$track)), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             algo = "sha1")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: track_files &lt;- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     .x)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ok_files &lt;- purrr::map_lgl(track_files, fs::file_exists)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: tracked &lt;- track_files[ok_files]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (any(ok_files)) ctxt$track_hash &lt;- digest::digest(hash_file(as.character(ctxt$track)), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     algo = "sha1") else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$qmd_file &lt;- c(ctxt$meta1$qmd_file, ctxt$qmd_file)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: return(ctxt)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: hash_context(ctxt)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$src_hash &lt;- hash_file(ctxt$src)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$arg_hash &lt;- ctxt$argid</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: mm &lt;- get_mdatas(ctxt$basename, ctxt$full_cache_rep)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$meta1 &lt;- mm$meta1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$metas &lt;- mm$metas</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$track &lt;- unique(unlist(c(ctxt$track, ctxt$meta1$track)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$track_hash &lt;- 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (length(ctxt$track) &gt; 0) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     track_files &lt;- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         .x)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ok_files &lt;- purrr::map_lgl(track_files, fs::file_exists)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     tracked &lt;- track_files[ok_files]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (any(ok_files)) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         ctxt$track_hash &lt;- digest::digest(hash_file(as.character(ctxt$track)), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             algo = "sha1")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: track_files &lt;- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     .x)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ok_files &lt;- purrr::map_lgl(track_files, fs::file_exists)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: tracked &lt;- track_files[ok_files]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (any(ok_files)) ctxt$track_hash &lt;- digest::digest(hash_file(as.character(ctxt$track)), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     algo = "sha1") else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$qmd_file &lt;- c(ctxt$meta1$qmd_file, ctxt$qmd_file)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: return(ctxt)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: hash_context(ctxt)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$src_hash &lt;- hash_file(ctxt$src)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$arg_hash &lt;- ctxt$argid</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: mm &lt;- get_mdatas(ctxt$basename, ctxt$full_cache_rep)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$meta1 &lt;- mm$meta1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$metas &lt;- mm$metas</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$track &lt;- unique(unlist(c(ctxt$track, ctxt$meta1$track)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$track_hash &lt;- 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (length(ctxt$track) &gt; 0) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     track_files &lt;- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         .x)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ok_files &lt;- purrr::map_lgl(track_files, fs::file_exists)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     tracked &lt;- track_files[ok_files]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (any(ok_files)) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         ctxt$track_hash &lt;- digest::digest(hash_file(as.character(ctxt$track)), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             algo = "sha1")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: track_files &lt;- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     .x)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ok_files &lt;- purrr::map_lgl(track_files, fs::file_exists)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: tracked &lt;- track_files[ok_files]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (any(ok_files)) ctxt$track_hash &lt;- digest::digest(hash_file(as.character(ctxt$track)), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     algo = "sha1") else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$qmd_file &lt;- c(ctxt$meta1$qmd_file, ctxt$qmd_file)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: return(ctxt)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some expressions had a GC in every iteration; so filtering is disabled.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 13</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   expression      min median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> forced       46.8ms 46.8ms      21.4     708KB     21.4     1     1     46.8ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> cached       16.8ms 16.8ms      59.7     197KB      0       1     0     16.8ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> forced       32.8ms 32.8ms      30.4     710KB        0     1     0     32.8ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> cached       17.8ms 17.8ms      56.1     198KB        0     1     0     17.8ms</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more variables: result &lt;list&gt;, memory &lt;list&gt;, time &lt;list&gt;, gc &lt;list&gt;</span></span>
 </code></pre></div>
     </div>

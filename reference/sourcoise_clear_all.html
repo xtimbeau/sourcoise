@@ -73,51 +73,20 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="set_sourcoise_root.html">set_sourcoise_root</a></span><span class="op">(</span><span class="va">dir</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/RtmprFG60F</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/RtmpwuSm4C</span></span>
 <span class="r-in"><span><span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/copy.html" class="external-link">file_copy</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/path_package.html" class="external-link">path_package</a></span><span class="op">(</span><span class="st">"sourcoise"</span>, <span class="st">"some_data.R"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    <span class="va">dir</span>,</span></span>
 <span class="r-in"><span>    overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Force execution</span></span></span>
 <span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="sourcoise.html">sourcoise</a></span><span class="op">(</span><span class="st">"some_data.R"</span>, force_exec <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: hash_context(ctxt)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$src_hash &lt;- hash_file(ctxt$src)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$arg_hash &lt;- ctxt$argid</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: mm &lt;- get_mdatas(ctxt$basename, ctxt$full_cache_rep)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$meta1 &lt;- mm$meta1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$metas &lt;- mm$metas</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$track &lt;- unique(unlist(c(ctxt$track, ctxt$meta1$track)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$track_hash &lt;- 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (length(ctxt$track) &gt; 0) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     track_files &lt;- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         .x)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ok_files &lt;- purrr::map_lgl(track_files, fs::file_exists)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     tracked &lt;- track_files[ok_files]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (any(ok_files)) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         ctxt$track_hash &lt;- digest::digest(hash_file(as.character(ctxt$track)), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             algo = "sha1")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: track_files &lt;- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     .x)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ok_files &lt;- purrr::map_lgl(track_files, fs::file_exists)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: tracked &lt;- track_files[ok_files]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (any(ok_files)) ctxt$track_hash &lt;- digest::digest(hash_file(as.character(ctxt$track)), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     algo = "sha1") else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: ctxt$qmd_file &lt;- c(ctxt$meta1$qmd_file, ctxt$qmd_file)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debug: return(ctxt)</span>
 <span class="r-in"><span><span class="co"># we then clear all caches</span></span></span>
 <span class="r-in"><span><span class="fu">sourcoise_clear_all</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmprFG60F/.sourcoise/some_data-4262323b_ce560b2f-1.json"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "/tmp/RtmprFG60F/.sourcoise/some_data-4262323b_ce560b2f-2.json"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "/tmp/RtmprFG60F/.sourcoise/some_data-4262323b_ce560b2f-3.json"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "/tmp/RtmprFG60F/.sourcoise/some_data-4262323b_ce560b2f-4.json"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "/tmp/RtmprFG60F/.sourcoise/some_data-4262323b_ce560b2f-5.json"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpwuSm4C/.sourcoise/some_data-4262323b_d38e68d8-1.json"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "/tmp/RtmpwuSm4C/.sourcoise/some_data-4262323b_d38e68d8-2.json"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "/tmp/RtmpwuSm4C/.sourcoise/some_data-4262323b_d38e68d8-3.json"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "/tmp/RtmpwuSm4C/.sourcoise/some_data-4262323b_d38e68d8-4.json"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "/tmp/RtmpwuSm4C/.sourcoise/some_data-4262323b_d38e68d8-5.json"</span>
 <span class="r-in"><span><span class="fu"><a href="sourcoise_status.html">sourcoise_status</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No cache data</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 0 × 0</span></span>
