@@ -187,7 +187,7 @@ sourcoise_refresh <- function(
       } else {
         cli::cli_alert_danger(
           "{msrc} failed (see log {.file {src_data$log_file}})" )
-        cli::cli_verbatim(src_data$error)
+        cli::cli_verbatim(src_data$error %||% "Cascade error")
       }
 
       if(unfreeze)
