@@ -89,35 +89,35 @@ Une dernière chose : `sourcoise()` est doté d'une heuristique maline trouve le
 
 ## Performance
 
-L'exécution "vraie" du scirpt `r` en exemple (`prix_insee.r`), sur un Macbook Air M2, prend 34ms et alloue 25Mb Lorsque les données sont en cache, l'exécution est effectuée en moins de 5ms et l'allocation de mémoire est celle des données finales (200kb). Le temps d'exécution des données cachées ne dépend que de leur taille alors que le temsp d'exécution "vraie" dépend de la complexité des calculs et des volumes téléchargés par le script. L'acces direct est bien sûr (infiniment) plus rapide, mais sans invalidation de cache !
+L'exécution "vraie" du scirpt `r` en exemple (`prix_insee.r`), sur un Macbook Air M2, prend 1s et alloue 1.25Mb Lorsque les données sont en cache, l'exécution est effectuée en 7ms. Le temps d'exécution des données cachées ne dépend que de leur taille alors que le temsp d'exécution "vraie" dépend de la complexité des calculs et des volumes téléchargés par le script (et de la machine employée). L'acces direct est bien sûr (infiniment) plus rapide, mais sans invalidation de cache !
 
 ``` r
 library(bench)
-    library(fs)
-    library(sourcoise)
-    tmp <- tempdir()
-    set_sourcoise_root(tmp)
-#> /var/folders/sr/zcvrvtss0w75m9m9g2t0zrcr0000gn/T/Rtmp4ygd80
-    setwd(tmp)
-    file_copy(
-        path_package("sourcoise", "ipch", "prix_insee.r"),
-        "prix_insee.r",
-        overwrite = TRUE)
-    data <- sourcoise("prix_insee.r")
-    mark(cache = sourcoise("prix_insee.r",),
-         no_cache = sourcoise("prix_insee.r", force_exec = TRUE),
-         direct = data)
+library(fs)
+library(sourcoise)
+tmp <- tempdir()
+set_sourcoise_root(tmp)
+#> /var/folders/sr/zcvrvtss0w75m9m9g2t0zrcr0000gn/T/Rtmp3w3fkq
+setwd(tmp)
+file_copy(
+    path_package("sourcoise", "ipch", "prix_insee.r"),
+    "prix_insee.r",
+    overwrite = TRUE)
+data <- sourcoise("prix_insee.r")
+mark(cache = sourcoise("prix_insee.r",),
+     no_cache = sourcoise("prix_insee.r", force_exec = TRUE),
+     direct = data)
 #> Warning: Some expressions had a GC in every iteration; so filtering is
 #> disabled.
 #> # A tibble: 3 × 6
-#>   expression      min   median `itr/sec` mem_alloc `gc/sec`
-#>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 cache        6.81ms   7.33ms   1.27e+2    5.01MB   33.7  
-#> 2 no_cache      1.01s    1.01s   9.88e-1    1.17MB    0.988
-#> 3 direct            0      1ns   1.34e+9        0B    0
+#>   expression      min   median     `itr/sec` mem_alloc `gc/sec`
+#>   <bch:expr> <bch:tm> <bch:tm>         <dbl> <bch:byt>    <dbl>
+#> 1 cache        7.13ms   7.43ms       123.       1.65MB   31.8  
+#> 2 no_cache      1.03s    1.03s         0.970    1.25MB    0.970
+#> 3 direct            0      1ns 390368176.           0B    0
 ```
 
-<sup>Created on 2025-12-11 with [reprex v2.1.1](https://reprex.tidyverse.org)</sup>
+<sup>Created on 2025-12-15 with [reprex v2.1.1](https://reprex.tidyverse.org)</sup>
 
 ## Le *workflow* avec sourcoise
 

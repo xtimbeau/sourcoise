@@ -19,7 +19,7 @@
 #'
 #' Whatever values takes `src_in`, if the file path starts with a `/`, then the source file will be interpreted from project root (if any). This is coherent whith naming convention in `quarto`. Otherwise, the document path wil be used firstly (if any, that is to say executed from quarto, rendering). Finally, working directory will be used. If everything fails, it will try to search in the project directory a corresponding file and will keep the closest from the calling point.
 #'
-#' Usually the fisrt call return and cache the results. Results can be aby R object and are serialized and saved using `qs2`. Subsequent calls, supposing none of cache invalidation are true, are then very quick. No logging is used, data is fecteched from the cache and that's it. For standard size data, used in a table or a graph (< 1Mb roughly), return timing is under 5ms.
+#' Usually the fisrt call return and cache the results. Results can be aby R object and are serialized and saved using `qs2`. Subsequent calls, supposing none of cache invalidation are true, are then very quick. No logging is used, data is fecteched from the cache and that's it. For standard size data, used in a table or a graph (< 1Mb roughly), return timing is under 10ms on a modern computer.
 #'
 #' `lapse` parameter is used for invalidation trigger 4. `lapse = "1 day"` ou `lapse="day"` for instance will trigger once a day the execution. `lapse = "3 days"` will do it every 72h. `hours`, `weeks`, `months`, `quarters` or `years` are understood time units. MOre complex calendar instructions could be added, but `sourcoise_refesh()` provides a solution more general and easy to adapt to any use case, as to my knowledge, there is no general mechanism to be warned of data updates.
 #'
