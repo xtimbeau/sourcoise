@@ -1,5 +1,4 @@
 # calcule les différents chemins et trouve les fichiers/répertoire dont on a besoin
-
 setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
                           lapse, nocache, limit_mb, grow_cache, log,
                           metadata, inform=FALSE, quiet=TRUE) {
@@ -28,13 +27,12 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
 
   # on trouve le fichier
   ctxt$name <- remove_ext(path)
-  ctxt$paths <- find_project_root()
-  ctxt$root <- try_find_root(root, src_in) |> as.character()
+  ctxt$paths <- find_project_root(root=root)
+  ctxt$root <- ctxt$paths$root
 
   ctxt$uid <- digest::digest(as.character(ctxt$root), algo = "crc32")
 
   ctxt$log_file <- startup_log2(log, ctxt$root, ctxt$uid, inform = inform)
-
   ctxt[["src"]] <- find_src(ctxt$root, ctxt$name, ctxt$paths)
   if(is.null(ctxt[["src"]])) {
     ctxt[["src"]] <- try_find_src(ctxt$root, ctxt$name)
@@ -116,6 +114,7 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
     }
   }
   logger::log_debug("wd: {ctxt[['exec_wd']]}")
+
   ctxt <- ctxt |>
     hash_context()
   ctxt$priority <- ctxt$meta1$priority %||% 10

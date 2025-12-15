@@ -122,6 +122,7 @@ hash_tracks <- function(tracks, root) {
 # }
 
 get_mdatas <- function(name, data_rep) {
+
   sn <- stringr::str_split(name, "-")[[1]]
   qm <- fast_metadata(cache_reps = data_rep, bn = sn[[1]], argsid = sn[[2]])
   if(nrow(qm)==0)
@@ -132,19 +133,20 @@ get_mdatas <- function(name, data_rep) {
     dplyr::filter(index == max(index)) |>
     dplyr::ungroup()
   # fast_read_mdata(qm$json_file)
-
+  meta1 <- RcppSimdJson::fload(qm$json_file)
   if(length(qm$json_file)==1)
     return(
-      list(meta1 = read_mdata(qm$json_file),
+      list(meta1 = meta1,
            metas = qm) )
 
-  meta1 <- fast_read_mdata(qm$json_file) |>
-    dplyr::filter(date == max(date)) |>
-    dplyr::slice(1) |>
-    as.list()
-
+  # meta1 <- purrr::map(qm$json_file, read_mdata)
+  idate <- meta1 |>
+    purrr::map("date") |>
+    unlist() |>
+    lubridate::as_datetime() |>
+    which.max()
   return(
-    list(meta1 = meta1,
+    list(meta1 =meta1[[idate]],
          metas = qm) )
 }
 
@@ -306,7 +308,7 @@ ls_cache_files <- function(root=NULL, uid = NULL, bn = NULL, argsid = NULL, cach
     cache_reps <- fs::dir_ls(path = root, regex = "\\.sourcoise$", all = TRUE, recurse = TRUE)
   }
   roots <- fs::path_dir(cache_reps) |> as.character()
-  cache_reps <- cache_reps |> purrr::keep(~fs::dir_exists(.x))
+
   if(length(cache_reps)==0)
     return(list())
   if(length(roots)==0)
@@ -331,7 +333,7 @@ ls_cache_files <- function(root=NULL, uid = NULL, bn = NULL, argsid = NULL, cach
     jsons=jsons,
     qs2=qs2s,
     cache_reps = cache_reps,
-    roots = roots|> as.character()))
+    roots = roots))
 }
 
 clean_caches <- function(root=NULL, cache_reps = NULL) {
@@ -512,4 +514,3 @@ get_metadata <- function(root=NULL, uid = NULL,
       log_file, root, src_hash, track_hash,
       track, arg_hash, data_hash)
 }
-

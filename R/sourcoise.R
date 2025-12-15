@@ -141,7 +141,6 @@ sourcoise_ <- function(
   refreshing <- getOption("sourcoise.refreshing") %||% FALSE
   if(refreshing)
     log <- "INFO"
-
   ctxt <- setup_context(
     path = path,
     root = root,
