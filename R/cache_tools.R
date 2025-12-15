@@ -83,7 +83,7 @@ cache_data <- function(data, ctxt) {
       les_metas$log_file <- ctxt$log_file |> fs::path_rel(ctxt$root)
     data$data_date <- les_metas$data_date
     les_metas$json_file <- fs::path_rel(json_fn, ctxt$root)
-    jsonlite::write_json(les_metas, path = json_fn)
+    jsonlite::write_json(les_metas, path = json_fn, pretty = TRUE)
     prune_cache(ctxt)
   }
   return(data)
@@ -152,7 +152,7 @@ pick_gooddata <- function(good_datas, ctxt) {
     newmdata$src_in <- ctxt$src_in
     newmdata$log_file <- ctxt$log_file
     newmdata$json_file <- fnm |> fs::path_rel(ctxt$root)
-    jsonlite::write_json(newmdata, path = fnm)
+    jsonlite::write_json(newmdata, path = fnm, pretty = TRUE)
   }
 
   good_good_data$ok <- "cache"

@@ -122,9 +122,10 @@ hash_tracks <- function(tracks, root) {
 # }
 
 get_mdatas <- function(name, data_rep) {
-
-  sn <- stringr::str_split(name, "-")[[1]]
-  qm <- fast_metadata(cache_reps = data_rep, bn = sn[[1]], argsid = sn[[2]])
+  pat <- "(.+)-([0-9a-f]{8})"
+  s1 <- stringr::str_extract(name, pat, group=1)
+  s2 <- stringr::str_extract(name, pat, group=2)
+  qm <- fast_metadata(cache_reps = data_rep, bn = s1, argsid = s2)
   if(nrow(qm)==0)
     return(list(meta1 = list(),
                 metas = list()))
@@ -261,7 +262,7 @@ sourcoise_priority <- function(path, priority = 10, root = getOption("sourcoise.
                                stringr::str_c(bbnme, "-", .x, "_", uid, "-", cc ))) |>
       fs::path_ext_set("json")
     les_metas$json_file <- json_fn |> fs::path_rel(root)
-    jsonlite::write_json(les_metas, path = json_fn)
+    jsonlite::write_json(les_metas, path = json_fn, pretty = TRUE)
     json_fn
   }) |> unlist()
 }

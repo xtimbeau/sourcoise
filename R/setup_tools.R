@@ -125,7 +125,7 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
 # calcule les hashs et ajoute les métadonnées au contexte
 
 hash_context <- function(ctxt) {
-browser()
+
   ctxt$src_hash <- hash_file(ctxt$src)
   ctxt$arg_hash <- ctxt$argid
 
@@ -136,17 +136,27 @@ browser()
   ctxt$track <- unique(c(ctxt$track, ctxt$meta1$track) |> unlist())
   ctxt$track_hash <- 0
   if(length(ctxt$track) > 0) {
-    track_files <- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, .x)))
-    ok_files <- purrr::map_lgl(track_files, fs::file_exists)
-    tracked <- track_files[ok_files]
-    if(any(ok_files))
-      ctxt$track_hash <- hash_file(as.character(ctxt$track)) |> digest::digest(algo = "sha1")
+    tt <- ctxt$track |>
+      purrr::map(~c(ctxt$root, .x)) |>
+      fs::path_join()
+    oktt <- tt |>
+      fs::file_exists()
+    ctxt$track <- ctxt$track[oktt] |> as.list()
+    if(length(ctxt$track)>0)
+      ctxt$track_hash <- hash_file(as.character(tt[oktt])) |>
+      digest::digest(algo = "sha1")
     else {
-      logger::log_info("Tracked files not found ({track_files[[!ok_files]]}), check your paths.")
+      logger::log_info("Tracked files not found, check your paths.")
     }
   }
 
-  ctxt$qmd_file <- c(ctxt$meta1$qmd_file, ctxt$qmd_file)
+  ctxt$qmd_file <- c(ctxt$meta1$qmd_file, ctxt$qmd_file) |>
+    unlist()
+  if(ctxt$paths$in_quarto & length(ctxt$qmd_file)>0) {
+    qq <- ctxt$qmd_file |> purrr::map(~c(ctxt$root, .x))
+    qq <- qq |> fs::path_join() |> fs::file_exists()
+    ctxt$qmd_file <- ctxt$qmd_file[qq] |> as.list()
+  }
 
   return(ctxt)
 }

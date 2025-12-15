@@ -3,6 +3,8 @@
 * errors messages are safer and better and logged systematically when refreshing
 * circulation in execution cases is safer
 * performance improvment when data is cached (30%)
+* a bug when source name contains a "-" is corrected (annoying)
+* better accumulation of tracked files or qmd files, accumulated only when they exists (clear track to do, and some cleaning to do in case of track changes)
 
 # sourcoise 1.0.0
 
