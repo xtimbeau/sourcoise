@@ -34,20 +34,20 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> /tmp/RtmpLY1YKh
+#> /tmp/Rtmphg0mqp
 fs::file_copy(
     fs::path_package("sourcoise", "some_data.R"),
     dir,
     overwrite = TRUE)
 # Force execution
 data <- sourcoise("some_data.R", force_exec = TRUE)
-#> Error in purrr::map(cache_reps, ~fs::dir_ls(.x, regexp = jpat, recurse = TRUE)): ℹ In index: 1.
-#> ℹ With name: /tmp/RtmpLY1YKh.
-#> Caused by error:
-#> ! [ENOENT] Failed to search directory '/tmp/RtmpLY1YKh/.sourcoise': no such file or directory
 # we then clear all caches
 sourcoise_clear_all()
-#> character(0)
+#> [1] "/tmp/Rtmphg0mqp/.sourcoise/some_data-4262323b_20639ecf-1.json"
+#> [2] "/tmp/Rtmphg0mqp/.sourcoise/some_data-4262323b_20639ecf-2.json"
+#> [3] "/tmp/Rtmphg0mqp/.sourcoise/some_data-4262323b_20639ecf-3.json"
+#> [4] "/tmp/Rtmphg0mqp/.sourcoise/some_data-4262323b_20639ecf-4.json"
+#> [5] "/tmp/Rtmphg0mqp/.sourcoise/some_data-4262323b_20639ecf-5.json"
 sourcoise_status()
 #> ℹ No cache data
 #> # A tibble: 0 × 0

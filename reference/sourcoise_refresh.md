@@ -122,22 +122,16 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> /tmp/RtmpLY1YKh
+#> /tmp/Rtmphg0mqp
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
    dir,
    overwrite = TRUE)
 # Force execution
 data <- sourcoise("some_data.R", force_exec = TRUE)
-#> Error in purrr::map(cache_reps, ~fs::dir_ls(.x, regexp = jpat, recurse = TRUE)): ℹ In index: 1.
-#> ℹ With name: /tmp/RtmpLY1YKh.
-#> Caused by error:
-#> ! [ENOENT] Failed to search directory '/tmp/RtmpLY1YKh/.sourcoise': no such file or directory
 # we then refresh all caches
 sourcoise_refresh()
-#> ℹ No cache data
-#> ℹ No cache data
-#> Error in dplyr::filter(what, .data$exists): ℹ In argument: `.data$exists`.
-#> Caused by error in `.data$exists`:
-#> ! Column `exists` not found in `.data`.
+#> ℹ Refreshing 1 source files
+#> ✔ ../../../../../../../tmp/Rtmphg0mqp/some_data.R executed in 0 s. , same data (2 kB)
+#> ℹ Total refresh in 0 seconds for 2 kB of data
 ```
