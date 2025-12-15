@@ -78,8 +78,8 @@ available to filter what really need to be refreshed.
     excel file can also take a long time. The time taken to access
     cached data depends on its size, but even for large data (and
     there’s no reason why it should be that large), the order of
-    magnitude is a few milliseconds (4 to 10ms) for execution when data
-    is cached, thanks to optimization and
+    magnitude is a few milliseconds (less than 10ms on a MacBook Air M2)
+    for execution when data is cached, thanks to optimization and
     [memoise](https://memoise.r-lib.org).
 
 2.  the cache is transferable via *github*. It’s in a (hidden) folder,

@@ -84,15 +84,15 @@ storage. To enable file-level cache storage behavior, set root to <code>NULL</co
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Set root to a temporary directory</span></span></span>
 <span class="r-in"><span><span class="va">dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">set_sourcoise_root</span><span class="op">(</span><span class="va">dir</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/RtmpHc0Qa2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/RtmpKW0JHk</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Reset to automatic detection</span></span></span>
 <span class="r-in"><span><span class="fu">set_sourcoise_root</span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/RtmpHc0Qa2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/RtmpKW0JHk</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Set root with messages enabled</span></span></span>
 <span class="r-in"><span><span class="fu">set_sourcoise_root</span><span class="op">(</span><span class="va">dir</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/RtmpHc0Qa2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/RtmpKW0JHk</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
