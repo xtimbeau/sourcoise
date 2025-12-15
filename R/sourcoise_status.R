@@ -56,6 +56,7 @@ sourcoise_status <- function(
     quiet = TRUE,
     root = NULL,
     prune = TRUE) {
+
   root <- try_find_root(root, src_in = "project")
   if(prune)
     cached <- get_metadata(root = root, filter = "recent")

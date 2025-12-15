@@ -1,5 +1,4 @@
 # calcule les différents chemins et trouve les fichiers/répertoire dont on a besoin
-
 setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
                           lapse, nocache, limit_mb, grow_cache, log,
                           metadata, inform=FALSE, quiet=TRUE) {
@@ -28,8 +27,8 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
 
   # on trouve le fichier
   ctxt$name <- remove_ext(path)
-  ctxt$paths <- find_project_root()
-  ctxt$root <- try_find_root(root, src_in) |> as.character()
+  ctxt$paths <- find_project_root(root=root)
+  ctxt$root <- ctxt$paths$root
 
   ctxt$uid <- digest::digest(as.character(ctxt$root), algo = "crc32")
 
@@ -46,6 +45,7 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
       cli::cli_alert_warning("{n_src} sources detected, choosing {ctxt[['src']]}, the closest to wd.")
     }
   }
+  logger::log_info("sourcoising {ctxt$src}")
 
   ctxt$basename <- fs::path_file(ctxt$name) |>
     stringr::str_c(ctxt$argid, sep = "-")
@@ -114,6 +114,7 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
     }
   }
   logger::log_debug("wd: {ctxt[['exec_wd']]}")
+
   ctxt <- ctxt |>
     hash_context()
   ctxt$priority <- ctxt$meta1$priority %||% 10
@@ -132,7 +133,7 @@ browser()
   ctxt$meta1 <- mm$meta1
   ctxt$metas <- mm$metas
 
-  ctxt$track <- unique(c(ctxt$track, ctxt$meta1$track))
+  ctxt$track <- unique(c(ctxt$track, ctxt$meta1$track) |> unlist())
   ctxt$track_hash <- 0
   if(length(ctxt$track) > 0) {
     track_files <- purrr::map(ctxt$track, ~fs::path_join(c(ctxt$root, .x)))
@@ -151,9 +152,11 @@ browser()
 }
 
 get_all_metadata <- function(ctxt) {
-  if(length(ctxt$metas$json_file)==0) {
-    ctxt$all_metas <- tibble::tibble()
-    return(ctxt) }
+
+  valids <- purrr::map_lgl(ctxt$metas$json_file, ~data_ok(.x, ctxt$basename) )
+  files <- ctxt$metas$json_file[valids]
+  if(length(files)==0) {
+    return(tibble::tibble()) }
 
   fast_read_mdata(ctxt$metas$json_file)
 
@@ -229,6 +232,5 @@ startup_log2 <- function(log, root,
   if(inform)
     logger::log_appender(logger::appender_tee(log_fn))
   log_file <- fs::path_rel(log_fn, getwd() |> path_abs())
-
   return(log_file)
 }

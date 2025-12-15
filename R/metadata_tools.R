@@ -47,6 +47,15 @@ valid_metas <- function(ctxt) {
   return(ctxt)
 }
 
+data_ok <- function(path, basename) {
+  pat <- glue::glue(".*{basename}_[0-9a-f]{{32}}\\.qs2")
+  if(!stringr::str_detect(path, pat))
+    return(FALSE)
+  if(!fs::file_exists(path))
+    return(FALSE)
+  return(TRUE)
+}
+
 valid_meta1 <- function(ctxt) {
 
   if(length(ctxt$meta1) == 0) {
@@ -58,7 +67,7 @@ valid_meta1 <- function(ctxt) {
     valid_src = ctxt$meta1$src_hash == ctxt$src_hash,
     valid_arg = ctxt$meta1$arg_hash == ctxt$arg_hash,
     valid_track = ctxt$meta1$track_hash == (ctxt$track_hash %||% 0),
-    data_exists = fs::file_exists(fs::path_join(c(ctxt$full_cache_rep, ctxt$meta1$data_file))),
+    data_exists = data_ok(fs::path_join(c(ctxt$full_cache_rep, ctxt$meta1$data_file)), ctxt$basename),
     valid_lapse = ifelse(
       ctxt$lapse != "never",
       lubridate::now() - lubridate::as_datetime(ctxt$meta1[["date"]]) <= what_lapse(ctxt$lapse),
@@ -113,6 +122,7 @@ hash_tracks <- function(tracks, root) {
 # }
 
 get_mdatas <- function(name, data_rep) {
+
   sn <- stringr::str_split(name, "-")[[1]]
   qm <- fast_metadata(cache_reps = data_rep, bn = sn[[1]], argsid = sn[[2]])
   if(nrow(qm)==0)
@@ -123,23 +133,26 @@ get_mdatas <- function(name, data_rep) {
     dplyr::filter(index == max(index)) |>
     dplyr::ungroup()
   # fast_read_mdata(qm$json_file)
-
+  meta1 <- RcppSimdJson::fload(qm$json_file)
   if(length(qm$json_file)==1)
     return(
-      list(meta1 = read_mdata(qm$json_file),
+      list(meta1 = meta1,
            metas = qm) )
 
-  meta1 <- fast_read_mdata(qm$json_file) |>
-    dplyr::filter(date == max(date)) |>
-    dplyr::slice(1) |>
-    as.list()
-
-    return(
-    list(meta1 = meta1,
+  # meta1 <- purrr::map(qm$json_file, read_mdata)
+  idate <- meta1 |>
+    purrr::map("date") |>
+    unlist() |>
+    lubridate::as_datetime() |>
+    which.max()
+  return(
+    list(meta1 =meta1[[idate]],
          metas = qm) )
 }
 
 fast_read_mdata <- function(paths) {
+  if(length(paths)==0)
+    return(tibble::tibble())
   jsons_raw <- RcppSimdJson::fload(paths, always_list = TRUE)
   n1 <- names(jsons_raw[[1]])
   # cette méthode permet de lire les listes
@@ -152,7 +165,8 @@ fast_read_mdata <- function(paths) {
                   dplyr::select(-name) ) |>
     dplyr::bind_cols() |>
     dplyr::mutate(
-      name = paths) |>
+      name = paths,
+      track_hash = as.character(track_hash)) |>
     dplyr::relocate(name)
 }
 
@@ -294,7 +308,7 @@ ls_cache_files <- function(root=NULL, uid = NULL, bn = NULL, argsid = NULL, cach
     cache_reps <- fs::dir_ls(path = root, regex = "\\.sourcoise$", all = TRUE, recurse = TRUE)
   }
   roots <- fs::path_dir(cache_reps) |> as.character()
-  cache_reps <- cache_reps |> purrr::keep(~fs::dir_exists(.x))
+
   if(length(cache_reps)==0)
     return(list())
   if(length(roots)==0)
@@ -307,8 +321,11 @@ ls_cache_files <- function(root=NULL, uid = NULL, bn = NULL, argsid = NULL, cach
     argsid <- "[a-f0-9]{8}"
   cache_reps <- rlang::set_names(cache_reps, roots)
   jpat <- "({bn})-({argsid})_({uid})-([0-9]+)\\.json" |> glue::glue()
-  jsons <- purrr::map(cache_reps,
-                      ~fs::dir_ls(.x,  regexp = jpat, recurse = TRUE))
+  jsons <- purrr::map(cache_reps, ~{
+    if(fs::dir_exists(.x))
+      return(fs::dir_ls(.x,  regexp = jpat, recurse = TRUE))
+    return(list())
+  })
   qs2s <- list()
   if(qs2) {
     dpat <- "({bn})-({argsid})_([a-f0-9]{{32}})\\.qs2" |> glue::glue()
@@ -319,7 +336,7 @@ ls_cache_files <- function(root=NULL, uid = NULL, bn = NULL, argsid = NULL, cach
     jsons=jsons,
     qs2=qs2s,
     cache_reps = cache_reps,
-    roots = roots|> as.character()))
+    roots = roots))
 }
 
 clean_caches <- function(root=NULL, cache_reps = NULL) {
@@ -363,6 +380,7 @@ fast_metadata <- function(root=NULL, uid = NULL, bn = NULL,
 get_metadata <- function(root=NULL, uid = NULL,
                          bn = NULL, argsid = NULL, cache_reps = NULL,
                          filter = "recent", quiet = FALSE) {
+
   qm <- fast_metadata(root=root, uid = uid, bn = bn,
                       argsid = argsid, cache_reps = cache_reps)
 
@@ -399,6 +417,7 @@ get_metadata <- function(root=NULL, uid = NULL,
                   dplyr::select(-name) ) |>
     dplyr::bind_cols() |>
     dplyr::mutate(
+      track_hash = as.character(track_hash),
       name = qm$json_file,
       json_file = qm$short_json_file,
       root = qm$root,
@@ -410,6 +429,14 @@ get_metadata <- function(root=NULL, uid = NULL,
       cli::cli_alert_info("No cache data")
     return(tibble::tibble())
   }
+
+  if(filter=="recent")
+    metas <- metas |>
+    dplyr::group_by(root, tolower(src), arg_hash) |>
+    dplyr::filter(data_date==max(data_date)) |>
+    dplyr::filter(date==max(date)) |>
+    dplyr::slice(1) |>
+    dplyr::ungroup()
 
   if(! "args" %in% names(metas))
     metas <- metas |> dplyr::mutate(args = NA_character_)
@@ -490,4 +517,3 @@ get_metadata <- function(root=NULL, uid = NULL,
       log_file, root, src_hash, track_hash,
       track, arg_hash, data_hash)
 }
-

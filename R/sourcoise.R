@@ -19,7 +19,7 @@
 #'
 #' Whatever values takes `src_in`, if the file path starts with a `/`, then the source file will be interpreted from project root (if any). This is coherent whith naming convention in `quarto`. Otherwise, the document path wil be used firstly (if any, that is to say executed from quarto, rendering). Finally, working directory will be used. If everything fails, it will try to search in the project directory a corresponding file and will keep the closest from the calling point.
 #'
-#' Usually the fisrt call return and cache the results. Results can be aby R object and are serialized and saved using `qs2`. Subsequent calls, supposing none of cache invalidation are true, are then very quick. No logging is used, data is fecteched from the cache and that's it. For standard size data, used in a table or a graph (< 1Mb roughly), return timing is under 5ms.
+#' Usually the fisrt call return and cache the results. Results can be aby R object and are serialized and saved using `qs2`. Subsequent calls, supposing none of cache invalidation are true, are then very quick. No logging is used, data is fecteched from the cache and that's it. For standard size data, used in a table or a graph (< 1Mb roughly), return timing is under 10ms on a modern computer.
 #'
 #' `lapse` parameter is used for invalidation trigger 4. `lapse = "1 day"` ou `lapse="day"` for instance will trigger once a day the execution. `lapse = "3 days"` will do it every 72h. `hours`, `weeks`, `months`, `quarters` or `years` are understood time units. MOre complex calendar instructions could be added, but `sourcoise_refesh()` provides a solution more general and easy to adapt to any use case, as to my knowledge, there is no general mechanism to be warned of data updates.
 #'
@@ -186,22 +186,24 @@ sourcoise_ <- function(
   }
 
   ctxt <- valid_meta1(ctxt)
-
   if(ctxt$meta_valid$valid) {
     return_data <- read_meta1(ctxt)
     logger::log_success("{ctxt$relname} valid cache ({scales::label_bytes()(return_data$size)})")
     if(length(our_data)!=0 && our_data$ok == FALSE ) {
+      our_data$error <- our_data$error %||% "Cascade error"
       logger::log_error("  but {ctxt$relname} failed")
+      logger::log_error(our_data$error |> cli::ansi_strip() |> logger::skip_formatter())
       if(!ctxt$quiet)
-        cli::cli_alert(our_data$error|> errorCondition())
+        cli::cli_verbatim(our_data$error)
     }
+    mark_as_done(ctxt$name)
     return(data_returned(return_data, ctxt))
   }
 
   if(!prevent) {
+
     if(length(our_data)==0)
       our_data <- super_exec_source(ctxt)
-
     if(our_data$ok=="exec") {
       our_data <- cache_data(our_data, ctxt)
       logger::log_success(
@@ -209,12 +211,13 @@ sourcoise_ <- function(
       return(data_returned(our_data, ctxt))
     }
   }
+
   return_data <- read_meta1(ctxt)
-  if(is.null(return_data))
+  if(is.null(return_data$data))
     return_data <- read_metas(ctxt)
 
   if(prevent) {
-    if(!is.null(return_data)) {
+    if(!is.null(return_data$data)) {
       return_data$ok <- "invalid cache"
       return_data$error <- NULL
       return(data_returned(return_data, ctxt))
@@ -226,17 +229,21 @@ sourcoise_ <- function(
       log_file = ctxt$log_file))
   }
 
-  if(!is.null(return_data)) {
+  if(!is.null(return_data$data)) {
     return_data$ok <- "invalid cache&exec error"
-    return_data$error <- our_data$error
+    our_data$error <- our_data$error  %||% "cascade error"
+    return_data$error <- our_data$error  %||% "cascade error"
+
     if(!ctxt$quiet)
-      cli::cli_alert(our_data$error |> errorCondition())
+      cli::cli_verbatim(our_data$error )
+    logger::log_error(our_data$error |> cli::ansi_strip() |> logger::skip_formatter())
     return(data_returned(return_data, ctxt))
   }
 
   logger::log_error("{ctxt$relname} failed&no cache")
   if(!ctxt$quiet)
-    cli::cli_alert(our_data$error |> errorCondition())
+    cli::cli_verbatim(our_data$error)
+  logger::log_error(our_data$error |> cli::ansi_strip() |> logger::skip_formatter())
   return(list(
     ok = "failed&no cache",
     error = our_data$error
