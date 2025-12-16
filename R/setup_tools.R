@@ -163,13 +163,10 @@ hash_context <- function(ctxt) {
 
 get_all_metadata <- function(ctxt) {
 
-  valids <- purrr::map_lgl(ctxt$metas$json_file, ~data_ok(.x, ctxt$basename) )
-  files <- ctxt$metas$json_file[valids]
-  if(length(files)==0) {
+  if(length(ctxt$metas$json_file)==0) {
     return(tibble::tibble()) }
 
   fast_read_mdata(ctxt$metas$json_file)
-
 }
 
 ctxt_json_history <- function(ctxt) {

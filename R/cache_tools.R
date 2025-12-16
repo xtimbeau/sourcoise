@@ -1,36 +1,17 @@
 #' @importFrom rlang .data
 #' @noRd
 cache_data <- function(data, ctxt) {
-  pat <- stringr::str_c(ctxt$basename, "_([a-f0-9]{8})-([0-9]+)\\.json")
-  files <- tibble::tibble()
-
-  if(fs::dir_exists(ctxt$full_cache_rep)) {
-    files <- fs::dir_info(path = ctxt$full_cache_rep, regexp = pat) |>
-      dplyr::mutate(uid = stringr::str_extract(.data$path, pat, group=1),
-                    cc = stringr::str_extract(.data$path, pat, group=2) |> as.numeric())
-  }
-  cc <- 1
-  exists <- FALSE
+  all_metas <- get_all_metadata(ctxt)
   new_data_hash <- digest::digest(data$data)
-
-  if(nrow(files)>0) {
-    uids <- files$uid
-    ccs <- files$cc
-    hashes <- purrr::map_dfr(
-      files$path, ~{
-        mdata <- read_mdata(.x)
-        tibble::tibble(
-          path = .x,
-          data_hash = mdata$data_hash,
-          data_file = mdata$data_file,
-          data_date = mdata$data_date,
-          file_size = mdata$file_size)
-      }) |>
-      dplyr::filter(.data$data_hash == new_data_hash)
-    if(nrow(hashes)>0) {
-      hashes <- hashes |>
-        dplyr::slice(1)
-      exists_data_file <- hashes |>
+  browser()
+  exist <- FALSE
+  if(nrow(all_metas)>0) {
+    meta <- all_metas |>
+      dplyr::filter(.data$data_hash == new_data_hash) |>
+      slice(1)
+    if(nrow(meta)==1) {
+      exist <- TRUE
+      exists_data_file <- meta |>
         dplyr::pull(.data$data_file) |>
         fs::path_file()
 
@@ -38,30 +19,21 @@ cache_data <- function(data, ctxt) {
       exists <- fs::file_exists(exists_data_file)
       finfo <- fs::file_info(exists_data_file)
       exists_file_size <- finfo$size
-      exists_data_date <- hashes |> dplyr::pull(.data$data_date) |> as.character()
+      exists_data_date <- meta |> dplyr::pull(.data$data_date) |> as.character()
     }
-    cc <- max(files$cc, na.rm = TRUE) + 1
   }
   if(!fs::dir_exists(ctxt$full_cache_rep))
     fs::dir_create(ctxt$full_cache_rep, recurse=TRUE)
   data$data_hash <- new_data_hash
-  data$id <- stringr::str_c(ctxt$uid, "-", cc)
-  data$uid <- ctxt$uid
-  data$cc <- cc
-  json_fn <-
-    fs::path_join(c(ctxt$full_cache_rep,
-                    stringr::str_c(ctxt$basename, "_", stringr::str_c(data$id, ".json")))) |>
-    path_abs()
-  data$json_file <- json_fn
+
   if(!ctxt$nocache) {
     les_metas <- data
     les_metas$data <- NULL
     les_metas$file <- NULL
     les_metas$ok <- NULL
-    les_metas$id <- NULL
     les_metas$priority <- ctxt$priority
 
-    if(!exists) {
+    if(!exist) {
       fnd <- fs::path_join(
         c(ctxt$full_cache_rep,
           stringr::str_c(ctxt$basename, "_", stringr::str_c(data$data_hash, ".qs2"))))
@@ -82,8 +54,7 @@ cache_data <- function(data, ctxt) {
     if(!is.null(ctxt$log_file))
       les_metas$log_file <- ctxt$log_file |> fs::path_rel(ctxt$root)
     data$data_date <- les_metas$data_date
-    les_metas$json_file <- fs::path_rel(json_fn, ctxt$root)
-    jsonlite::write_json(les_metas, path = json_fn, pretty = TRUE)
+    write_meta(les_metas, ctxt)
     prune_cache(ctxt)
   }
   return(data)
@@ -121,55 +92,19 @@ prune_cache <- function(ctxt) {
   purrr::walk(datas_out, ~ sure_delete(fs::path_join(c(ctxt$full_cache_rep, .x))))
 }
 
-# pick les meilleures données en cache
-#' @importFrom rlang %||%
-#' @noRd
-pick_gooddata <- function(good_datas, ctxt) {
-  dates <- purrr::map(good_datas, "date") |>
-    unlist() |>
-    lubridate::as_datetime()
-  mdd <- which.max(dates)
-  good_good_data <- good_datas[[mdd]]
-  fnm <- good_datas[[mdd]][["json_file"]]
-  fnd <- fs::path_join(c(ctxt$full_cache_rep, good_good_data$data_file))
-
-  ggd_lapse <- good_good_data$lapse %||% "never"
-  ggd_wd <- good_good_data$wd %||% "file"
-  ggd_qmds <- setequal(good_good_data$qmd_file ,
-                       ctxt$new_qmds )
-  ggd_track <- setequal(good_good_data$track ,
-                        ctxt$track )
-  ggd_src_in <- ctxt$src_in == good_good_data$src_in %||% "project"
-
-  if(ggd_lapse != ctxt$lapse | ggd_wd != ctxt$wd | !ggd_qmds | !ggd_track | !ggd_src_in) {
-    newmdata <- good_good_data
-    newmdata$file <- NULL
-    newmdata$lapse <- ctxt$lapse
-    newmdata$wd <- ctxt$wd
-    newmdata$qmd_file <- ctxt$new_qmds
-    newmdata$track <- ctxt$track
-    newmdata$args <- ctxt$args
-    newmdata$src_in <- ctxt$src_in
-    newmdata$log_file <- ctxt$log_file
-    newmdata$json_file <- fnm |> fs::path_rel(ctxt$root)
-    jsonlite::write_json(newmdata, path = fnm, pretty = TRUE)
-  }
-
-  good_good_data$ok <- "cache"
-  good_good_data$json_file <- fnm
-  if(getOption("sourcoise.memoize"))
-    good_good_data$data <- read_data_from_cache(fnd)
-  else
-    good_good_data$data <-   qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
-
-  return(good_good_data)
-}
-
 read_meta1 <- function(ctxt) {
-  data <- ctxt$meta1
+  metas <- ctxt$meta1
+  new_meta <- purrr::map_lgl(
+    rlang::set_names(c("track", "track_hash", "qmd_file", "wd", "src_in")),
+    ~{
+      chged <- !setequal(metas[[.x]], ctxt[[.x]])
+      metas[[.x]] <<- metas[[.x]]
+      chged})
+
   fnd <- fs::path_join(c(ctxt$full_cache_rep, ctxt$meta1$data_file))
   if(!data_ok(fnd, ctxt$basename))
     return(NULL)
+  data <- metas
   data$ok <- "cache"
   data$error <- NULL
   if(fs::file_exists(fnd)) {
@@ -178,7 +113,42 @@ read_meta1 <- function(ctxt) {
     else
       data$data <- qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
   }
+  if(any(new_meta)) {
+    write_meta(metas, ctxt)
+  }
   return(data)
+}
+
+write_meta <- function(metas, ctxt) {
+  towrite <- list(
+    error = metas$error,
+    timing = metas$timing |> as.numeric(),
+    date = metas$date |> as.character(),
+    size = metas$size |> as.numeric(),
+    args = metas$args |> as.list(),
+    lapse = metas$lapse,
+    src = metas$src,
+    src_hash = metas$src_hash,
+    arg_hash = metas$arg_hash,
+    track_hash = metas$track_hash,
+    track = metas$track |> as.list(),
+    wd = metas$wd,
+    qmd_file = metas$qmd_file |> as.list(),
+    src_in = metas$src_in,
+    data_hash = metas$data_hash,
+    priority = metas$priority,
+    file_size = metas$file_size,
+    data_date = metas$data_date,
+    data_file = metas$data_file)
+  new_cc <- ctxt$metas |>
+    dplyr::filter(uid == ctxt$uid) |>
+    dplyr::pull(index)
+  if(length(new_cc) == 0)
+    new_cc <- 1 else
+      new_cc <- max(new_cc)+1
+  new_json_fn <- glue::glue("{ctxt$basename}_{ctxt$uid}-{new_cc}.json")
+  metas$json_file <- new_json_file |> fs::path_rel(ctxt$root)
+  jsonlite::write_json(metas, new_json_fn, pretty = TRUE)
 }
 
 read_metas <- function(ctxt) {
@@ -190,7 +160,7 @@ read_metas <- function(ctxt) {
     dplyr::slice(1) |>
     as.list()
 
-  data <- ctxt$all_metas
+  data <- all_metas
   data$data <- NULL
   fnd <- fs::path_join(c(fs::path_dir(all_metas$name), all_metas$data_file))
 
@@ -199,7 +169,7 @@ read_metas <- function(ctxt) {
       data$data <- read_data_from_cache(fnd)
     else
       data$data <- qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
-    }
+  }
 
   return(data)
 }

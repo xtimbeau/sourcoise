@@ -188,7 +188,7 @@ sourcoise_ <- function(
   ctxt <- valid_meta1(ctxt)
   if(ctxt$meta_valid$valid) {
     return_data <- read_meta1(ctxt)
-    logger::log_success("{ctxt$relname} valid cache ({scales::label_bytes()(return_data$size)})")
+    logger::log_success("{ctxt$relname} cache valid ({scales::label_bytes()(return_data$size)})")
     if(length(our_data)!=0 && our_data$ok == FALSE ) {
       our_data$error <- our_data$error %||% "Cascade error"
       logger::log_error("  but {ctxt$relname} failed")
