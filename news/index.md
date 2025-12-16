@@ -1,6 +1,6 @@
 # Changelog
 
-## sourcoise 1.0.0.9002
+## sourcoise 1.0.0.9003
 
 - errors messages are safer and better and logged systematically when
   refreshing
