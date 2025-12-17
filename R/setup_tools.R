@@ -141,7 +141,7 @@ hash_context <- function(ctxt) {
       fs::path_join()
     oktt <- tt |>
       fs::file_exists()
-    ctxt$track <- ctxt$track[oktt] |> as.list()
+    ctxt$track <- ctxt$track[oktt]
     if(length(ctxt$track)>0)
       ctxt$track_hash <- hash_file(as.character(tt[oktt])) |>
       digest::digest(algo = "sha1")
@@ -163,7 +163,7 @@ hash_context <- function(ctxt) {
 
 get_all_metadata <- function(ctxt) {
 
-  if(length(ctxt$metas$json_file)==0) {
+  if(length(ctxt$metas) == 0 || length(ctxt$metas$json_file)==0) {
     return(tibble::tibble()) }
 
   fast_read_mdata(ctxt$metas$json_file)

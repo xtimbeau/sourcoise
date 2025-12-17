@@ -7,7 +7,8 @@ valid_meta4meta <- function(meta, root) {
     track_files <- purrr::map(meta$track, ~fs::path_join(c(root, .x)))
     ok_files <- purrr::map_lgl(track_files, fs::file_exists)
     if(any(ok_files))
-      track_hash <- hash_file(as.character(track_files[ok_files]))
+      track_hash <- hash_file(as.character(track_files[ok_files])) |>
+      digest::digest(algo = "sha1")
     else {
       cli::cli_alert_warning("invalid track ({track_files[!ok_files]}), please check paths.")
     }
@@ -98,15 +99,15 @@ hash_file <- function(path) {
 
 hash_tracks <- function(tracks, root) {
   purrr::map2(tracks, root, \(.t, .r) {
-    if(length(.t)==0|!any(is.na(.t)))
+    if(length(.t)==0|any(is.na(.t)))
       return(0)
     track_files <- purrr::map(.t, ~fs::path_join(c(.r, .x)))
     ok_files <- purrr::map_lgl(track_files, fs::file_exists)
     if(any(ok_files))
-      return(hash_file(as.character(track_files[ok_files])))
+      return(hash_file(as.character(track_files[ok_files])) |>
+               digest::digest(algo = "sha1"))
     return(0)
   })
-  return(0)
 }
 
 # get_datas <- function(name, data_rep) {
@@ -128,7 +129,7 @@ get_mdatas <- function(name, data_rep) {
   qm <- fast_metadata(cache_reps = data_rep, bn = s1, argsid = s2)
   if(nrow(qm)==0)
     return(list(meta1 = list(),
-                metas = list()))
+                metas = tibble::tibble()))
   qm <- qm |>
     dplyr::group_by(uid) |>
     dplyr::filter(index == max(index)) |>
@@ -421,7 +422,9 @@ get_metadata <- function(root=NULL, uid = NULL,
       track_hash = as.character(track_hash),
       name = qm$json_file,
       json_file = qm$short_json_file,
+      index = qm$index,
       root = qm$root,
+      uid = qm$uid,
       cache_rep = stringr::str_c(root, "/.sourcoise")) |>
     dplyr::relocate(name)
 
@@ -510,7 +513,7 @@ get_metadata <- function(root=NULL, uid = NULL,
       src,
       exists = src_exist,
       date = lubridate::as_datetime(date),
-      valid, priority, uid, index = cc,
+      valid, priority, uid, index,
       timing, size, lapse, wd, args,
       json_file, qmd_file, src_in, data_file,
       data_date = lubridate::as_datetime(data_date),

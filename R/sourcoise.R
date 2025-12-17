@@ -166,7 +166,6 @@ sourcoise_ <- function(
                 ok = FALSE,
                 log_file = ctxt$log_file))
   }
-
   priority <- ctxt$priority
   force <- nuorf(force_exec)
   if(should_i_do(ctxt$name))

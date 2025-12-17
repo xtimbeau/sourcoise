@@ -1,14 +1,15 @@
 #' @importFrom rlang .data
 #' @noRd
 cache_data <- function(data, ctxt) {
+
   all_metas <- get_all_metadata(ctxt)
   new_data_hash <- digest::digest(data$data)
-  browser()
+
   exist <- FALSE
   if(nrow(all_metas)>0) {
     meta <- all_metas |>
       dplyr::filter(.data$data_hash == new_data_hash) |>
-      slice(1)
+      dplyr::slice(1)
     if(nrow(meta)==1) {
       exist <- TRUE
       exists_data_file <- meta |>
@@ -131,24 +132,30 @@ write_meta <- function(metas, ctxt) {
     src_hash = metas$src_hash,
     arg_hash = metas$arg_hash,
     track_hash = metas$track_hash,
-    track = metas$track |> as.list(),
+    track = metas$track |> unlist(),
     wd = metas$wd,
-    qmd_file = metas$qmd_file |> as.list(),
+    qmd_file = metas$qmd_file |> unlist(),
     src_in = metas$src_in,
     data_hash = metas$data_hash,
     priority = metas$priority,
     file_size = metas$file_size,
     data_date = metas$data_date,
     data_file = metas$data_file)
-  new_cc <- ctxt$metas |>
-    dplyr::filter(uid == ctxt$uid) |>
-    dplyr::pull(index)
-  if(length(new_cc) == 0)
-    new_cc <- 1 else
+
+  new_cc <- 1
+  if(length(ctxt$metas)>0) {
+    new_cc <- ctxt$metas |>
+      dplyr::filter(uid == ctxt$uid) |>
+      dplyr::pull(index)
+    if(length(new_cc) > 0)
       new_cc <- max(new_cc)+1
-  new_json_fn <- glue::glue("{ctxt$basename}_{ctxt$uid}-{new_cc}.json")
-  metas$json_file <- new_json_file |> fs::path_rel(ctxt$root)
-  jsonlite::write_json(metas, new_json_fn, pretty = TRUE)
+  }
+
+  new_json_fn <- fs::path_join(
+    c(ctxt$full_cache_rep,
+      glue::glue("{ctxt$basename}_{ctxt$uid}-{new_cc}"))) |>
+      fs::path_ext_set("json")
+  jsonlite::write_json(towrite, new_json_fn, pretty = TRUE)
 }
 
 read_metas <- function(ctxt) {
@@ -198,6 +205,6 @@ data_returned <- function(data, ctxt) {
     data_file = data$data_file,
     file_size = data$file_size,
     data_date = data$data_date,
-    json_file = data$json_file
+    json_file = ctxt$json_file
   )
 }

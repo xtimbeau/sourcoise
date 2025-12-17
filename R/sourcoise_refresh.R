@@ -65,9 +65,9 @@ sourcoise_refresh <- function(
 
   root_root <- try_find_root(root, src_in = "project")
   startup_log2("INFO", root_root)
-  ww <- sourcoise_status(short = FALSE, prune = TRUE, root=root, quiet=quiet)
+  ww <- sourcoise_status(short = FALSE, prune = TRUE, root=root, quiet=TRUE)
   n_sources <- nrow(ww)
-  if(!is.null(what)) {
+  if(!is.null(what)>0) {
     if("character"%in%class(what)) {
       ww <- ww |>
         dplyr::filter(purrr::map(what, ~stringr::str_detect(ww$src,.x) ) |> purrr::reduce(`|`))
@@ -81,7 +81,8 @@ sourcoise_refresh <- function(
   if(is.null(what))
     what <- ww
 
-  what <- what |> dplyr::filter(.data$exists)
+  if(nrow(what)>0)
+    what <- what |> dplyr::filter(.data$exists)
 
   if(nrow(what)==0) {
     if(!quiet)

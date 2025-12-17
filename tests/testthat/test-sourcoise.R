@@ -84,25 +84,25 @@ test_that("meta ok when no cache", {
 
 ## track files
 
-# write.csv("data", file = fs::path_join(c(dir, "data.csv")))
-# zz <- sourcoise("prix_insee.R", track = "data.csv", metadata=TRUE)
-#
-# test_that(
-#   "tracking", {
-#     expect(sourcoise("prix_insee.R", track = "data.csv", metadata=TRUE)$ok == "cache", "cache ?")
-#   })
-#
-# write.csv("data modified", file = fs::path_join(c(dir, "data.csv")))
-#
-# test_that(
-#   "tracking", {
-#     expect(sourcoise("prix_insee.R", track = "data.csv", metadata=TRUE)$ok == "exec",  "exec ?")
-#   })
-#
-# test_that(
-#   "tracking", {
-#     expect(sourcoise("prix_insee.R", track = "data.csv", metadata=TRUE)$ok == "cache",  "cache ?")
-#   })
+write.csv("data", file = fs::path_join(c(dir, "data.csv")))
+zz <- sourcoise("prix_insee.R", track = "data.csv", metadata=TRUE)
+
+test_that(
+  "tracking", {
+    expect(sourcoise("prix_insee.R", track = "data.csv", metadata=TRUE)$ok == "cache", "cache ?")
+  })
+
+write.csv("data modified", file = fs::path_join(c(dir, "data.csv")))
+
+test_that(
+  "tracking", {
+    expect(sourcoise("prix_insee.R", track = "data.csv", metadata=TRUE)$ok == "exec",  "exec ?")
+  })
+
+test_that(
+  "tracking", {
+    expect(sourcoise("prix_insee.R", track = "data.csv", metadata=TRUE)$ok == "cache",  "cache ?")
+  })
 
 ## sourcoise_status ----------------
 
@@ -139,7 +139,7 @@ test_that("sourcoise_status", {
 })
 
 sourcoise_reset()
-if(!is.null(cache_dir))1
+if(!is.null(cache_dir))bencj::
   test_that("sourcoise_reset", {
     expect(!fs::dir_exists(cache_dir),
            "cache dir was not removed")

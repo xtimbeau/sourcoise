@@ -50,8 +50,9 @@ sourcoise_meta <- function(path, args=NULL) {
   metas <- fast_metadata(bn = path |> fs::path_ext_remove(), argsid = argsid)
   if(nrow(metas)==0)
     return(list(ok = "file not found"))
+
   metas <- metas |>
-    dplyr::group_by(uid) |>
+    dplyr::group_by(uid, argsid) |>
     dplyr::filter(index == max(index))
   mm <- fast_read_mdata(metas$json_file)
   if(nrow(mm)==0)
@@ -61,12 +62,19 @@ sourcoise_meta <- function(path, args=NULL) {
     dplyr::slice(1) |>
     as.list()
 
+  mm$track <- mm$track |> purrr::list_c()
+  mm$args <- mm$args |> purrr::list_c()
+  mm$qmd_file <- mm$qmd_file |> purrr::list_c()
+
   cache_rep <- fs::path_dir(mm$name)
   root <- cache_rep |> fs::path_dir()
   src <- fs::path_join(c(root, mm$src))
   src_hash <- hash_file(src)
-  track_hash <- hash_tracks(mm$track |> unlist(), root)
+  if(length(mm$track)>0)
+    track_hash <- hash_tracks(list(mm$track), root) else
+      track_hash <- 0
   data_exists <- fs::file_exists(fs::path_join(c(cache_rep, mm$data_file)))
+
   valid <- src_hash == mm$src_hash &
     track_hash == mm$track_hash &
     data_exists
