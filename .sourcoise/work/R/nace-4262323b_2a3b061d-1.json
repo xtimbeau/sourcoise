@@ -1,1 +1,20 @@
-{"error":{},"timing":[1.2359],"date":["2025-12-15 14:15:38"],"size":[10536],"args":[],"lapse":["never"],"src":["work/R/nace.r"],"src_hash":["8482d09a91311de8bb03e0009052181185bb4e05"],"arg_hash":["4262323b"],"track_hash":[0],"track":[0],"wd":["file"],"qmd_file":{},"src_in":["project"],"data_hash":["4c90a091a9293362073fc80200c6abc2"],"uid":["2a3b061d"],"cc":[1],"json_file":[".sourcoise/work/R/nace-4262323b_2a3b061d-1.json"],"priority":[10],"file_size":[1199],"data_date":["2025-12-15 14:15:38.447999"],"data_file":["nace-4262323b_4c90a091a9293362073fc80200c6abc2.qs2"],"log_file":[".sourcoise_logs/2a3b061d_2025-12-15.log"]}
+{
+  "timing": [3.3285],
+  "date": ["2025-12-18 17:38:44.90387"],
+  "size": [10536],
+  "args": [],
+  "lapse": ["never"],
+  "src": ["work/R/nace.r"],
+  "src_hash": ["220ce34e4d07fece22940e2ed440730cfe2bc01d"],
+  "arg_hash": ["4262323b"],
+  "track_hash": [0],
+  "track": [],
+  "wd": ["file"],
+  "qmd_file": {},
+  "src_in": ["project"],
+  "data_hash": ["4c90a091a9293362073fc80200c6abc2"],
+  "priority": [10],
+  "file_size": [1199],
+  "data_date": ["2025-12-18 17:38:44.918356"],
+  "data_file": ["nace-4262323b_4c90a091a9293362073fc80200c6abc2.qs2"]
+}

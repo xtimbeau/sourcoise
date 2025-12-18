@@ -1,7 +1,8 @@
 # calcule les différents chemins et trouve les fichiers/répertoire dont on a besoin
-setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
-                          lapse, nocache, limit_mb, grow_cache, log,
-                          metadata, inform=FALSE, quiet=TRUE) {
+setup_context <- function(path, root, src_in="project", exec_wd=NULL, wd="file",
+                          track = NULL, args = NULL,
+                          lapse="never", nocache=FALSE, limit_mb=50, grow_cache=Inf, log="OFF",
+                          metadata=FALSE, inform=FALSE, quiet=TRUE, hash = TRUE) {
   ctxt <- list()
   if(is.null(track))
     ctxt$track <- list()
@@ -42,16 +43,20 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
     if(n_src>1) {
       l_src <- purrr::map(ctxt[["src"]], ~stringr::str_count(.x |> fs::path_rel(getwd()), "/"))
       ctxt[["src"]] <- ctxt[["src"]][[which.min(l_src)]]
-      cli::cli_alert_warning("{n_src} sources detected, choosing {ctxt[['src']]}, the closest to wd.")
+      if(!quiet)
+        cli::cli_alert_warning(
+          "{n_src} sources detected, choosing {ctxt[['src']]}, the closest to wd.")
     }
   }
   logger::log_info("sourcoising {ctxt$src}")
 
-  ctxt$basename <- fs::path_file(ctxt$name) |>
-    stringr::str_c(ctxt$argid, sep = "-")
   ctxt$relname <- fs::path_rel(ctxt$src, ctxt$root)
+  ctxt$basename <- ctxt$relname |>
+    fs::path_ext_remove() |>
+    stringr::str_c(ctxt$argid, sep = "-")
   ctxt$reldirname <- fs::path_dir(ctxt$relname)
-
+  ctxt$cachename <- ctxt$relname |> fs::path_ext_remove()
+  ctxt$cachebasename <- ctxt$basename
   if(src_in == "project") {
     ctxt$root_cache_rep <- fs::path_join(c(ctxt$root, ".sourcoise")) |>
       fs::path_norm()
@@ -59,18 +64,27 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
       fs::path_norm()
     # vérifier que .sourcoise n'est pas dans le répertoire du source,
     # dans ce cas, c'est celui là qu'on prend
-    sourcoise_file_rep <- fs::path_join(c(ctxt$root, ctxt$reldirname, ".sourcoise")) |> fs::path_norm()
+    sourcoise_file_rep <- fs::path_join(c(ctxt$root, ctxt$reldirname, ".sourcoise")) |>
+      fs::path_norm()
     if(sourcoise_file_rep != ctxt$full_cache_rep && fs::dir_exists(sourcoise_file_rep)) {
       istheresourcoise <- length(
         fs::dir_ls(sourcoise_file_rep,
                    pattern = fs::path_file(ctxt$src) |> fs::path_ext_remove()))>0
       if(istheresourcoise) {
         file_path <- fs::path_dir(ctxt$src)
-        ctxt$full_cache_rep <- fs::path_join(c(file_path, ".sourcoise"))
+        ctxt$root_cache_rep <- fs::path_join(c(file_path, ".sourcoise")) |>
+          fs::path_norm()
+        ctxt$full_cache_rep <- ctxt$root_cache_rep
         wd <- "file"
+        ctxt$cachename <- fs::path_file(ctxt$relname) |> fs::path_ext_remove()
+        ctxt$cachebasename <- ctxt$basename |>
+          fs::path_file()
         logger::log_warn(
           "scr_in is 'project' but cache files found in file folder, switching to src_in='file'.")
         logger::log_warn("If it is not what you want, please delete {ctxt$full_cache_rep}")
+        if(!quiet)
+          cli::cli_alert_warning(
+            "scr_in is 'project' but cache files found in file folder, switching to src_in='file'.")
       }
     }
   }
@@ -80,6 +94,9 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
       fs::path_norm()
     ctxt$full_cache_rep <- ctxt$root_cache_rep
     wd <- "file"
+    ctxt$cachename <- fs::path_file(ctxt$relname) |> fs::path_ext_remove()
+    ctxt$cachebasename <- ctxt$basename |>
+      fs::path_file()
   }
 
   ctxt$qmd_path <- ctxt$paths$doc_path
@@ -114,11 +131,11 @@ setup_context <- function(path, root, src_in, exec_wd, wd, track, args,
     }
   }
   logger::log_debug("wd: {ctxt[['exec_wd']]}")
-
-  ctxt <- ctxt |>
-    hash_context()
-  ctxt$priority <- ctxt$meta1$priority %||% 10
-
+  if(hash) {
+    ctxt <- ctxt |>
+      hash_context()
+    ctxt$priority <- ctxt$meta1$priority %||% 10
+  }
   return(ctxt)
 }
 
@@ -129,7 +146,7 @@ hash_context <- function(ctxt) {
   ctxt$src_hash <- hash_file(ctxt$src)
   ctxt$arg_hash <- ctxt$argid
 
-  mm <- get_mdatas(ctxt$basename, ctxt$full_cache_rep)
+  mm <- get_mdatas(ctxt$cachebasename, ctxt$full_cache_rep)
   ctxt$meta1 <- mm$meta1
   ctxt$metas <- mm$metas
 
@@ -166,7 +183,7 @@ get_all_metadata <- function(ctxt) {
   if(length(ctxt$metas) == 0 || length(ctxt$metas$json_file)==0) {
     return(tibble::tibble()) }
 
-  fast_read_mdata(ctxt$metas$json_file)
+  fast_read_mdata(ctxt$metas)
 }
 
 ctxt_json_history <- function(ctxt) {

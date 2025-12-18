@@ -26,25 +26,21 @@ cache_data <- function(data, ctxt) {
   if(!fs::dir_exists(ctxt$full_cache_rep))
     fs::dir_create(ctxt$full_cache_rep, recurse=TRUE)
   data$data_hash <- new_data_hash
-
   if(!ctxt$nocache) {
     les_metas <- data
-    les_metas$data <- NULL
-    les_metas$file <- NULL
-    les_metas$ok <- NULL
     les_metas$priority <- ctxt$priority
-
     if(!exist) {
       fnd <- fs::path_join(
-        c(ctxt$full_cache_rep,
-          stringr::str_c(ctxt$basename, "_", stringr::str_c(data$data_hash, ".qs2"))))
+        c(ctxt$root_cache_rep,
+          stringr::str_c(ctxt$cachebasename, "_", stringr::str_c(data$data_hash, ".qs2"))))
       qs2::qs_save( data$data, file = fnd, nthreads = getOption("sourcoise.nthreads") )
       f_i <- fs::file_info(fnd)
       les_metas$file_size <- f_i$size
       les_metas$data_date <- f_i$modification_time |> as.character()
       if(f_i$size > ctxt$limit_mb*1024*1024) {
         fs::file_delete(fnd)
-        logger::log_warn("cached data not saved because ({scales::label_bytes()(file_size)} is over the {ctxt$limit_md} Mb limit.")
+        logger::log_warn(
+          "cached data not saved ({scales::label_bytes()(file_size)} -- over the {ctxt$limit_md} Mb limit.")
       }
     } else {
       fnd <- exists_data_file
@@ -67,7 +63,7 @@ prune_cache <- function(ctxt) {
   if(is.infinite(ctxt$grow_cache))
     return(NULL)
 
-  md <- get_mdatas(ctxt$basename, ctxt$full_cache_rep)$meta1
+  md <- get_mdatas(ctxt$cachebasename, ctxt$full_cache_rep)$meta1
 
   pairs <- purrr::imap_dfr(
     md,
@@ -101,28 +97,27 @@ read_meta1 <- function(ctxt) {
       chged <- !setequal(metas[[.x]], ctxt[[.x]])
       metas[[.x]] <<- metas[[.x]]
       chged})
-
   fnd <- fs::path_join(c(ctxt$full_cache_rep, ctxt$meta1$data_file))
-  if(!data_ok(fnd, ctxt$basename))
+  if(!data_ok(fnd, ctxt$cachebasename))
     return(NULL)
   data <- metas
   data$ok <- "cache"
   data$error <- NULL
   if(fs::file_exists(fnd)) {
+    data$data_date <- lubridate::as_datetime(data$data_date)
     if(getOption("sourcoise.memoize"))
       data$data <- read_data_from_cache(fnd)
     else
       data$data <- qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
   }
   if(any(new_meta)) {
-    write_meta(metas, ctxt)
+    data$json_file <- write_meta(metas, ctxt)
   }
   return(data)
 }
 
 write_meta <- function(metas, ctxt) {
   towrite <- list(
-    error = metas$error,
     timing = metas$timing |> as.numeric(),
     date = metas$date |> as.character(),
     size = metas$size |> as.numeric(),
@@ -143,19 +138,23 @@ write_meta <- function(metas, ctxt) {
     data_file = metas$data_file)
 
   new_cc <- 1
-  if(length(ctxt$metas)>0) {
-    new_cc <- ctxt$metas |>
-      dplyr::filter(uid == ctxt$uid) |>
+  existing <- fast_metadata(root=ctxt$root,
+                            uid = ctxt$uid,
+                            bn = ctxt$cachename,
+                            argid = ctxt$argid,
+                            cache_reps = ctxt$root_cache_rep)
+  if(nrow(existing)>0) {
+    new_cc <- existing |>
       dplyr::pull(index)
     if(length(new_cc) > 0)
-      new_cc <- max(new_cc)+1
+      new_cc <- max(new_cc, na.rm=TRUE)+1
   }
-
   new_json_fn <- fs::path_join(
-    c(ctxt$full_cache_rep,
-      glue::glue("{ctxt$basename}_{ctxt$uid}-{new_cc}"))) |>
-      fs::path_ext_set("json")
+    c(ctxt$root_cache_rep,
+      glue::glue("{ctxt$cachename}-{ctxt$argid}_{ctxt$uid}-{new_cc}"))) |>
+    fs::path_ext_set("json")
   jsonlite::write_json(towrite, new_json_fn, pretty = TRUE)
+  return(new_json_fn |> fs::path_rel(ctxt$root))
 }
 
 read_metas <- function(ctxt) {
@@ -205,6 +204,6 @@ data_returned <- function(data, ctxt) {
     data_file = data$data_file,
     file_size = data$file_size,
     data_date = data$data_date,
-    json_file = ctxt$json_file
+    json_file = data$json_file
   )
 }

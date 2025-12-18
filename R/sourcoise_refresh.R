@@ -60,7 +60,6 @@ sourcoise_refresh <- function(
     priotirize = TRUE,
     log = "INFO",
     .progress = TRUE) {
-
   refresh_start <- Sys.time()
 
   root_root <- try_find_root(root, src_in = "project")

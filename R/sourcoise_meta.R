@@ -46,17 +46,23 @@
 sourcoise_meta <- function(path, args=NULL) {
   if(is.null(args))
     args <- list()
-  argsid <- digest::digest(args, algo = "crc32")
-  metas <- fast_metadata(bn = path |> fs::path_ext_remove(), argsid = argsid)
+  argid <- digest::digest(args, algo = "crc32")
+  metas <- fast_metadata(bn = path |>
+                           fs::path_file() |>
+                           fs::path_ext_remove(),
+                         argid = argid)
   if(nrow(metas)==0)
     return(list(ok = "file not found"))
 
   metas <- metas |>
-    dplyr::group_by(uid, argsid) |>
-    dplyr::filter(index == max(index))
-  mm <- fast_read_mdata(metas$json_file)
+    dplyr::group_by(uid, argid, basename) |>
+    dplyr::filter(index == max(index)) |>
+    dplyr::ungroup()
+
+  mm <- fast_read_mdata(metas)
   if(nrow(mm)==0)
     return(list(ok = "metadata not found"))
+
   mm <- mm |>
     dplyr::filter(date == max(date)) |>
     dplyr::slice(1) |>
@@ -65,16 +71,13 @@ sourcoise_meta <- function(path, args=NULL) {
   mm$track <- mm$track |> purrr::list_c()
   mm$args <- mm$args |> purrr::list_c()
   mm$qmd_file <- mm$qmd_file |> purrr::list_c()
-
-  cache_rep <- fs::path_dir(mm$name)
-  root <- cache_rep |> fs::path_dir()
+  root <- unique(metas$root)
   src <- fs::path_join(c(root, mm$src))
   src_hash <- hash_file(src)
   if(length(mm$track)>0)
     track_hash <- hash_tracks(list(mm$track), root) else
       track_hash <- 0
-  data_exists <- fs::file_exists(fs::path_join(c(cache_rep, mm$data_file)))
-
+  data_exists <- fs::file_exists(fs::path_join(c(mm$cache_rep, mm$data_file)))
   valid <- src_hash == mm$src_hash &
     track_hash == mm$track_hash &
     data_exists

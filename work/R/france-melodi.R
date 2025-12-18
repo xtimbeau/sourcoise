@@ -45,11 +45,11 @@ nace <- source_data("nace.r")$nace
 a20 <- nace$a20
 pays <- source_data("nace.r")$pays1
 
-vahim <- source_data("vaq.r")$naa |>
-  select(geo, time, van, champ) |>
-  filter(champ %in% c("mdhim", "mdhi"), geo %in% pays) |>
-  pivot_wider(names_from = champ, values_from = van) |>
-  mutate(r = (mdhim-mdhi)/mdhi)
+# vahim <- source_data("vaq.r")$naa |>
+#   select(geo, time, van, champ) |>
+#   filter(champ %in% c("mdhim", "mdhi"), geo %in% pays) |>
+#   pivot_wider(names_from = champ, values_from = van) |>
+#   mutate(r = (mdhim-mdhi)/mdhi)
 
 men <- "DD_CNA_CONSO_MENAGES_PRODUITS" |>
   melodi::get_all_data() |>

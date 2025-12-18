@@ -38,7 +38,7 @@ sourcoise_clear <- function(
   }
   if(what2keep=="recent") {
     ww <- get_metadata(root, filter="recent") |>
-      dplyr::group_by(root, basename, argsid, uid) |>
+      dplyr::group_by(root, basename, argid, uid) |>
       dplyr::filter(index==max(index)) |>
       dplyr::ungroup()
   }
@@ -103,8 +103,11 @@ sourcoise_reset <- function(
 
   root <- try_find_root(root)
 
-  caches_reps <- fs::dir_ls(path = root, regex = "\\.sourcoise", type = "directory", all = TRUE, recurse = TRUE)
+  caches_reps <- fs::dir_ls(path = root,
+                            regex = "\\.sourcoise",
+                            type = "directory",
+                            all = TRUE, recurse = TRUE)
 
-  purrr::walk(caches_reps, ~fs::dir_delete(.x))
+  purrr::walk(caches_reps, ~if(fs::dir_exists(.x)) fs::dir_delete(.x))
 
 }

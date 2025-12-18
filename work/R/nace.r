@@ -1,5 +1,5 @@
 library(tidyverse)
-
+library(eurostat)
 nace  <- tribble( ~a20, ~a10, ~marchand, ~hors_imm, ~hifi, ~hfi,  ~hi,
                  "A", "A",   TRUE,       TRUE,      TRUE,  TRUE,  TRUE,
                  "B", "B-E", TRUE,       TRUE,      TRUE,  TRUE,  TRUE,

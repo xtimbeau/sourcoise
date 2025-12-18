@@ -24,7 +24,9 @@ try_find_src <- function(root, name) {
 try_find_root <- function(root=NULL, src_in = getOption("sourcoise.src_in"), quiet = TRUE) {
   if(!is.null(root)) {
     if(fs::dir_exists(root))
-      return(root |> fs::path_abs())
+      return(root |>
+               fs::path_expand() |>
+               fs::path_abs())
   }
   if(!is.null(getOption("sourcoise.root"))) {
     if(fs::dir_exists(getOption("sourcoise.root")))
@@ -36,19 +38,25 @@ try_find_root <- function(root=NULL, src_in = getOption("sourcoise.src_in"), qui
       root <- safe_find_root(
         rprojroot::is_quarto_project | rprojroot::is_r_package | rprojroot::is_rstudio_project)
       if(is.null(root$error))
-        return(root$result |> fs::path_abs())
+        return(root$result |>
+                 fs::path_expand() |>
+                 fs::path_abs())
       else {
         if(!quiet)
           cli::cli_alert_warning("{root$error}")
-        return(getwd() |> fs::path_abs())
+        return(getwd() |>
+                 fs::path_expand() |>
+                 fs::path_abs())
       }
     }
-    return(Sys.getenv("QUARTO_PROJECT_DIR") |> path_abs())
+    return(Sys.getenv("QUARTO_PROJECT_DIR") |> fs::path_expand() |> path_abs())
   }
 
   if(src_in == "file") {
     paths <- find_project_root(NULL, NULL)
-    return( fs::path_join(c(paths$project_path, paths$doc_path)) |> path_abs() )
+    return( fs::path_join(c(paths$project_path, paths$doc_path)) |>
+              fs::path_expand() |>
+              path_abs() )
   }
   getwd()
 }
@@ -74,19 +82,26 @@ find_project_root <- function(root=NULL, project_path = NULL, doc_path = NULL) {
       else
         in_quarto <- TRUE
       if(!is.null(project_path$error))
-        project_path$result <- getwd()
-      project_path <- project_path$result
+        project_path$result <- getwd() |> fs::path_expand()
+      project_path <- project_path$result |> fs::path_expand()
     }
   }
   project_path <- project_path |> fs::path_norm() |> path_abs()
-  doc_path <- doc_path |> fs::path_abs() |> fs::path_rel(project_path)
+  doc_path <- doc_path |>
+    fs::path_expand() |>
+    fs::path_abs() |>
+    fs::path_rel(project_path)
   the_root <- NULL
   if(!is.null(root))
     if(fs::dir_exists(root))
-      the_root <- root |> fs::path_abs()
+      the_root <- root |>
+    fs::path_expand() |>
+    fs::path_abs()
   if(!is.null(getOption("sourcoise.root"))&is.null(root))
     if(fs::dir_exists(getOption("sourcoise.root")))
-      the_root <- getOption("sourcoise.root") |> path_abs()
+      the_root <- getOption("sourcoise.root") |>
+    fs::path_expand() |>
+    fs::path_abs()
   if(is.null(the_root))
     the_root <- project_path
 
