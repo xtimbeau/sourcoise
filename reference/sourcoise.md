@@ -125,7 +125,7 @@ R object and are serialized and saved using `qs2`. Subsequent calls,
 supposing none of cache invalidation are true, are then very quick. No
 logging is used, data is fecteched from the cache and that's it. For
 standard size data, used in a table or a graph (\< 1Mb roughly), return
-timing is under 5ms.
+timing is under 10ms on a modern computer.
 
 `lapse` parameter is used for invalidation trigger 4. `lapse = "1 day"`
 ou `lapse="day"` for instance will trigger once a day the execution.
@@ -209,7 +209,7 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> /tmp/Rtmpipco5A
+#> /tmp/RtmpMb0hmZ
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
   dir,
@@ -221,7 +221,7 @@ data <- sourcoise("some_data.R")
 # Performance and mem test
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> /tmp/Rtmpipco5A
+#> /tmp/RtmpMb0hmZ
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
    dir,
@@ -230,10 +230,11 @@ bench::mark(
  forced = data <- sourcoise("some_data.R", force_exec = TRUE),
  cached = data <- sourcoise("some_data.R"),
  max_iterations = 1)
+#> Warning: Some expressions had a GC in every iteration; so filtering is disabled.
 #> # A tibble: 2 × 13
 #>   expression      min median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time
 #>   <bch:expr> <bch:tm> <bch:>     <dbl> <bch:byt>    <dbl> <int> <dbl>   <bch:tm>
-#> 1 forced       57.1ms 57.1ms      17.5    1.55MB        0     1     0     57.1ms
-#> 2 cached       16.3ms 16.3ms      61.5  198.62KB        0     1     0     16.3ms
+#> 1 forced       85.1ms 85.1ms      11.8    1.66MB     11.8     1     1     85.1ms
+#> 2 cached       20.8ms 20.8ms      48.0  238.32KB      0       1     0     20.8ms
 #> # ℹ 4 more variables: result <list>, memory <list>, time <list>, gc <list>
 ```
