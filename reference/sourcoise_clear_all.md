@@ -34,7 +34,7 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> /tmp/RtmpEOYeOR
+#> /tmp/RtmpCF8XBm
 fs::file_copy(
     fs::path_package("sourcoise", "some_data.R"),
     dir,
@@ -43,11 +43,11 @@ fs::file_copy(
 data <- sourcoise("some_data.R", force_exec = TRUE)
 # we then clear all caches
 sourcoise_clear_all()
-#> [1] "/tmp/RtmpEOYeOR/.sourcoise/some_data-4262323b_b6785f4a-1.json"
-#> [2] "/tmp/RtmpEOYeOR/.sourcoise/some_data-4262323b_b6785f4a-2.json"
-#> [3] "/tmp/RtmpEOYeOR/.sourcoise/some_data-4262323b_b6785f4a-3.json"
-#> [4] "/tmp/RtmpEOYeOR/.sourcoise/some_data-4262323b_b6785f4a-4.json"
-#> [5] "/tmp/RtmpEOYeOR/.sourcoise/some_data-4262323b_b6785f4a-5.json"
+#> [1] "/tmp/RtmpCF8XBm/.sourcoise/some_data-4262323b_c1d06bf3-1.json"
+#> [2] "/tmp/RtmpCF8XBm/.sourcoise/some_data-4262323b_c1d06bf3-2.json"
+#> [3] "/tmp/RtmpCF8XBm/.sourcoise/some_data-4262323b_c1d06bf3-3.json"
+#> [4] "/tmp/RtmpCF8XBm/.sourcoise/some_data-4262323b_c1d06bf3-4.json"
+#> [5] "/tmp/RtmpCF8XBm/.sourcoise/some_data-4262323b_c1d06bf3-5.json"
 sourcoise_status()
 #> ℹ No cache data
 #> # A tibble: 0 × 0

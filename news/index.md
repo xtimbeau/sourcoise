@@ -3,6 +3,7 @@
 ## sourcoise 1.0.0.9004
 
 - refactor context mechanic, normally safer, plus more test
+- tracking is smarter (accumulation)
 - errors messages are safer and better and logged systematically when
   refreshing
 - circulation in execution cases is safer
