@@ -3,9 +3,9 @@ sourcoise_clear_all()
 
 library(tidyverse)
 
-purrr::walk(1:10,  ~sourcoise("work/noerror3.r", force=TRUE))
+purrr::walk(1:1000,  ~sourcoise("work/noerror3.r", force=TRUE))
 
-sourcoise("work/noerror.r") |> bench::mark()
+sourcoise("work/noerror3.r") |> bench::mark()
 sourcoise("work/commun.r") |> bench::mark()
 sourcoise("work/error.r")
 
