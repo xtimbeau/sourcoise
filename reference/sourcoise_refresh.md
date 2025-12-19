@@ -122,7 +122,7 @@ Other sourcoise:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> /tmp/RtmpCF8XBm
+#> /tmp/Rtmphd9Uwt
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
    dir,
@@ -132,6 +132,6 @@ data <- sourcoise("some_data.R", force_exec = TRUE)
 # we then refresh all caches
 sourcoise_refresh()
 #> ℹ Refreshing 1 source files
-#> ✔ ../../../../../../../tmp/RtmpCF8XBm/some_data.R executed in 0 s., same data (2 kB)
+#> ✔ ../../../../../../../tmp/Rtmphd9Uwt/some_data.R executed in 0 s., same data (2 kB)
 #> ℹ Total refresh in 0 seconds for 2 kB of data
 ```

@@ -2,6 +2,7 @@
 
 ## sourcoise 1.0.0.9004
 
+- Uppercase is now correctly treated on UNIX systems
 - refactor context mechanic, normally safer, plus more test
 - tracking is smarter (accumulation)
 - errors messages are safer and better and logged systematically when

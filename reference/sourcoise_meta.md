@@ -87,7 +87,7 @@ A named list containing cache metadata with the following elements:
 ``` r
 dir <- tempdir()
 set_sourcoise_root(dir)
-#> /tmp/RtmpCF8XBm
+#> /tmp/Rtmphd9Uwt
 fs::file_copy(
    fs::path_package("sourcoise", "some_data.R"),
   dir,
