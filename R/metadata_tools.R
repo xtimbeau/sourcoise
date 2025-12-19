@@ -379,6 +379,8 @@ get_metadata <- function(root=NULL, uid = NULL,
         stringr::str_extract(qm$json_file, pattern = pat, group=2)) |>
         fs::path_rel(!!root) |>
         fs::path_ext_set(".r")) |>
+    dplyr::mutate(
+      src = ifelse(fs::file_exists(src), src, src |> fs::path_ext_set(".R")) ) |>
     dplyr::relocate(name)
 
   if(nrow(metas) == 0) {
