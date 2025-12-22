@@ -31,7 +31,10 @@
 #'
 
 set_sourcoise_root <- function(root=NULL, quiet = TRUE) {
-  root <- try_find_root(root, src_in = "project", quiet = quiet)
+  root <- try_find_root(root, src_in = "project", quiet = quiet) |>
+    fs::path_expand() |>
+    fs::path_abs() |>
+    fs::path_norm()
   options(sourcoise.root = root)
-  root |> fs::path_norm()
+
 }

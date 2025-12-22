@@ -51,7 +51,7 @@ cache_data <- function(data, ctxt) {
     if(!is.null(ctxt$log_file))
       les_metas$log_file <- ctxt$log_file |> fs::path_rel(ctxt$root)
     data$data_date <- les_metas$data_date
-    write_meta(les_metas, ctxt)
+    data$json_file <- write_meta(les_metas, ctxt)
     prune_cache(ctxt)
   }
   return(data)
@@ -175,7 +175,7 @@ write_meta <- function(metas, ctxt) {
       glue::glue("{ctxt$cachename}-{ctxt$argid}_{ctxt$uid}-{new_cc}"))) |>
     fs::path_ext_set("json")
   jsonlite::write_json(towrite, new_json_fn, pretty = TRUE)
-  return(new_json_fn |> fs::path_rel(ctxt$root))
+  return(new_json_fn)
 }
 
 read_metas <- function(ctxt) {

@@ -52,7 +52,7 @@ test_that("prevent works", {
 })
 
 ## timing test
-
+setwd(dir)
 if(rlang::is_installed("bench")&FALSE) {
   gc()
   timing_force <- bench::mark(sourcoise("slow.R", force_exec = TRUE), max_iterations = 5 )
@@ -60,7 +60,7 @@ if(rlang::is_installed("bench")&FALSE) {
   timing <- bench::mark(sourcoise("slow.R"), max_iterations = 5)
 
   test_that("Timings", {
-    expect(timing_force$median>=timing$median,
+    expect(timing_force$median>=5*timing$median,
            "cache is too slow")
   })
 }
@@ -144,3 +144,4 @@ if(!is.null(cache_dir))
     expect(!fs::dir_exists(cache_dir),
            "cache dir was not removed")
   })
+

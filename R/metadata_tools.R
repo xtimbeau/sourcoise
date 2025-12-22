@@ -144,8 +144,7 @@ get_mdatas <- function(name, data_rep, root=NULL) {
   # fast_read_mdata(qm$json_file)
   meta1 <- RcppSimdJson::fload(qm$json_file)
   if(length(qm$json_file)==1) {
-    meta1$json_file <- qm$json_file |>
-      fs::path_rel(root)
+    meta1$json_file <- qm$json_file
     return(
       list(meta1 = meta1,
            metas = qm) )}
@@ -320,7 +319,6 @@ fast_metadata <- function(root=NULL, uid = NULL, bn = NULL,
                           argid = argid, cache_reps = cache_reps)
   if(length(files$json)==0)
     return(list())
-
   pat <- ".+/\\.sourcoise/(.+)-([a-f0-9]{8})_([a-f0-9]{8})-([0-9]+)\\.json"
   json_file <- files$jsons |> purrr::list_c() |> unname()
   list(
