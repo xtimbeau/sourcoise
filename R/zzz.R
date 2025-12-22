@@ -23,8 +23,9 @@
   toset <- !(names(op.sourcoise) %in% names(op))
   if (any(toset)) options(op.sourcoise[toset])
 
-  if(rlang::is_installed("memoise"))
-    read_data_from_cache <<- memoise::memoise(read_data_from_cache)
+  if(rlang::is_installed("memoise")) {
+    read_meta1_valid <<- memoise::memoise(read_meta1_valid)
+  }
 }
 
 utils::globalVariables(c("json_file", "index", "short_json_file", "uid",  "src", "cache_rep", "upcache_rep", "data_file",
@@ -35,3 +36,5 @@ utils::globalVariables(c("json_file", "index", "short_json_file", "uid",  "src",
                          "data_hash", "uid", "argid", "src",  "json_file", "name"))
 
 utils::globalVariables(c(".data"))
+
+.datatable.aware <- TRUE

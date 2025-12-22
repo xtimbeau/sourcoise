@@ -17,14 +17,14 @@ cache_data <- function(data, ctxt) {
         fs::path_file()
 
       exists_data_file <- fs::path_join(c(ctxt$full_cache_rep, exists_data_file))
-      exists <- fs::file_exists(exists_data_file)
-      finfo <- fs::file_info(exists_data_file)
+      exists <- file.exists(exists_data_file)
+      finfo <- file.info(exists_data_file)
       exists_file_size <- finfo$size
       exists_data_date <- meta |> dplyr::pull(.data$data_date) |> as.character()
     }
   }
-  if(!fs::dir_exists(ctxt$full_cache_rep))
-    fs::dir_create(ctxt$full_cache_rep, recurse=TRUE)
+  if(!dir.exists(ctxt$full_cache_rep))
+    dir.create(ctxt$full_cache_rep, recursive=TRUE)
   data$data_hash <- new_data_hash
   if(!ctxt$nocache) {
     les_metas <- data
@@ -34,9 +34,9 @@ cache_data <- function(data, ctxt) {
         c(ctxt$root_cache_rep,
           stringr::str_c(ctxt$cachebasename, "_", stringr::str_c(data$data_hash, ".qs2"))))
       qs2::qs_save( data$data, file = fnd, nthreads = getOption("sourcoise.nthreads") )
-      f_i <- fs::file_info(fnd)
+      f_i <- file.info(fnd)
       les_metas$file_size <- f_i$size
-      les_metas$data_date <- f_i$modification_time |> as.character()
+      les_metas$data_date <- f_i$mtime |> as.character()
       if(f_i$size > ctxt$limit_mb*1024*1024) {
         fs::file_delete(fnd)
         logger::log_warn(
@@ -63,7 +63,7 @@ prune_cache <- function(ctxt) {
   if(is.infinite(ctxt$grow_cache))
     return(NULL)
 
-  md <- get_mdatas(ctxt$cachebasename, ctxt$full_cache_rep)$meta1
+  md <- get_mdatas(ctxt$cachebasename, ctxt$full_cache_rep, ctxt$root)$meta1
 
   pairs <- purrr::imap_dfr(
     md,
@@ -103,12 +103,33 @@ read_meta1 <- function(ctxt) {
   data <- metas
   data$ok <- "cache"
   data$error <- NULL
-  if(fs::file_exists(fnd)) {
+  if(file.exists(fnd)) {
     data$data_date <- lubridate::as_datetime(data$data_date)
-    if(getOption("sourcoise.memoize"))
-      data$data <- read_data_from_cache(fnd)
-    else
-      data$data <- qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
+    data$data <- qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
+  }
+  if(any(new_meta)) {
+    data$json_file <- write_meta(metas, ctxt)
+  }
+  return(data)
+}
+
+read_meta1_valid <- function(ctxt) {
+  metas <- ctxt$meta1
+  new_meta <- purrr::map_lgl(
+    rlang::set_names(c("track", "track_hash", "qmd_file", "wd", "src_in")),
+    ~{
+      chged <- !setequal(metas[[.x]], ctxt[[.x]])
+      metas[[.x]] <<- metas[[.x]]
+      chged})
+  fnd <- fs::path_join(c(ctxt$full_cache_rep, ctxt$meta1$data_file))
+  if(!data_ok(fnd, ctxt$cachebasename))
+    return(NULL)
+  data <- metas
+  data$ok <- "cache"
+  data$error <- NULL
+  if(file.exists(fnd)) {
+    data$data_date <- lubridate::as_datetime(data$data_date)
+    data$data <- qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
   }
   if(any(new_meta)) {
     data$json_file <- write_meta(metas, ctxt)
@@ -117,19 +138,20 @@ read_meta1 <- function(ctxt) {
 }
 
 write_meta <- function(metas, ctxt) {
+
   towrite <- list(
     timing = metas$timing |> as.numeric(),
     date = metas$date |> as.character(),
     size = metas$size |> as.numeric(),
-    args = metas$args |> as.list(),
+    args = metas[["args"]] %||% list(),
     lapse = metas$lapse,
     src = metas$src,
     src_hash = metas$src_hash,
     arg_hash = metas$arg_hash,
     track_hash = metas$track_hash,
-    track = metas$track |> unlist(),
+    track = metas[["track"]] %||% list(),
     wd = metas$wd,
-    qmd_file = metas$qmd_file |> unlist(),
+    qmd_file = metas[["qmd_file"]] %||% list(),
     src_in = metas$src_in,
     data_hash = metas$data_hash,
     priority = metas$priority,
@@ -143,9 +165,8 @@ write_meta <- function(metas, ctxt) {
                             bn = ctxt$cachename,
                             argid = ctxt$argid,
                             cache_reps = ctxt$root_cache_rep)
-  if(nrow(existing)>0) {
-    new_cc <- existing |>
-      dplyr::pull(index)
+  if(length(existing$index)>0) {
+    new_cc <- existing$index
     if(length(new_cc) > 0)
       new_cc <- max(new_cc, na.rm=TRUE)+1
   }
@@ -170,20 +191,11 @@ read_metas <- function(ctxt) {
   data$data <- NULL
   fnd <- fs::path_join(c(fs::path_dir(all_metas$name), all_metas$data_file))
 
-  if(fs::file_exists(fnd)) {
-    if(getOption("sourcoise.memoize"))
-      data$data <- read_data_from_cache(fnd)
-    else
-      data$data <- qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
+  if(file.exists(fnd)) {
+    data$data <- qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
   }
 
   return(data)
-}
-
-read_data_from_cache <- function(fnd) {
-  if(stringr::str_detect(fnd, "[0-9a-f]{32}\\.qs2"))
-    return(qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads")))
-  return(NULL)
 }
 
 data_returned <- function(data, ctxt) {

@@ -141,6 +141,7 @@ sourcoise_ <- function(
   refreshing <- getOption("sourcoise.refreshing") %||% FALSE
   if(refreshing)
     log <- "INFO"
+
   ctxt <- setup_context(
     path = path,
     root = root,
@@ -161,9 +162,8 @@ sourcoise_ <- function(
   if(is.null(ctxt)) {
     logger::log_fatal("file {path} not found")
     cli::cli_alert("file {path} not found")
-    return(list(error = glue::glue("file {path} not found"),
-                ok = FALSE,
-                log_file = ctxt$log_file))
+    rlang::abort(
+      message = glue::glue("source file {path} not found"))
   }
   priority <- ctxt$priority
   force <- nuorf(force_exec)
@@ -185,7 +185,7 @@ sourcoise_ <- function(
 
   ctxt <- valid_meta1(ctxt)
   if(ctxt$meta_valid$valid) {
-    return_data <- read_meta1(ctxt)
+    return_data <- read_meta1_valid(ctxt)
     logger::log_success("{ctxt$relname} cache valid ({scales::label_bytes()(return_data$size)})")
     if(length(our_data)!=0 && our_data$ok == FALSE ) {
       our_data$error <- our_data$error %||% "Cascade error"
@@ -199,7 +199,6 @@ sourcoise_ <- function(
   }
 
   if(!prevent) {
-
     if(length(our_data)==0)
       our_data <- super_exec_source(ctxt)
     if(our_data$ok=="exec") {
@@ -242,10 +241,9 @@ sourcoise_ <- function(
   if(!ctxt$quiet)
     cli::cli_verbatim(our_data$error)
   logger::log_error(our_data$error |> cli::ansi_strip() |> logger::skip_formatter())
-  return(list(
-    ok = "failed&no cache",
-    error = our_data$error
-  ))
+  rlang::abort(
+    message = glue::glue("Execution of {ctxt$src} failed and no cache to return")
+  )
 }
 
 # helpers

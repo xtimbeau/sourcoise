@@ -9,9 +9,9 @@ find_src <- function(root, name, paths=NULL) {
       if(paths$in_quarto)
         path <- fs::path_join(c(paths$project_path, paths$doc_path, name)) |> fs::path_norm()
   fn <- stringr::str_c(path, ".r")
-  if(fs::file_exists(fn)) return(fn)
+  if(file.exists(fn)) return(fn)
   fn <- stringr::str_c(path, ".R")
-  if(fs::file_exists(fn)) return(fn)
+  if(file.exists(fn)) return(fn)
   return(NULL)
 }
 
@@ -23,10 +23,7 @@ try_find_src <- function(root, name) {
 
 try_find_root <- function(root=NULL, src_in = getOption("sourcoise.src_in"), quiet = TRUE) {
   if(!is.null(root)) {
-    if(fs::dir_exists(root))
-      return(root |>
-               fs::path_expand() |>
-               fs::path_abs())
+    return(root)
   }
   if(!is.null(getOption("sourcoise.root"))) {
     if(fs::dir_exists(getOption("sourcoise.root")))

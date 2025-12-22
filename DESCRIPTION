@@ -38,7 +38,8 @@ Imports:
     stringr,
     tibble,
     tidyr,
-    utils
+    utils,
+    data.table
 Suggests:
     bench,
     rmarkdown,

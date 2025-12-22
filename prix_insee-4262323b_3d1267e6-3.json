@@ -1,0 +1,20 @@
+{
+  "timing": [1.0035],
+  "date": ["2025-12-22 16:04:53.612018"],
+  "size": [11976],
+  "args": [],
+  "lapse": ["never"],
+  "src": ["prix_insee.r"],
+  "src_hash": ["9698394f5d2fe7b78485fa3fff7e67ba885526fb"],
+  "arg_hash": ["4262323b"],
+  "track_hash": ["0"],
+  "track": {},
+  "wd": ["file"],
+  "qmd_file": {},
+  "src_in": ["project"],
+  "data_hash": ["33c68d4f31091cf13f43f14e597637e7"],
+  "priority": [12],
+  "file_size": [3263],
+  "data_date": ["2025-12-22 16:04:53"],
+  "data_file": ["prix_insee-4262323b_33c68d4f31091cf13f43f14e597637e7.qs2"]
+}

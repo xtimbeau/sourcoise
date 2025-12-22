@@ -7,8 +7,12 @@ fs::file_copy(
   fs::path_package("sourcoise", "synthetic.R"),
   dir,
   overwrite = TRUE)
-data_100 <- sourcoise("synthetic.R", args = list(size=100))
-data_1000 <- sourcoise("synthetic.R", args = list(size=1000))
+data_100 <- sourcoise("synthetic.R", args = list(size=100), force=TRUE)
+data_100 <- sourcoise("synthetic.R", args = list(size=100), force=TRUE)
+data_100 <- sourcoise("synthetic.R", args = list(size=100), force=TRUE)
+data_1000 <- sourcoise("synthetic.R", args = list(size=1000), force=TRUE)
+data_1000 <- sourcoise("synthetic.R", args = list(size=1000), force=TRUE)
+data_1000 <- sourcoise("synthetic.R", args = list(size=1000), force=TRUE)
 
 ## sourcoise() ----------------
 if(tibble::is_tibble(data_100)) {
