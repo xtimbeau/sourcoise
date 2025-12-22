@@ -73,7 +73,6 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="set_sourcoise_root.html">set_sourcoise_root</a></span><span class="op">(</span><span class="va">dir</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/RtmpTjjqPS</span></span>
 <span class="r-in"><span><span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/copy.html" class="external-link">file_copy</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/path_package.html" class="external-link">path_package</a></span><span class="op">(</span><span class="st">"sourcoise"</span>, <span class="st">"some_data.R"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    <span class="va">dir</span>,</span></span>
@@ -82,11 +81,11 @@
 <span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="sourcoise.html">sourcoise</a></span><span class="op">(</span><span class="st">"some_data.R"</span>, force_exec <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># we then clear all caches</span></span></span>
 <span class="r-in"><span><span class="fu">sourcoise_clear_all</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpTjjqPS/.sourcoise/some_data-4262323b_343f4ceb-1.json"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "/tmp/RtmpTjjqPS/.sourcoise/some_data-4262323b_343f4ceb-2.json"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "/tmp/RtmpTjjqPS/.sourcoise/some_data-4262323b_343f4ceb-3.json"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "/tmp/RtmpTjjqPS/.sourcoise/some_data-4262323b_343f4ceb-4.json"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "/tmp/RtmpTjjqPS/.sourcoise/some_data-4262323b_343f4ceb-5.json"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpIFkJTH/.sourcoise/some_data-4262323b_f1cdfe57-1.json"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "/tmp/RtmpIFkJTH/.sourcoise/some_data-4262323b_f1cdfe57-2.json"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "/tmp/RtmpIFkJTH/.sourcoise/some_data-4262323b_f1cdfe57-3.json"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "/tmp/RtmpIFkJTH/.sourcoise/some_data-4262323b_f1cdfe57-4.json"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "/tmp/RtmpIFkJTH/.sourcoise/some_data-4262323b_f1cdfe57-5.json"</span>
 <span class="r-in"><span><span class="fu"><a href="sourcoise_status.html">sourcoise_status</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No cache data</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 0 × 0</span></span>
