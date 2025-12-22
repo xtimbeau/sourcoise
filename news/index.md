@@ -1,7 +1,11 @@
 # Changelog
 
-## sourcoise 1.0.0.9004
+## sourcoise 1.0.0.9005
 
+- Source not found and execution error with no cache now trigger an
+  error
+- performance improvment (50%) in cache data cleaning and testing
+  existence of files (not anymore done with fs)
 - Uppercase is now correctly treated on UNIX systems
 - refactor context mechanic, normally safer, plus more test
 - tracking is smarter (accumulation)
