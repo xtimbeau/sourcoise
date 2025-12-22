@@ -279,14 +279,16 @@ ls_cache_files <- function(root=NULL, uid = NULL, bn = NULL, argid = NULL, cache
   jpat <- "({bn})-({argid})_({uid})-([0-9]+)\\.json" |> glue::glue()
   jsons <- purrr::map(cache_reps, ~{
     if(dir.exists(.x))
-      return(fs::dir_ls(.x,  regexp = jpat, recurse = TRUE, type = "file"))
+      return(fs::dir_ls(.x,  regexp = jpat, recurse = TRUE, type = "file") |>
+               fs::path_norm() )
     return(list())
   })
   qs2s <- list()
   if(qs2) {
     dpat <- "({bn})-({argid})_([a-f0-9]{{32}})\\.qs2" |> glue::glue()
     qs2 <- purrr::map(cache_reps,
-                      ~fs::dir_ls(.x, regexp = dpat, recurse = TRUE, type = "file"))
+                      ~fs::dir_ls(.x, regexp = dpat, recurse = TRUE, type = "file")  |>
+                        fs::path_norm() )
   }
   return(list(
     jsons=jsons,
