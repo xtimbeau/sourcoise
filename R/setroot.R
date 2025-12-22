@@ -33,5 +33,5 @@
 set_sourcoise_root <- function(root=NULL, quiet = TRUE) {
   root <- try_find_root(root, src_in = "project", quiet = quiet)
   options(sourcoise.root = root)
-  root
+  root |> fs::path_norm()
 }
