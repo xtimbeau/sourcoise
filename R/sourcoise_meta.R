@@ -80,11 +80,10 @@ sourcoise_meta <- function(path, args=NULL) {
   if(length(unlist(mm$track))>0)
     track_hash <- hash_tracks(mm$track, root) else
       track_hash <- 0
-  data_exists <- file.exists(fs::path_join(c(mm$cache_rep, mm$data_file)))
+  data_exists <- file.exists(fs::path_join(c(mm$downcache_rep, mm$data_file)))
   valid <- src_hash == mm$src_hash &
     track_hash == mm$track_hash &
     data_exists
-
   if(valid)
     mm$ok <- "cache ok&valid" else
       mm$ok <- "invalid cache"

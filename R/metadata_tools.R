@@ -189,6 +189,7 @@ fast_read_mdata <- function(paths) {
       index = paths$index,
       upcache_rep = stringr::str_extract(json_file, pat, group=1),
       cache_rep = stringr::str_c(upcache_rep, "/.sourcoise"),
+      downcache_rep = fs::path_join(c(cache_rep, fs::path_dir(basename))) |> fs::path_norm(),
       date = lubridate::as_datetime(date),
       data_date = lubridate::as_datetime(data_date),
       track_hash = as.character(track_hash)) |>

@@ -144,4 +144,3 @@ if(!is.null(cache_dir))
     expect(!fs::dir_exists(cache_dir),
            "cache dir was not removed")
   })
-
