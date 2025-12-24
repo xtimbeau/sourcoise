@@ -9,7 +9,7 @@ find_src <- function(root, name, paths=NULL) {
     if(!is.null(paths))
       if(paths$in_quarto)
         path <- fs::path_join(c(paths$project_path, paths$doc_path, name)) |>
-          Qfs::path_norm()
+          fs::path_norm()
   fn <- stringr::str_c(path, ".r")
   if(file.exists(fn)) return(fn)
   fn <- stringr::str_c(path, ".R")

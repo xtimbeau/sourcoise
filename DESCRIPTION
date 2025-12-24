@@ -30,17 +30,15 @@ Imports:
     memoise,
     purrr,
     qs2,
-    quarto,
     RcppSimdJson,
     rlang,
     rprojroot,
-    scales,
     stringr,
     tibble,
     tidyr,
-    utils,
-    data.table
+    utils
 Suggests:
+    quarto,
     bench,
     rmarkdown,
     testthat (>= 3.0.0)

@@ -177,7 +177,7 @@ sourcoise_ <- function(
     if(our_data$ok=="exec") {
       our_data <- cache_data(our_data, ctxt)
       logger::log_success(
-        "{ctxt$relname} (forced) in {round(our_data$timing, 2)} sec. ({scales::label_bytes()(our_data$size)})")
+        "{ctxt$relname} (forced) in {round(our_data$timing, 2)} sec. ({fs::as_fs_bytes(our_data$size)})")
       mark_as_done(ctxt$name)
       return(data_returned(our_data, ctxt))
     }
@@ -186,7 +186,7 @@ sourcoise_ <- function(
   ctxt <- valid_meta1(ctxt)
   if(ctxt$meta_valid$valid) {
     return_data <- read_meta1_valid(ctxt)
-    logger::log_success("{ctxt$relname} cache valid ({scales::label_bytes()(return_data$size)})")
+    logger::log_success("{ctxt$relname} cache valid ({fs::as_fs_bytes(return_data$size)})")
     if(length(our_data)!=0 && our_data$ok == FALSE ) {
       our_data$error <- our_data$error %||% "Cascade error"
       logger::log_error("  but {ctxt$relname} failed")
@@ -204,7 +204,7 @@ sourcoise_ <- function(
     if(our_data$ok=="exec") {
       our_data <- cache_data(our_data, ctxt)
       logger::log_success(
-        "{ctxt$relname} (exec. no cache) in {round(our_data$timing, 2)} sec. ({scales::label_bytes()(our_data$size)})")
+        "{ctxt$relname} (exec. no cache) in {round(our_data$timing, 2)} sec. ({fs::as_fs_bytes(our_data$size)})")
       return(data_returned(our_data, ctxt))
     }
   }

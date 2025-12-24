@@ -40,7 +40,7 @@ cache_data <- function(data, ctxt) {
       if(f_i$size > ctxt$limit_mb*1024*1024) {
         fs::file_delete(fnd)
         logger::log_warn(
-          "cached data not saved ({scales::label_bytes()(file_size)} -- over the {ctxt$limit_md} Mb limit.")
+          "cached data not saved ({fs::as_fs_bytes(file_size)} -- over the {ctxt$limit_md} Mb limit.")
       }
     } else {
       fnd <- exists_data_file

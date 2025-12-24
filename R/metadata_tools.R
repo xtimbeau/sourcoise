@@ -121,7 +121,7 @@ hash_tracks <- function(tracks, root) {
 #     l})
 # }
 
-#' @import data.table
+
 get_mdatas <- function(name, data_rep, root=NULL) {
   pat <- "(.+)-([0-9a-f]{8})"
   s1 <- stringr::str_extract(name, pat, group=1)
@@ -499,7 +499,7 @@ get_metadata <- function(root=NULL, uid = NULL,
       timing, size, lapse, wd, args,
       json_file, qmd_file, src_in, data_file,
       data_date = lubridate::as_datetime(data_date),
-      file_size = scales::label_bytes()(file_size),
+      file_size = fs::as_fs_bytes(file_size),
       log_file, root, src_hash, track_hash,
       track, arg_hash, data_hash)
 }

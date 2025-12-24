@@ -12,6 +12,8 @@ sourcoise_meta(path, args = NULL, root = NULL)
 \item{args}{Named list of arguments that were passed to the script, if any. Default is \code{NULL}.
 This is used to identify the specific cached version when the script was executed with
 different argument sets.}
+
+\item{root}{(defaut \code{NULL}) the root of the project (you'd better rely on sourcoise for that one)}
 }
 \value{
 A named list containing cache metadata with the following elements:

@@ -176,7 +176,7 @@ sourcoise_refresh <- function(
         if(lubridate::as_datetime(src_data$data_date) > lubridate::as_datetime(data_date))
           new <- TRUE else
             new <- FALSE
-          data_size <- glue::glue("{scales::label_bytes()(src_data$size)}")
+          data_size <- glue::glue("{fs::as_fs_bytes(src_data$size)}")
           msg <- glue::glue(
             "{msrc} executed in {round(src_data$timing)} s.{ifelse(done, ' cached during refresh', '' )}")
           if(new)
@@ -214,7 +214,7 @@ sourcoise_refresh <- function(
   dt <- difftime(Sys.time(), refresh_start, units = "secs") |> as.numeric() |> round()
   tsize <- res$size |> unlist() |>  sum(na.rm=TRUE)
   if(!quiet)
-    cli::cli_alert_info("Total refresh in {dt} seconds for {scales::label_bytes()(tsize)} of data")
+    cli::cli_alert_info("Total refresh in {dt} seconds for {fs::as_fs_bytes(tsize)} of data")
 
   if(priotirize & nrow(what)==n_sources) {
     allsrcs <- res$src |>

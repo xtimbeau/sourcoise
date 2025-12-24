@@ -7,6 +7,7 @@
 #' @param args Named list of arguments that were passed to the script, if any. Default is `NULL`.
 #'   This is used to identify the specific cached version when the script was executed with
 #'   different argument sets.
+#' @param root (defaut `NULL`) the root of the project (you'd better rely on sourcoise for that one)
 #'
 #' @returns A named list containing cache metadata with the following elements:
 #' \describe{
