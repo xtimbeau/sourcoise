@@ -131,6 +131,6 @@ data <- sourcoise("some_data.R", force_exec = TRUE)
 # we then refresh all caches
 sourcoise_refresh()
 #> ℹ Refreshing 1 source files
-#> ✔ ../../../../../../../tmp/RtmpA1OKt2/some_data.R executed in 0 s., same data (2 kB)
+#> ✔ ../../../../../../../tmp/Rtmp19fT26/some_data.R executed in 0 s., same data (2 kB)
 #> ℹ Total refresh in 0 seconds for 2 kB of data
 ```
