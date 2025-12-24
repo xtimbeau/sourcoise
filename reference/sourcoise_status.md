@@ -115,5 +115,5 @@ sourcoise_status()
 #> # A tibble: 1 × 6
 #>   src       priority date                data_date           file_size json_file
 #>   <chr>        <int> <dttm>              <dttm>              <fs::byt> <chr>    
-#> 1 some_dat…       10 2025-12-24 16:41:21 2025-12-24 16:41:21       242 .sourcoi…
+#> 1 some_dat…       10 2025-12-24 17:05:29 2025-12-24 17:05:29       242 .sourcoi…
 ```
