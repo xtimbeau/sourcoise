@@ -123,7 +123,6 @@ hash_tracks <- function(tracks, root) {
 
 #' @import data.table
 get_mdatas <- function(name, data_rep, root=NULL) {
-
   pat <- "(.+)-([0-9a-f]{8})"
   s1 <- stringr::str_extract(name, pat, group=1)
   s2 <- stringr::str_extract(name, pat, group=2)
@@ -175,6 +174,7 @@ fast_read_mdata <- function(paths) {
 
   pat <- "(.+)/\\.sourcoise/(.+)-([a-f0-9]{8})_([a-f0-9]{8})-([0-9]+)\\.json"
   root <- paths$root |> unique()
+
   jsons_raw |>
     purrr::list_transpose(simplify = simplifies |> as.list(), default = NULL) |>
     purrr::imap(~ tibble::enframe(.x) |>
@@ -189,7 +189,9 @@ fast_read_mdata <- function(paths) {
       index = paths$index,
       upcache_rep = stringr::str_extract(json_file, pat, group=1),
       cache_rep = stringr::str_c(upcache_rep, "/.sourcoise"),
-      downcache_rep = fs::path_join(c(cache_rep, fs::path_dir(basename))) |> fs::path_norm(),
+      downcache_rep = purrr::map2_chr(
+        cache_rep, basename,
+        ~fs::path_join(c(.x, fs::path_dir(.y))) |> fs::path_norm()),
       date = lubridate::as_datetime(date),
       data_date = lubridate::as_datetime(data_date),
       track_hash = as.character(track_hash)) |>
@@ -271,15 +273,25 @@ ls_cache_files <- function(root=NULL, uid = NULL, bn = NULL, argid = NULL, cache
     return(list())
   if(is.null(uid))
     uid <- "[a-f0-9]{8}"
-  if(is.null(bn))
+
+  if(is.null(bn)) {
+    recurse <- TRUE
     bn <- ".+"
+    subdir <- "." }
+  else {
+    recurse <- FALSE
+    subdir <- fs::path_dir(bn)
+    bn <- fs::path_file(bn)
+  }
+
   if(is.null(argid))
     argid <- "[a-f0-9]{8}"
   cache_reps <- rlang::set_names(cache_reps, cache_reps)
   jpat <- "({bn})-({argid})_({uid})-([0-9]+)\\.json" |> glue::glue()
   jsons <- purrr::map(cache_reps, ~{
-    if(dir.exists(.x))
-      return(fs::dir_ls(.x,  regexp = jpat, recurse = TRUE, type = "file")  )
+    rep <- fs::path_join(c(.x, subdir)) |> fs::path_norm()
+      if(dir.exists(rep))
+        return(fs::dir_ls(rep,  regexp = jpat, recurse = recurse, type = "file")  )
     return(list())
   })
   qs2s <- list()

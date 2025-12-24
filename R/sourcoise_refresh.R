@@ -215,9 +215,11 @@ sourcoise_refresh <- function(
   tsize <- res$size |> unlist() |>  sum(na.rm=TRUE)
   if(!quiet)
     cli::cli_alert_info("Total refresh in {dt} seconds for {scales::label_bytes()(tsize)} of data")
-
+browser()
   if(priotirize & nrow(what)==n_sources) {
-    allsrcs <- res$src |> unlist() |> fs::path_ext_remove()
+    allsrcs <- res$src |>
+      unlist() |>
+      fs::path_ext_remove()
     hits <- getOption("sourcoise.refreshing.hit") |> unlist() |> table()
     nohits <- setdiff(allsrcs, names(hits))
     srcs <- c(hits, rlang::set_names(rep(0, length(nohits)), nohits))

@@ -167,7 +167,7 @@ sourcoise_ <- function(
   }
   priority <- ctxt$priority
   force <- nuorf(force_exec)
-  if(should_i_do(ctxt$name))
+  if(should_i_do(ctxt$src))
     force <- TRUE
   prevent <- nuorf(prevent_exec)
   our_data <- list()

@@ -43,21 +43,23 @@
 #' print(meta$timing)  # View execution time
 #' print(meta$ok)      # Check cache status
 #'
-sourcoise_meta <- function(path, args=NULL) {
-
+sourcoise_meta <- function(path, args=NULL, root = NULL) {
+  root <- try_find_root(root)
   if(is.null(args))
     args <- list()
   argid <- digest::digest(args, algo = "crc32")
-  metas <- fast_metadata(bn = path |>
-                           fs::path_file() |>
-                           fs::path_ext_remove(),
-                         argid = argid) |>
+  metas <- fast_metadata(
+    bn = path |>
+      fs::path_ext_remove(),
+    argid = argid,
+    root=root) |>
     tibble::as_tibble()
+
   if(nrow(metas)==0)
     return(list(ok = "file not found"))
 
   metas <- metas |>
-    dplyr::group_by(uid, argid, basename) |>
+    dplyr::group_by(uid, argid, tolower(basename)) |>
     dplyr::filter(index == max(index)) |>
     dplyr::ungroup()
 

@@ -143,7 +143,6 @@ setup_context <- function(path, root, src_in="project", exec_wd=NULL, wd="file",
 # calcule les hashs et ajoute les métadonnées au contexte
 
 hash_context <- function(ctxt) {
-
   ctxt$src_hash <- hash_file(ctxt$src)
   ctxt$arg_hash <- ctxt$argid
   mm <- get_mdatas(ctxt$cachebasename, ctxt$root_cache_rep, ctxt$root)
