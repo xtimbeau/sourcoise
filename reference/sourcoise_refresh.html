@@ -140,8 +140,25 @@ After execution of one refresh, by setting higher priority to more used files.</
 <span class="r-in"><span><span class="co"># we then refresh all caches</span></span></span>
 <span class="r-in"><span><span class="fu">sourcoise_refresh</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Refreshing 1 source files</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> ../../../../../../../tmp/RtmpazeB6t/some_data.R executed in 0 s., same data (2 kB)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> ../../../../../../../tmp/RtmpedenZW/some_data.R executed in 0 s., same data (2 kB)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Total refresh in 0 seconds for 2 kB of data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: sourcoise_refresh()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (priotirize &amp; nrow(what) == n_sources) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     allsrcs &lt;- fs::path_ext_remove(unlist(res$src))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     hits &lt;- table(unlist(getOption("sourcoise.refreshing.hit")))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     nohits &lt;- setdiff(allsrcs, names(hits))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     srcs &lt;- c(hits, rlang::set_names(rep(0, length(nohits)), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         nohits))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     srcs &lt;- srcs[names(srcs) %in% allsrcs[res$ok == "exec"]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     purrr::iwalk(srcs, ~sourcoise_priority(.y, 10 + .x))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: allsrcs &lt;- fs::path_ext_remove(unlist(res$src))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: hits &lt;- table(unlist(getOption("sourcoise.refreshing.hit")))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: nohits &lt;- setdiff(allsrcs, names(hits))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: srcs &lt;- c(hits, rlang::set_names(rep(0, length(nohits)), nohits))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: srcs &lt;- srcs[names(srcs) %in% allsrcs[res$ok == "exec"]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: purrr::iwalk(srcs, ~sourcoise_priority(.y, 10 + .x))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: invisible(res)</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
