@@ -345,7 +345,6 @@ fast_metadata <- function(root=NULL, uid = NULL, bn = NULL,
 
 }
 
-#' @import data.tableQ
 get_metadata <- function(root=NULL, uid = NULL,
                          bn = NULL, argid = NULL, cache_reps = NULL,
                          filter = "recent", quiet = FALSE) {

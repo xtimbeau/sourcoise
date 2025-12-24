@@ -4,7 +4,7 @@
 \alias{sourcoise_meta}
 \title{Get Sourcoise Metadata for a Script}
 \usage{
-sourcoise_meta(path, args = NULL)
+sourcoise_meta(path, args = NULL, root = NULL)
 }
 \arguments{
 \item{path}{Path to the script file (character). Can be an absolute or relative path.}
