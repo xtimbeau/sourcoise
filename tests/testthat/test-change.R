@@ -38,3 +38,13 @@ test_that(
       sourcoise_meta("prix_insee.r")$track |> unlist() |> is.null(),
       "not untracked")
   })
+
+sourcoise_lapse("prix_insee.r", lapse= "1 week")
+
+test_that(
+  "lapse", {
+    expect(
+      sourcoise_meta("prix_insee.r")$lapse == "1 week",
+      "not untracked")
+  })
+
