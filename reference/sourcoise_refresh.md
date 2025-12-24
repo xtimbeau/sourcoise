@@ -131,23 +131,6 @@ data <- sourcoise("some_data.R", force_exec = TRUE)
 # we then refresh all caches
 sourcoise_refresh()
 #> ℹ Refreshing 1 source files
-#> ✔ ../../../../../../../tmp/RtmpedenZW/some_data.R executed in 0 s., same data (2 kB)
+#> ✔ ../../../../../../../tmp/RtmpA1OKt2/some_data.R executed in 0 s., same data (2 kB)
 #> ℹ Total refresh in 0 seconds for 2 kB of data
-#> Called from: sourcoise_refresh()
-#> debug: if (priotirize & nrow(what) == n_sources) {
-#>     allsrcs <- fs::path_ext_remove(unlist(res$src))
-#>     hits <- table(unlist(getOption("sourcoise.refreshing.hit")))
-#>     nohits <- setdiff(allsrcs, names(hits))
-#>     srcs <- c(hits, rlang::set_names(rep(0, length(nohits)), 
-#>         nohits))
-#>     srcs <- srcs[names(srcs) %in% allsrcs[res$ok == "exec"]]
-#>     purrr::iwalk(srcs, ~sourcoise_priority(.y, 10 + .x))
-#> }
-#> debug: allsrcs <- fs::path_ext_remove(unlist(res$src))
-#> debug: hits <- table(unlist(getOption("sourcoise.refreshing.hit")))
-#> debug: nohits <- setdiff(allsrcs, names(hits))
-#> debug: srcs <- c(hits, rlang::set_names(rep(0, length(nohits)), nohits))
-#> debug: srcs <- srcs[names(srcs) %in% allsrcs[res$ok == "exec"]]
-#> debug: purrr::iwalk(srcs, ~sourcoise_priority(.y, 10 + .x))
-#> debug: invisible(res)
 ```
