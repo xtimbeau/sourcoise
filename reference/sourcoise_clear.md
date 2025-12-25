@@ -55,8 +55,13 @@ data <- sourcoise("some_data.R", force_exec = TRUE)
 sourcoise_clear()
 #> character(0)
 sourcoise_status()
-#> # A tibble: 1 × 6
-#>   src       priority date                data_date           file_size json_file
-#>   <chr>        <int> <dttm>              <dttm>              <fs::byt> <chr>    
-#> 1 some_dat…       10 2025-12-25 17:54:36 2025-12-25 17:54:35       242 .sourcoi…
+#> 
+#> Attaching package: ‘lubridate’
+#> The following objects are masked from ‘package:base’:
+#> 
+#>     date, intersect, setdiff, union
+#> # A tibble: 1 × 7
+#>   valid priority src         last_call last_update   file_size json_file        
+#>   <lgl>    <int> <chr>       <chr>     <chr>       <fs::bytes> <chr>            
+#> 1 FALSE       10 some_data.R 0s        1s                  242 .sourcoise/some_…
 ```

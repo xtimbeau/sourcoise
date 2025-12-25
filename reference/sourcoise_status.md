@@ -112,8 +112,8 @@ fs::file_copy(
 data <- sourcoise("some_data.R", force_exec = TRUE)
 # status returns the cache status
 sourcoise_status()
-#> # A tibble: 1 × 6
-#>   src       priority date                data_date           file_size json_file
-#>   <chr>        <int> <dttm>              <dttm>              <fs::byt> <chr>    
-#> 1 some_dat…       10 2025-12-25 17:54:39 2025-12-25 17:54:39       242 .sourcoi…
+#> # A tibble: 1 × 7
+#>   valid priority src         last_call last_update   file_size json_file        
+#>   <lgl>    <int> <chr>       <chr>     <chr>       <fs::bytes> <chr>            
+#> 1 TRUE        10 some_data.R 0s        0s                  242 .sourcoise/some_…
 ```
