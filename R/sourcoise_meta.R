@@ -8,6 +8,7 @@
 #'   This is used to identify the specific cached version when the script was executed with
 #'   different argument sets.
 #' @param root (defaut `NULL`) the root of the project (you'd better rely on sourcoise for that one)
+#' @param quiet (defaut `FALSE`) should we say something ?
 #'
 #' @returns A named list containing cache metadata with the following elements:
 #' \describe{
@@ -44,51 +45,51 @@
 #' print(meta$timing)  # View execution time
 #' print(meta$ok)      # Check cache status
 #'
-sourcoise_meta <- function(path, args=NULL, root = NULL) {
-  root <- try_find_root(root)
-  if(is.null(args))
-    args <- list()
-  argid <- digest::digest(args, algo = "crc32")
-  metas <- fast_metadata(
-    bn = path |>
-      fs::path_ext_remove(),
-    argid = argid,
-    root=root) |>
-    tibble::as_tibble()
+sourcoise_meta <- function(path, args = NULL, root = NULL, quiet = FALSE) {
 
-  if(nrow(metas)==0)
-    return(list(ok = "file not found"))
+  ctxt <- setup_context(
+    path = path,
+    root = root,
+    src_in = getOption("sourcoise.src_in"),
+    exec_wd = NULL,
+    wd = getOption("sourcoise.wd"),
+    track = list(),
+    args = args,
+    lapse = NULL,
+    nocache = FALSE,
+    grow_cache = getOption("sourcoise.grow_cache"),
+    limit_mb = getOption("sourcoise.limit_mb"),
+    log = "OFF",
+    inform = FALSE,
+    quiet = TRUE,
+    metadata = TRUE)
 
-  metas <- metas |>
-    dplyr::group_by(uid, argid, tolower(basename)) |>
-    dplyr::filter(index == max(index)) |>
-    dplyr::ungroup()
+  meta <- list()
 
-  mm <- fast_read_mdata(metas)
-  if(nrow(mm)==0)
-    return(list(ok = "metadata not found"))
+  if(is.null(ctxt)) {
+    meta$ok <- "file {path} not found" |> glue::glue() }
 
-  mm <- mm |>
-    dplyr::filter(date == max(date)) |>
-    dplyr::slice(1) |>
-    as.list()
-  if(is.null(mm$track))
-    mm$track <- list()
-  if(is.null(mm$args))
-    mm$args <- list()
-  mm$qmd_file <- mm$qmd_file |> purrr::list_c()
-  root <- unique(metas$root)
-  src <- fs::path_join(c(root, mm$src))
-  src_hash <- hash_file(src)
-  if(length(unlist(mm$track))>0)
-    track_hash <- hash_tracks(mm$track, root) else
-      track_hash <- 0
-  data_exists <- file.exists(fs::path_join(c(mm$downcache_rep, mm$data_file)))
-  valid <- src_hash == mm$src_hash &
-    track_hash == mm$track_hash &
-    data_exists
-  if(valid)
-    mm$ok <- "cache ok&valid" else
-      mm$ok <- "invalid cache"
-  return(mm)
+  if(!is.null(ctxt)) {
+    ctxt <- valid_meta1(ctxt)
+    meta <- ctxt$meta1
+    meta <- purrr::list_modify(meta, !!!ctxt$meta_valid)
+
+    if(meta$valid)
+      meta$ok <- "cache ok&valid"
+    if(!meta$data_exists)
+      meta$ok <- "no cache"
+    if(!meta$valid_src&meta$data_exists)
+      meta$ok <- "cache invalid -- source file changed"
+    if(!meta$valid_lapse&meta$data_exists)
+      meta$ok <- "cache expired"
+    if(!meta$valid_track&meta$data_exists)
+      meta$ok <- "cache invalid -- tracked filed changed"
+
+    meta$date <- lubridate::as_datetime(meta$date)
+    meta$data_date <- lubridate::as_datetime(meta$data_date)
+  }
+  if(!quiet)
+    cli::cli_alert_info(meta$ok)
+
+  return(meta)
 }

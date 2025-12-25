@@ -5,7 +5,6 @@
     sourcoise.prevent_exec = FALSE,
     sourcoise.metadata = FALSE,
     sourcoise.init_fn = NULL,
-    sourcoise.lapse = "never",
     sourcoise.src_in = "project",
     sourcoise.wd = "file",
     sourcoise.unfreeze = FALSE,

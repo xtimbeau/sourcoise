@@ -1,7 +1,7 @@
 # calcule les différents chemins et trouve les fichiers/répertoire dont on a besoin
 setup_context <- function(path, root, src_in="project", exec_wd=NULL, wd="file",
                           track = NULL, args = NULL,
-                          lapse="never", nocache=FALSE, limit_mb=50, grow_cache=Inf, log="OFF",
+                          lapse=NULL, nocache=FALSE, limit_mb=50, grow_cache=Inf, log="OFF",
                           metadata=FALSE, inform=FALSE, quiet=TRUE, hash = TRUE) {
   ctxt <- list()
   if(is.null(track))
@@ -148,6 +148,9 @@ hash_context <- function(ctxt) {
   mm <- get_mdatas(ctxt$cachebasename, ctxt$root_cache_rep, ctxt$root)
   ctxt$meta1 <- mm$meta1
   ctxt$metas <- mm$metas
+
+  if(is.null(ctxt$lapse))
+    ctxt$lapse <- ctxt$meta1$lapse %||% "never"
 
   ctxt$track <- c(ctxt$track, ctxt$meta1$track) |>
     unlist() |>

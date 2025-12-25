@@ -78,7 +78,7 @@ test_that("sourcoise_meta", {
 })
 
 test_that("meta ok when no cache", {
-  expect(sourcoise_meta("toto.R")$ok == "file not found",
+  expect(sourcoise_meta("toto.R")$ok |> stringr::str_detect("not found"),
          "meta fails when nothing found")
 })
 
@@ -144,3 +144,4 @@ if(!is.null(cache_dir))
     expect(!fs::dir_exists(cache_dir),
            "cache dir was not removed")
   })
+

@@ -14,11 +14,11 @@ snfia <- source_data("snf_international.r") |>
 
 meta <- sourcoise::sourcoise_meta("snf_ratio.r")
 date <- meta$data_date |> ymd_hms()
-date <- stringr::str_glue("{day(date)}/{month(date)}/{year(date)}")
+datet <- stringr::str_glue("{day(date)}/{month(date)}/{year(date)}")
 lbl_eurostat <- function(x) eurostat::label_eurostat(x, "geo",
                                                      lang = "fr",
                                                      custom_dic=c("EA20"= "Zone euro"))
-source <- "Eurostat, comptes nationaux annuels (naidsa_10_nf_tr), téléchargés le {date}, code à github.com/xtimbeau/travail/snf_international.r." |> glue()
+source <- "Eurostat, comptes nationaux annuels (naidsa_10_nf_tr), téléchargés le {datet}, code à github.com/xtimbeau/travail/snf_international.r." |> glue()
 psali <- ggplot(snfia) +
   aes(x=time, y=psal, col = geo) +
   geom_line_interactive(

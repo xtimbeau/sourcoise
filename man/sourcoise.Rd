@@ -8,7 +8,7 @@ sourcoise(
   path,
   args = list(),
   track = list(),
-  lapse = getOption("sourcoise.lapse"),
+  lapse = NULL,
   force_exec = getOption("sourcoise.force_exec"),
   prevent_exec = getOption("sourcoise.prevent_exec"),
   metadata = getOption("sourcoise.metadata"),
