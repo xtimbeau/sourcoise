@@ -11,7 +11,7 @@ sourcoise(
   path,
   args = list(),
   track = list(),
-  lapse = getOption("sourcoise.lapse"),
+  lapse = NULL,
   force_exec = getOption("sourcoise.force_exec"),
   prevent_exec = getOption("sourcoise.prevent_exec"),
   metadata = getOption("sourcoise.metadata"),
@@ -231,7 +231,7 @@ bench::mark(
 #> # A tibble: 2 × 13
 #>   expression      min median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time
 #>   <bch:expr> <bch:tm> <bch:>     <dbl> <bch:byt>    <dbl> <int> <dbl>   <bch:tm>
-#> 1 forced       56.5ms 56.5ms      17.7    5.01MB        0     1     0     56.5ms
-#> 2 cached       13.1ms 13.1ms      76.4  203.18KB        0     1     0     13.1ms
+#> 1 forced       54.8ms 54.8ms      18.2    5.01MB        0     1     0     54.8ms
+#> 2 cached       12.2ms 12.2ms      82.3  203.17KB        0     1     0     12.2ms
 #> # ℹ 4 more variables: result <list>, memory <list>, time <list>, gc <list>
 ```

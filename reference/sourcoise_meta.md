@@ -7,7 +7,7 @@ execution, cache status, and related files.
 ## Usage
 
 ``` r
-sourcoise_meta(path, args = NULL, root = NULL)
+sourcoise_meta(path, args = NULL, root = NULL, quiet = FALSE)
 ```
 
 ## Arguments
@@ -27,6 +27,10 @@ sourcoise_meta(path, args = NULL, root = NULL)
 
   (defaut `NULL`) the root of the project (you'd better rely on
   sourcoise for that one)
+
+- quiet:
+
+  (defaut `FALSE`) should we say something ?
 
 ## Value
 
@@ -101,8 +105,9 @@ data <- sourcoise("some_data.R", force_exec = TRUE)
 
 # Access metadata without loading the cached data
 meta <- sourcoise_meta("some_data.R")
+#> ℹ cache ok&valid
 print(meta$timing)  # View execution time
-#> [1] 8e-04
+#> [1] 7e-04
 print(meta$ok)      # Check cache status
 #> [1] "cache ok&valid"
 ```
