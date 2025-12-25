@@ -32,7 +32,7 @@ utils::globalVariables(c("json_file", "index", "short_json_file", "uid",  "src",
                          "cur_track_hash", "log_file", "src_hash", "arg_hash", "track_hash", "valid_src",
                          "valid_args", "valid_track", "src_exist", "data_exist", "valid", "priority",
                          "cc", "timing", "size", "wd",  "qmd_file", "src_in", "data_date", "file_size",
-                         "data_hash", "uid", "argid", "src",  "json_file", "name"))
+                         "data_hash", "uid", "argid", "src",  "json_file", "name", "last_call", "last_update"))
 
 utils::globalVariables(c(".data"))
 
