@@ -121,7 +121,7 @@ sourcoise_refresh <- function(
       sourcoise.refreshing = TRUE,
       sourcoise.refreshing.2do = what |>
         dplyr::mutate(fsrc = purrr::map2(root, src, \(.r, .f) fs::path_join(c(.r,.f)))) |>
-        dplyr::pull() |> unlist(),
+        dplyr::pull() |> unlist() |> tolower(),
       sourcoise.refreshing.done = list(),
       sourcoise.refreshing.hit = list())
   }
@@ -173,7 +173,8 @@ sourcoise_refresh <- function(
 
       msrc <- fs::path_join(c(root, src)) |> fs::path_rel(cwd)
       if( src_data$ok == "exec" | done ) {
-        if(lubridate::as_datetime(src_data$data_date) > lubridate::as_datetime(data_date))
+        if(lubridate::as_datetime(src_data$data_date, tz=Sys.timezone()) >
+           lubridate::as_datetime(data_date, tz=Sys.timezone()))
           new <- TRUE else
             new <- FALSE
           data_size <- glue::glue("{fs::as_fs_bytes(src_data$size)}")
@@ -219,9 +220,12 @@ sourcoise_refresh <- function(
   if(priotirize & nrow(what)==n_sources) {
     allsrcs <- res$src |>
       unlist() |>
-      fs::path_ext_remove()
-    hits <- getOption("sourcoise.refreshing.hit") |> unlist() |> table()
-    nohits <- setdiff(allsrcs, names(hits))
+      tolower()
+    hits <- getOption("sourcoise.refreshing.hit") |>
+      unlist() |>
+      table()
+
+    nohits <- setdiff(allsrcs, names(hits) |> tolower() )
     srcs <- c(hits, rlang::set_names(rep(0, length(nohits)), nohits))
     srcs <- srcs[names(srcs)%in%allsrcs[res$ok=="exec"]]
     purrr::iwalk(srcs, ~sourcoise_priority(.y, 10 + .x))

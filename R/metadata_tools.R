@@ -70,7 +70,7 @@ valid_meta1 <- function(ctxt) {
     data_exists = data_ok(fs::path_join(c(ctxt$full_cache_rep, ctxt$meta1$data_file)), ctxt$cachebasename),
     valid_lapse = ifelse(
       ctxt$lapse != "never",
-      lubridate::now() - lubridate::as_datetime(ctxt$meta1[["date"]]) <= what_lapse(ctxt$lapse),
+      lubridate::now() - lubridate::as_datetime(ctxt$meta1[["date"]], tz=Sys.timezone()) <= what_lapse(ctxt$lapse),
       TRUE))
 
   ctxt$meta_valid$valid <- ctxt$meta_valid$valid_src &
@@ -152,7 +152,7 @@ get_mdatas <- function(name, data_rep, root=NULL) {
   idate <- meta1 |>
     purrr::map("date") |>
     unlist() |>
-    lubridate::as_datetime() |>
+    lubridate::as_datetime(tz=Sys.timezone()) |>
     which.max()
   meta1 <- meta1[[idate]]
   meta1$json_file <- qm$json_file[[idate]] |>
@@ -192,8 +192,8 @@ fast_read_mdata <- function(paths) {
       downcache_rep = purrr::map2_chr(
         cache_rep, basename,
         ~fs::path_join(c(.x, fs::path_dir(.y))) |> fs::path_norm()),
-      date = lubridate::as_datetime(date),
-      data_date = lubridate::as_datetime(data_date),
+      date = lubridate::as_datetime(date, tz=Sys.timezone()),
+      data_date = lubridate::as_datetime(data_date, tz=Sys.timezone()),
       track_hash = as.character(track_hash)) |>
     dplyr::relocate(json_file)
 }
@@ -254,7 +254,7 @@ valid_lapse <- function(lapse, date) {
     if(.l == "never")
       return(TRUE)
     lapse <- what_lapse(.l)
-    lubridate::now() - lubridate::as_datetime(.d) <= lapse
+    lubridate::now() - lubridate::as_datetime(.d, tz=Sys.timezone()) <= lapse
   })
 }
 
@@ -494,11 +494,11 @@ get_metadata <- function(root=NULL, uid = NULL,
     dplyr::transmute(
       src,
       exists = src_exist,
-      date = lubridate::as_datetime(date),
+      date = lubridate::as_datetime(date, tz=Sys.timezone()),
       valid, priority, uid, index,
       timing, size, lapse, wd, args,
       json_file, qmd_file, src_in, data_file,
-      data_date = lubridate::as_datetime(data_date),
+      data_date = lubridate::as_datetime(data_date, tz=Sys.timezone()),
       file_size = fs::as_fs_bytes(file_size),
       log_file, root, src_hash, track_hash,
       track, arg_hash, data_hash)

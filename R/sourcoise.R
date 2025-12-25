@@ -178,7 +178,7 @@ sourcoise_ <- function(
       our_data <- cache_data(our_data, ctxt)
       logger::log_success(
         "{ctxt$relname} (forced) in {round(our_data$timing, 2)} sec. ({fs::as_fs_bytes(our_data$size)})")
-      mark_as_done(ctxt$name)
+      mark_as_done(ctxt$src)
       return(data_returned(our_data, ctxt))
     }
   }
@@ -194,7 +194,7 @@ sourcoise_ <- function(
       if(!ctxt$quiet)
         cli::cli_verbatim(our_data$error)
     }
-    mark_as_done(ctxt$name)
+    mark_as_done(ctxt$src)
     return(data_returned(return_data, ctxt))
   }
 
@@ -256,10 +256,12 @@ nuorf <- function(x) {
 }
 
 should_i_do <- function(src) {
+  src <- tolower(src)
   refreshing <- getOption("sourcoise.refreshing")
   if(is.null(refreshing) || !refreshing)
     return(FALSE)
-  done <- getOption("sourcoise.refreshing.done")
+  done <- getOption("sourcoise.refreshing.done") |>
+    unlist()
   if(src %in% done | !(src %in% getOption("sourcoise.refreshing.2do"))) {
     options(sourcoise.refreshing.hit = c(getOption("sourcoise.refreshing.hit"), src))
     return(FALSE) }
@@ -267,11 +269,11 @@ should_i_do <- function(src) {
 }
 
 mark_as_done <- function(src) {
+  src <- tolower(src)
   refreshing <- getOption("sourcoise.refreshing")
   if(is.null(refreshing) || !refreshing)
     return(NULL)
   src <- src |>
-    fs::path_ext_remove() |>
     as.character()
   done <- getOption("sourcoise.refreshing.done")
   done <- c(done, src) |> unique()

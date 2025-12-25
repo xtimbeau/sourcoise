@@ -104,7 +104,7 @@ read_meta1 <- function(ctxt) {
   data$ok <- "cache"
   data$error <- NULL
   if(file.exists(fnd)) {
-    data$data_date <- lubridate::as_datetime(data$data_date)
+    data$data_date <- lubridate::as_datetime(data$data_date, tz = Sys.timezone())
     data$data <- qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
   }
   if(any(new_meta)) {
@@ -128,7 +128,7 @@ read_meta1_valid <- function(ctxt) {
   data$ok <- "cache"
   data$error <- NULL
   if(file.exists(fnd)) {
-    data$data_date <- lubridate::as_datetime(data$data_date)
+    data$data_date <- lubridate::as_datetime(data$data_date, tz = Sys.timezone())
     data$data <- qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
   }
   if(any(new_meta)) {

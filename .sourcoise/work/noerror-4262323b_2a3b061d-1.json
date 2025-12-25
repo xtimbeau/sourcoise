@@ -1,0 +1,20 @@
+{
+  "timing": [0.0359],
+  "date": ["2025-12-25 19:43:01.258308"],
+  "size": [367400],
+  "args": [],
+  "lapse": ["never"],
+  "src": ["work/noerror.r"],
+  "src_hash": ["7ed0ba41689bcda36e0d5235dce9fe00b800740d"],
+  "arg_hash": ["4262323b"],
+  "track_hash": [0],
+  "track": [],
+  "wd": ["file"],
+  "qmd_file": [],
+  "src_in": ["project"],
+  "data_hash": ["628b89e7d69015b7d1e9e5d4a16b4e0a"],
+  "priority": [10],
+  "file_size": [124307],
+  "data_date": ["2025-12-25 19:43:01.280332"],
+  "data_file": ["noerror-4262323b_628b89e7d69015b7d1e9e5d4a16b4e0a.qs2"]
+}

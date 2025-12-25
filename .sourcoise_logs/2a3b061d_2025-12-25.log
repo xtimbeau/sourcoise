@@ -1,0 +1,136 @@
+INFO [2025-12-25 19:43:20] Refreshing 3 source files
+INFO [2025-12-25 19:43:20] sourcoising /Users/xt/github/sourcoise/work/commun.r
+INFO [2025-12-25 19:43:20] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 19:43:20] work/commun.r (forced) in 0 sec. (0)
+INFO [2025-12-25 19:43:20] sourcoising /Users/xt/github/sourcoise/work/noerror.r
+INFO [2025-12-25 19:43:20] Tracked files not found, check your paths.
+INFO [2025-12-25 19:43:20] sourcoising /Users/xt/github/sourcoise/work/commun.R
+INFO [2025-12-25 19:43:20] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 19:43:20] work/commun.R cache valid (0)
+INFO [2025-12-25 19:43:20] sourcoising /Users/xt/github/sourcoise/work/noerror3.R
+INFO [2025-12-25 19:43:20] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 19:43:20] work/noerror3.R (forced) in 0 sec. (8.66K)
+SUCCESS [2025-12-25 19:43:20] work/noerror.r (forced) in 0.1 sec. (359K)
+INFO [2025-12-25 19:43:21] sourcoising /Users/xt/github/sourcoise/work/noerror3.r
+INFO [2025-12-25 19:43:21] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 19:43:21] work/noerror3.r (forced) in 0 sec. (8.66K)
+INFO [2025-12-25 19:45:34] Refreshing 3 source files
+INFO [2025-12-25 19:45:34] sourcoising /Users/xt/github/sourcoise/work/commun.r
+INFO [2025-12-25 19:45:34] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 19:45:34] work/commun.r (forced) in 0 sec. (0)
+INFO [2025-12-25 19:45:34] sourcoising /Users/xt/github/sourcoise/work/noerror.r
+INFO [2025-12-25 19:45:34] Tracked files not found, check your paths.
+INFO [2025-12-25 19:45:34] sourcoising /Users/xt/github/sourcoise/work/commun.R
+INFO [2025-12-25 19:45:34] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 19:45:34] work/commun.R cache valid (0)
+INFO [2025-12-25 19:45:34] sourcoising /Users/xt/github/sourcoise/work/noerror3.R
+INFO [2025-12-25 19:45:34] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 19:45:34] work/noerror3.R (forced) in 0 sec. (8.66K)
+SUCCESS [2025-12-25 19:45:34] work/noerror.r (forced) in 0.12 sec. (359K)
+INFO [2025-12-25 19:45:34] sourcoising /Users/xt/github/sourcoise/work/noerror3.r
+INFO [2025-12-25 19:45:34] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 19:45:34] work/noerror3.r (forced) in 0 sec. (8.66K)
+INFO [2025-12-25 19:45:38] Refreshing 3 source files
+INFO [2025-12-25 19:45:38] sourcoising /Users/xt/github/sourcoise/work/commun.r
+INFO [2025-12-25 19:45:38] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 19:45:38] work/commun.r (forced) in 0 sec. (0)
+INFO [2025-12-25 19:45:38] sourcoising /Users/xt/github/sourcoise/work/noerror3.r
+INFO [2025-12-25 19:45:38] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 19:45:38] work/noerror3.r (forced) in 0 sec. (8.66K)
+INFO [2025-12-25 19:45:38] sourcoising /Users/xt/github/sourcoise/work/noerror.r
+INFO [2025-12-25 19:45:38] Tracked files not found, check your paths.
+INFO [2025-12-25 19:45:38] sourcoising /Users/xt/github/sourcoise/work/commun.R
+INFO [2025-12-25 19:45:38] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 19:45:38] work/commun.R cache valid (0)
+INFO [2025-12-25 19:45:38] sourcoising /Users/xt/github/sourcoise/work/noerror3.R
+INFO [2025-12-25 19:45:38] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 19:45:38] work/noerror3.R cache valid (8.66K)
+SUCCESS [2025-12-25 19:45:39] work/noerror.r (forced) in 0.07 sec. (359K)
+INFO [2025-12-25 19:45:40] Refreshing 3 source files
+INFO [2025-12-25 19:45:40] sourcoising /Users/xt/github/sourcoise/work/commun.r
+INFO [2025-12-25 19:45:40] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 19:45:40] work/commun.r (forced) in 0 sec. (0)
+INFO [2025-12-25 19:45:40] sourcoising /Users/xt/github/sourcoise/work/noerror3.r
+INFO [2025-12-25 19:45:40] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 19:45:40] work/noerror3.r (forced) in 0.01 sec. (8.66K)
+INFO [2025-12-25 19:45:40] sourcoising /Users/xt/github/sourcoise/work/noerror.r
+INFO [2025-12-25 19:45:40] Tracked files not found, check your paths.
+INFO [2025-12-25 19:45:40] sourcoising /Users/xt/github/sourcoise/work/commun.R
+INFO [2025-12-25 19:45:40] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 19:45:40] work/commun.R cache valid (0)
+INFO [2025-12-25 19:45:40] sourcoising /Users/xt/github/sourcoise/work/noerror3.R
+INFO [2025-12-25 19:45:40] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 19:45:40] work/noerror3.R cache valid (8.66K)
+SUCCESS [2025-12-25 19:45:40] work/noerror.r (forced) in 0.07 sec. (359K)
+INFO [2025-12-25 19:45:42] Refreshing 3 source files
+INFO [2025-12-25 19:45:42] sourcoising /Users/xt/github/sourcoise/work/commun.r
+INFO [2025-12-25 19:45:42] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 19:45:42] work/commun.r (forced) in 0 sec. (0)
+INFO [2025-12-25 19:45:42] sourcoising /Users/xt/github/sourcoise/work/noerror3.r
+INFO [2025-12-25 19:45:42] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 19:45:42] work/noerror3.r (forced) in 0 sec. (8.66K)
+INFO [2025-12-25 19:45:42] sourcoising /Users/xt/github/sourcoise/work/noerror.r
+INFO [2025-12-25 19:45:42] Tracked files not found, check your paths.
+INFO [2025-12-25 19:45:42] sourcoising /Users/xt/github/sourcoise/work/commun.R
+INFO [2025-12-25 19:45:42] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 19:45:42] work/commun.R cache valid (0)
+INFO [2025-12-25 19:45:42] sourcoising /Users/xt/github/sourcoise/work/noerror3.R
+INFO [2025-12-25 19:45:42] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 19:45:42] work/noerror3.R cache valid (8.66K)
+SUCCESS [2025-12-25 19:45:42] work/noerror.r (forced) in 0.08 sec. (359K)
+INFO [2025-12-25 21:17:42] Refreshing 3 source files
+INFO [2025-12-25 21:17:42] sourcoising /Users/xt/github/sourcoise/work/commun.r
+INFO [2025-12-25 21:17:42] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 21:17:42] work/commun.r (forced) in 0 sec. (0)
+INFO [2025-12-25 21:18:44] Refreshing 3 source files
+INFO [2025-12-25 21:18:44] sourcoising /Users/xt/github/sourcoise/work/commun.r
+INFO [2025-12-25 21:18:44] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 21:18:44] work/commun.r (forced) in 0 sec. (0)
+INFO [2025-12-25 21:18:44] sourcoising /Users/xt/github/sourcoise/work/noerror3.r
+INFO [2025-12-25 21:18:44] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 21:18:44] work/noerror3.r (forced) in 0 sec. (8.66K)
+INFO [2025-12-25 21:18:44] sourcoising /Users/xt/github/sourcoise/work/noerror.r
+INFO [2025-12-25 21:18:44] Tracked files not found, check your paths.
+INFO [2025-12-25 21:18:44] sourcoising /Users/xt/github/sourcoise/work/commun.R
+INFO [2025-12-25 21:18:44] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 21:18:44] work/commun.R cache valid (0)
+INFO [2025-12-25 21:18:44] sourcoising /Users/xt/github/sourcoise/work/noerror3.R
+INFO [2025-12-25 21:18:44] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 21:18:44] work/noerror3.R cache valid (8.66K)
+SUCCESS [2025-12-25 21:18:44] work/noerror.r (forced) in 0.08 sec. (359K)
+INFO [2025-12-25 21:20:07] Refreshing 3 source files
+INFO [2025-12-25 21:20:07] sourcoising /Users/xt/github/sourcoise/work/commun.r
+INFO [2025-12-25 21:20:07] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 21:20:07] work/commun.r (forced) in 0 sec. (0)
+INFO [2025-12-25 21:20:07] sourcoising /Users/xt/github/sourcoise/work/noerror3.r
+INFO [2025-12-25 21:20:07] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 21:20:07] work/noerror3.r (forced) in 0 sec. (8.66K)
+INFO [2025-12-25 21:20:07] sourcoising /Users/xt/github/sourcoise/work/noerror.r
+INFO [2025-12-25 21:20:07] Tracked files not found, check your paths.
+INFO [2025-12-25 21:20:07] sourcoising /Users/xt/github/sourcoise/work/commun.R
+INFO [2025-12-25 21:20:07] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 21:20:07] work/commun.R cache valid (0)
+INFO [2025-12-25 21:20:07] sourcoising /Users/xt/github/sourcoise/work/noerror3.R
+INFO [2025-12-25 21:20:07] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 21:20:07] work/noerror3.R cache valid (8.66K)
+SUCCESS [2025-12-25 21:20:07] work/noerror.r (forced) in 0.06 sec. (359K)
+INFO [2025-12-25 21:44:48] Refreshing 3 source files
+INFO [2025-12-25 21:44:48] sourcoising /Users/xt/github/sourcoise/work/commun.r
+INFO [2025-12-25 21:44:48] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 21:44:48] work/commun.r (forced) in 0 sec. (0)
+INFO [2025-12-25 21:45:08] Refreshing 3 source files
+INFO [2025-12-25 21:45:08] sourcoising /Users/xt/github/sourcoise/work/commun.r
+INFO [2025-12-25 21:45:08] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 21:45:08] work/commun.r (forced) in 0 sec. (0)
+INFO [2025-12-25 21:45:09] sourcoising /Users/xt/github/sourcoise/work/noerror3.r
+INFO [2025-12-25 21:45:09] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 21:45:09] work/noerror3.r (forced) in 0.45 sec. (8.66K)
+INFO [2025-12-25 21:45:09] sourcoising /Users/xt/github/sourcoise/work/noerror.r
+INFO [2025-12-25 21:45:09] Tracked files not found, check your paths.
+INFO [2025-12-25 21:45:09] sourcoising /Users/xt/github/sourcoise/work/commun.R
+INFO [2025-12-25 21:45:09] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 21:45:09] work/commun.R cache valid (0)
+INFO [2025-12-25 21:45:09] sourcoising /Users/xt/github/sourcoise/work/noerror3.R
+INFO [2025-12-25 21:45:09] Tracked files not found, check your paths.
+SUCCESS [2025-12-25 21:45:09] work/noerror3.R cache valid (8.66K)
+SUCCESS [2025-12-25 21:45:10] work/noerror.r (forced) in 0.14 sec. (359K)

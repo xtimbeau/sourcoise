@@ -85,8 +85,8 @@ sourcoise_meta <- function(path, args = NULL, root = NULL, quiet = FALSE) {
     if(!meta$valid_track&meta$data_exists)
       meta$ok <- "cache invalid -- tracked filed changed"
 
-    meta$date <- lubridate::as_datetime(meta$date)
-    meta$data_date <- lubridate::as_datetime(meta$data_date)
+    meta$date <- lubridate::as_datetime(meta$date, tz=Sys.timezone())
+    meta$data_date <- lubridate::as_datetime(meta$data_date, tz=Sys.timezone())
   }
   if(!quiet)
     cli::cli_alert_info(meta$ok)

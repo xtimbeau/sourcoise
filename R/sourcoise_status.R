@@ -64,15 +64,17 @@ sourcoise_status <- function(
     cached <- get_metadata(root = root, filter = "all")
 
   if(nrow(cached)>0) {
-    if(short)
-      cached <- cached |> dplyr::select(src, priority, date, data_date, file_size, json_file)
-
     cached <- cached |>
-      dplyr::arrange(dplyr::desc(.data$priority), .data$src, dplyr::desc(.data$date))
+      dplyr::arrange(dplyr::desc(.data$priority), .data$src, dplyr::desc(.data$date)) |>
+      dplyr::mutate(
+        last_call = format_timespan(date),
+        last_update = format_timespan(data_date) )
+
+    if(short)
+      cached <- cached |> dplyr::select(valid, priority, src, last_call, last_update, file_size, json_file)
 
     return(cached)
   }
-
 
   if(!quiet)
     cli::cli_alert_info("No cache data")

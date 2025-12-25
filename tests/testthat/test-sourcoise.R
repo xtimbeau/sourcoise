@@ -71,7 +71,7 @@ meta <- sourcoise_meta("prix_insee.R")
 test_that("sourcoise_meta", {
   expect(meta$ok == "cache ok&valid",
          "no metadata returned")
-  expect(meta$data_date == lubridate::as_datetime(data$data_date),
+  expect(meta$data_date == lubridate::as_datetime(data$data_date, tz=Sys.timezone()),
          "date not the same")
   expect(meta$data_file == data$data_file,
          "data_file not the same")

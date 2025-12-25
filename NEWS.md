@@ -1,5 +1,6 @@
-# sourcoise 1.0.0.9005
+# sourcoise 1.0.0.9006
 
+* new `sourcoise_meta()` producing the same result plus explanation of cache status
 * Source not found and execution error with no cache now trigger an error 
 * performance improvment (50%) in cache data cleaning and testing existence of files (not anymore done with fs)
 * Uppercase is now correctly treated on UNIX systems
