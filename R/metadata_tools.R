@@ -476,7 +476,7 @@ get_metadata <- function(root=NULL, uid = NULL,
       cur_arg_hash = ifelse(is.na(cur_arg_hash),
                             digest::digest(list(), algo = "crc32"),
                             cur_arg_hash),
-      cur_track_hash = ifelse(is.na(cur_track_hash),
+      cur_track_hash = ifelse(purrr::map_lgl(cur_track_hash, ~length(.x)==0),
                               0,
                               cur_track_hash),
       log_file = ifelse(purrr::map_lgl(log_file, length), "", log_file))
