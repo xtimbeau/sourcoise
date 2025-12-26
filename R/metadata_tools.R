@@ -421,7 +421,7 @@ get_metadata <- function(root=NULL, uid = NULL,
   if(filter=="recent")
     metas <- metas |>
     dplyr::group_by(root, tolower(src), arg_hash) |>
-    dplyr::filter(data_date==max(data_date)) |>
+    # dplyr::filter(data_date==max(data_date)) |>
     dplyr::filter(date==max(date)) |>
     dplyr::slice(1) |>
     dplyr::ungroup()
@@ -459,7 +459,7 @@ get_metadata <- function(root=NULL, uid = NULL,
   if(nrow(args)>0)
     metas <- metas |>
     dplyr::left_join(args, dplyr::join_by(args)) else
-      metas <- metas |> dplyr::mutate(cur_arg_hash =  NA_character_)
+      metas <- metas |> dplyr::mutate(cur_arg_hash = NA_character_)
   tracks <- metas |>
     tidyr::drop_na(track) |>
     dplyr::distinct(root, track) |>
@@ -468,7 +468,7 @@ get_metadata <- function(root=NULL, uid = NULL,
   if(nrow(tracks)>0)
     metas <- metas |>
     dplyr::left_join(tracks, dplyr::join_by(root, track)) else
-      metas <- metas |> dplyr::mutate(cur_track_hash = NA_character_)
+      metas <- metas |> dplyr::mutate(cur_track_hash = 0)
   metas <- metas |>
     dplyr::mutate(valid_lapse = valid_lapse(lapse, date))
   metas <- metas |>

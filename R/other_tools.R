@@ -84,7 +84,7 @@ format_timespan <- function(to_datetime, from_datetime = lubridate::now()) {
               tspan <- textify(span, 3) else
                 if(span<lubridate::days(7))
                   tspan <- textify(span, 4) else
-                    if(span<lubridate::weeks(4))
+                    if(span<lubridate::weeks(5))
                       tspan <- textify(span, 5) else
                         if(span<lubridate::weeks(52))
                           tspan <- textify(span, 6) else
