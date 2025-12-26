@@ -121,7 +121,9 @@ sourcoise_refresh <- function(
       sourcoise.refreshing = TRUE,
       sourcoise.refreshing.2do = what |>
         dplyr::mutate(fsrc = purrr::map2(root, src, \(.r, .f) fs::path_join(c(.r,.f)))) |>
-        dplyr::pull() |> unlist() |> tolower(),
+        dplyr::pull() |>
+        unlist() |>
+        tolower(),
       sourcoise.refreshing.done = list(),
       sourcoise.refreshing.hit = list())
   }

@@ -407,7 +407,9 @@ get_metadata <- function(root=NULL, uid = NULL,
         fs::path_rel(!!root) |>
         fs::path_ext_set(".r")) |>
     dplyr::mutate(
-      src = ifelse(file.exists(src), src, src |> fs::path_ext_set(".R")) ) |>
+      src = ifelse(exists_file(src, root),
+                   src,
+                   src |> fs::path_ext_set(".R")) ) |>
     dplyr::relocate(name)
 
   if(nrow(metas) == 0) {

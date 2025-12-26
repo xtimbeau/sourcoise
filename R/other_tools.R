@@ -61,7 +61,8 @@ format_timespan <- function(to_datetime, from_datetime = lubridate::now()) {
     tspan <- glue::glue("{floor(span/is[[i]])}{names(is)[[i]]}")
     if(i>1) {
       mspan <- round((span/is[[i]] - floor(span/is[[i]]))*is[[i]]/is[[i-1]])
-      tspan <- glue::glue("{tspan} {mspan}{names(is)[[i-1]]}")
+      if(mspan>0)
+        tspan <- glue::glue("{tspan} {mspan}{names(is)[[i-1]]}")
     }
     return(tspan)
   }
