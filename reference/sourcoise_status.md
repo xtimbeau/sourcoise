@@ -115,5 +115,5 @@ sourcoise_status()
 #> # A tibble: 1 × 7
 #>   valid priority src         last_call last_update   file_size json_file        
 #>   <lgl>    <int> <chr>       <chr>     <chr>       <fs::bytes> <chr>            
-#> 1 NA          10 some_data.R 0s        0s                  242 .sourcoise/some_…
+#> 1 TRUE        10 some_data.R 0s        0s                  242 .sourcoise/some_…
 ```
