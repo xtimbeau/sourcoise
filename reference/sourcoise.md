@@ -231,7 +231,7 @@ bench::mark(
 #> # A tibble: 2 × 13
 #>   expression      min median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time
 #>   <bch:expr> <bch:tm> <bch:>     <dbl> <bch:byt>    <dbl> <int> <dbl>   <bch:tm>
-#> 1 forced       54.6ms 54.6ms      18.3    5.01MB        0     1     0     54.6ms
-#> 2 cached       12.2ms 12.2ms      81.6  203.17KB        0     1     0     12.2ms
+#> 1 forced       53.9ms 53.9ms      18.6    5.01MB        0     1     0     53.9ms
+#> 2 cached       12.2ms 12.2ms      81.7  203.17KB        0     1     0     12.2ms
 #> # ℹ 4 more variables: result <list>, memory <list>, time <list>, gc <list>
 ```
