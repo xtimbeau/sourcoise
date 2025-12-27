@@ -418,10 +418,24 @@ get_metadata <- function(root=NULL, uid = NULL,
     return(tibble::tibble())
   }
 
+  sources <- metas |>
+    dplyr::distinct(src, root) |>
+    dplyr::mutate(
+      ffn = stringr::str_c(root,"/", src),
+      cur_src_hash = hash_file(ffn) ) |>
+    dplyr::select(root, src, cur_src_hash)
+  metas <- metas |>
+    dplyr::left_join(sources, dplyr::join_by(src, root)) |>
+    dplyr::mutate(cur_src_hash = tidyr::replace_na(cur_src_hash, 0)) |>
+    dplyr::group_by(root, tolower(src), arg_hash) |>
+    dplyr::mutate(vsrc  = ifelse(any(src_hash==cur_src_hash),
+                                 src_hash == cur_src_hash, TRUE)) |>
+    dplyr::ungroup() |>
+    dplyr::filter(vsrc)
+
   if(filter=="recent")
     metas <- metas |>
     dplyr::group_by(root, tolower(src), arg_hash) |>
-    # dplyr::filter(data_date==max(data_date)) |>
     dplyr::filter(date==max(date)) |>
     dplyr::slice(1) |>
     dplyr::ungroup()
@@ -444,14 +458,6 @@ get_metadata <- function(root=NULL, uid = NULL,
                                        ~fs::path_join(c(.x, .y))),
       data_exist = exists_file(data_file,
                                full_cache_rep))
-  sources <- metas |>
-    dplyr::distinct(src, root) |>
-    dplyr::mutate(
-      ffn = stringr::str_c(root,"/", src),
-      cur_src_hash = hash_file(ffn) ) |>
-    dplyr::select(root, src, cur_src_hash)
-  metas <- metas |>
-    dplyr::left_join(sources, dplyr::join_by(src, root))
   args <- metas |>
     dplyr::distinct(args) |>
     tidyr::drop_na() |>
