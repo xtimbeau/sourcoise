@@ -113,7 +113,7 @@ data <- sourcoise("some_data.R", force_exec = TRUE)
 # status returns the cache status
 sourcoise_status()
 #> # A tibble: 1 × 7
-#>   valid priority src         last_call last_update   file_size json_file        
+#>   valid priority src         last_exec last_update   file_size json_file        
 #>   <lgl>    <int> <chr>       <chr>     <chr>       <fs::bytes> <chr>            
 #> 1 TRUE        10 some_data.R 0s        0s                  242 .sourcoise/some_…
 ```
