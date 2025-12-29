@@ -200,16 +200,16 @@ fast_read_mdata <- function(paths) {
 
 read_json_safe <- purrr::safely(jsonlite::read_json)
 
-read_mdata <- function(path) {
-  l <- read_json_safe(path, simplifyVector = TRUE)
-  if(is.null(l$error)) {
-    l <- l$result
-    l$json_file <- path
-    return(l)
-  }
-  sure_delete(path)
-  l <- list()
-}
+# read_mdata <- function(path) {
+#   l <- read_json_safe(path, simplifyVector = TRUE)
+#   if(is.null(l$error)) {
+#     l <- l$result
+#     l$json_file <- path
+#     return(l)
+#   }
+#   sure_delete(path)
+#   l <- list()
+# }
 
 # get_ddatas <- function(name, data_rep) {
 #   pat <- stringr::str_c(name, "_([a-f0-9]){8}-([0-9]+).qs2")

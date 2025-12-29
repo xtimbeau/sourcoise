@@ -156,25 +156,25 @@ write_meta <- function(metas, ctxt) {
   return(new_json_fn)
 }
 
-read_metas <- function(ctxt) {
-  all_metas <- get_all_metadata(ctxt)
-  if(nrow(all_metas)==0)
-    return(NULL)
-  all_metas <- all_metas |>
-    dplyr::filter(data_date == max(data_date)) |>
-    dplyr::slice(1) |>
-    as.list()
-
-  data <- all_metas
-  data$data <- NULL
-  fnd <- fs::path_join(c(fs::path_dir(all_metas$name), all_metas$data_file))
-
-  if(file.exists(fnd)) {
-    data$data <- qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
-  }
-
-  return(data)
-}
+# read_metas <- function(ctxt) {
+#   all_metas <- get_all_metadata(ctxt)
+#   if(nrow(all_metas)==0)
+#     return(NULL)
+#   all_metas <- all_metas |>
+#     dplyr::filter(data_date == max(data_date)) |>
+#     dplyr::slice(1) |>
+#     as.list()
+#
+#   data <- all_metas
+#   data$data <- NULL
+#   fnd <- fs::path_join(c(fs::path_dir(all_metas$name), all_metas$data_file))
+#
+#   if(file.exists(fnd)) {
+#     data$data <- qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
+#   }
+#
+#   return(data)
+# }
 
 data_returned <- function(data, ctxt) {
   if(!ctxt$metadata)
