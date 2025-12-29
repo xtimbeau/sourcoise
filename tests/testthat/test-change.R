@@ -45,6 +45,6 @@ test_that(
   "lapse", {
     expect(
       sourcoise_meta("prix_insee.r")$lapse == "1 week",
-      "not untracked")
+      "lapse is incorrect")
   })
 

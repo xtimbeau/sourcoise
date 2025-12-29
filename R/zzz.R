@@ -23,7 +23,7 @@
   if (any(toset)) options(op.sourcoise[toset])
 
   if(rlang::is_installed("memoise")) {
-    read_meta1_valid <<- memoise::memoise(read_meta1_valid)
+    read_data <<- memoise::memoise(read_data)
   }
 }
 

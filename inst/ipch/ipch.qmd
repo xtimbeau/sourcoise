@@ -14,4 +14,3 @@ ggplot(data = ipch_data$ipchm) +
   geom_line()
 
 ```
-

@@ -182,10 +182,11 @@ sourcoise_ <- function(
       return(data_returned(our_data, ctxt))
     }
   }
-
+  # check si le json le plus récent est valide
   ctxt <- valid_meta1(ctxt)
+
   if(ctxt$meta_valid$valid) {
-    return_data <- read_meta1_valid(ctxt)
+    return_data <- read_data(ctxt$meta1, ctxt)
     logger::log_success("{ctxt$relname} cache valid ({fs::as_fs_bytes(return_data$size)})")
     if(length(our_data)!=0 && our_data$ok == FALSE ) {
       our_data$error <- our_data$error %||% "Cascade error"
@@ -197,10 +198,34 @@ sourcoise_ <- function(
     mark_as_done(ctxt$src)
     return(data_returned(return_data, ctxt))
   }
+  # on lit toutes les métadonnées disponibles puisque le json évident n'est pas valide
+  metas <- get_metadata(
+    root = ctxt$root,
+    bn = ctxt$name,
+    argid = ctxt$arg_hash,
+    cache_reps = ctxt$root_cache_rep,
+    filter = "all")
 
-  if(!prevent) {
-    if(length(our_data)==0)
-      our_data <- super_exec_source(ctxt)
+  if(nrow(metas) >0 ) {
+    metas <- metas |>
+      dplyr::mutate(valid_track  =  track_hash == ctxt$track_hash,
+                    valid  = valid_src & valid_args & valid_track &
+                      valid_lapse & data_exist  )
+
+    # on cherche un valid
+    if(any(metas$valid)) {
+      gmeta <- metas |>
+        dplyr::filter(valid) |>
+        dplyr::slice(1)
+      return_data <- read_data(gmeta, ctxt)
+      logger::log_success("{ctxt$relname} cache valid ({fs::as_fs_bytes(return_data$size)})")
+      return(data_returned(return_data, ctxt))
+    }
+  }
+  # ni valide, ni execution forcée, potentiellement pas d'exécution
+
+  if(!prevent&length(our_data)==0) {
+    our_data <- super_exec_source(ctxt)
     if(our_data$ok=="exec") {
       our_data <- cache_data(our_data, ctxt)
       logger::log_success(
@@ -209,41 +234,39 @@ sourcoise_ <- function(
     }
   }
 
-  return_data <- read_meta1(ctxt)
-  if(is.null(return_data$data))
-    return_data <- read_metas(ctxt)
+  # on arrive là si on a échoué à produire les données et qu'on a pas de cache valide
+  # on essaye de retourner un cache qand même
+  if(any(metas$data_exist)) {
+    gmeta <- metas |>
+      dplyr::filter(data_exist) |>
+      dplyr::filter(data_date == max(data_date)) |>
+      dplyr::slice(1)
+    return_data <- read_data(gmeta, ctxt)
+    if(prevent)
+      logger::log_warn(
+        "{ctxt$relname} exec prevented, returning invalid cache ({fs::as_fs_bytes(return_data$size)})")
+    if(!prevent)
+      logger::log_warn(
+        "{ctxt$relname} exec error, returning invalid cache ({fs::as_fs_bytes(return_data$size)})")
+    return_data$ok <- "Invalid cache"
+    return_data$error <- our_data$error
+    return(data_returned(return_data, ctxt))
+  }
 
   if(prevent) {
-    if(!is.null(return_data$data)) {
-      return_data$ok <- "invalid cache"
-      return_data$error <- NULL
-      return(data_returned(return_data, ctxt))
-    }
     logger::log_fatal("No cached data&execution prevented")
     return(list(
       error = "No valid cache&prevent",
       ok = FALSE,
       log_file = ctxt$log_file))
   }
-
-  if(!is.null(return_data$data)) {
-    return_data$ok <- "invalid cache&exec error"
-    our_data$error <- our_data$error  %||% "cascade error"
-    return_data$error <- our_data$error  %||% "cascade error"
-
-    if(!ctxt$quiet)
-      cli::cli_verbatim(our_data$error )
-    logger::log_error(our_data$error |> cli::ansi_strip() |> logger::skip_formatter())
-    return(data_returned(return_data, ctxt))
+  if(prevent) {
+    logger::log_fatal("No cached data&execution failed")
+    return(list(
+      error = "No valid cache&execution error",
+      ok = FALSE,
+      log_file = ctxt$log_file))
   }
-
-  logger::log_error("{ctxt$relname} failed&no cache")
-  if(!ctxt$quiet)
-    cli::cli_verbatim(our_data$error)
-  logger::log_error(our_data$error |> cli::ansi_strip() |> logger::skip_formatter())
-  rlang::abort(
-    message = glue::glue("Execution of {ctxt$src} failed and no cache to return")
-  )
 }
 
 # helpers

@@ -89,50 +89,28 @@ prune_cache <- function(ctxt) {
   purrr::walk(datas_out, ~ sure_delete(fs::path_join(c(ctxt$full_cache_rep, .x))))
 }
 
-read_meta1 <- function(ctxt) {
-  metas <- ctxt$meta1
+read_data <- function(meta, ctxt) {
+  fnd <- fs::path_join(c(ctxt$full_cache_rep, meta$data_file))
+  if(!data_ok(fnd, ctxt$cachebasename))
+    return(NULL)
+  data <- meta |> as.list()
+  data$args <- data$args |> unlist() |> as.list()
+  data$track <- data$track |> unlist() |> as.list()
+  data$qmd_file <- data$qmd_file |> unlist() |> as.list()
   new_meta <- purrr::map_lgl(
     rlang::set_names(c("track", "track_hash", "qmd_file", "wd", "src_in")),
     ~{
-      chged <- !setequal(metas[[.x]], ctxt[[.x]])
-      metas[[.x]] <<- metas[[.x]]
+      chged <- !setequal(data[[.x]], ctxt[[.x]])
+      data[[.x]] <<- ctxt[[.x]]
       chged})
-  fnd <- fs::path_join(c(ctxt$full_cache_rep, ctxt$meta1$data_file))
-  if(!data_ok(fnd, ctxt$cachebasename))
-    return(NULL)
-  data <- metas
-  data$ok <- "cache"
-  data$error <- NULL
-  if(file.exists(fnd)) {
-    data$data_date <- lubridate::as_datetime(data$data_date, tz = Sys.timezone())
-    data$data <- qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
-  }
-  if(any(new_meta)) {
-    data$json_file <- write_meta(metas, ctxt)
-  }
-  return(data)
-}
 
-read_meta1_valid <- function(ctxt) {
-  metas <- ctxt$meta1
-  new_meta <- purrr::map_lgl(
-    rlang::set_names(c("track", "track_hash", "qmd_file", "wd", "src_in")),
-    ~{
-      chged <- !setequal(metas[[.x]], ctxt[[.x]])
-      metas[[.x]] <<- metas[[.x]]
-      chged})
-  fnd <- fs::path_join(c(ctxt$full_cache_rep, ctxt$meta1$data_file))
-  if(!data_ok(fnd, ctxt$cachebasename))
-    return(NULL)
-  data <- metas
   data$ok <- "cache"
   data$error <- NULL
-  if(file.exists(fnd)) {
-    data$data_date <- lubridate::as_datetime(data$data_date, tz = Sys.timezone())
-    data$data <- qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
-  }
+  data$data_date <- lubridate::as_datetime(meta$data_date, tz = Sys.timezone())
+  data$data <- qs2::qs_read(fnd, nthreads = getOption("sourcoise.nthreads"))
+
   if(any(new_meta)) {
-    data$json_file <- write_meta(metas, ctxt)
+    data$json_file <- write_meta(meta, ctxt)
   }
   return(data)
 }
@@ -143,15 +121,15 @@ write_meta <- function(metas, ctxt) {
     timing = metas$timing |> as.numeric(),
     date = metas$date |> as.character(),
     size = metas$size |> as.numeric(),
-    args = metas[["args"]] %||% list(),
+    args = (metas[["args"]] |> unlist() |> as.list()) %||% list(),
     lapse = metas$lapse,
     src = metas$src,
     src_hash = metas$src_hash,
     arg_hash = metas$arg_hash,
     track_hash = metas$track_hash,
-    track = metas[["track"]] %||% list(),
+    track = (metas[["track"]] |> unlist() |> as.list()) %||% list(),
     wd = metas$wd,
-    qmd_file = metas[["qmd_file"]] %||% list(),
+    qmd_file = (metas[["qmd_file"]] |> unlist() |> as.list()) %||% list(),
     src_in = metas$src_in,
     data_hash = metas$data_hash,
     priority = metas$priority,

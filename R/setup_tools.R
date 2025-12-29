@@ -5,7 +5,7 @@ setup_context <- function(path, root, src_in="project", exec_wd=NULL, wd="file",
                           metadata=FALSE, inform=FALSE, quiet=TRUE, hash = TRUE) {
   ctxt <- list()
   if(is.null(track))
-    ctxt$track <- list()
+    ctxt$track <- character(0)
   else
     ctxt$track <- track
 

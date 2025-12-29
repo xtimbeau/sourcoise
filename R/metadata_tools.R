@@ -347,7 +347,7 @@ fast_metadata <- function(root=NULL, uid = NULL, bn = NULL,
 
 get_metadata <- function(root=NULL, uid = NULL,
                          bn = NULL, argid = NULL, cache_reps = NULL,
-                         filter = "recent", quiet = FALSE) {
+                         filter = "recent", quiet = TRUE) {
 
   qm <- fast_metadata(root=root, uid = uid, bn = bn,
                       argid = argid, cache_reps = cache_reps)
@@ -509,5 +509,7 @@ get_metadata <- function(root=NULL, uid = NULL,
       data_date = lubridate::as_datetime(data_date, tz=Sys.timezone()),
       file_size = fs::as_fs_bytes(file_size),
       log_file, root, src_hash, track_hash,
-      track, arg_hash, data_hash)
+      track, arg_hash, data_hash,
+      valid_src, valid_args, valid_lapse, valid_track,
+      src_exist, data_exist)
 }
