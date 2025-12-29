@@ -1,5 +1,5 @@
 dir <- tempdir()
-library(tidyverse)
+library(tidyr)
 set_sourcoise_root(dir)
 sourcoise_clear_all()
 fs::file_copy(
