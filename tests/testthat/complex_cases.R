@@ -1,5 +1,7 @@
 dir <- tempdir()
 library(tidyr)
+library(dplyr)
+library(stringr)
 set_sourcoise_root(dir)
 sourcoise_clear_all()
 fs::file_copy(
@@ -73,4 +75,17 @@ test_that(
     expect(data6$ok == "Invalid cache", "Cache error")
     expect(all(data6$data$a == data5$data$a), "good data")
     expect(all(data6$data$b == data5$data$b), "old data")
+  })
+
+slow <- readLines(fs::path_join(c(dir, "slow.R")))
+slow[4] <- ""
+writeLines(slow, con = fs::path_join(c(dir, "slow.R")))
+
+data7 <- sourcoise("slow.r", metadata = TRUE, prevent = TRUE)
+
+test_that(
+  "cache is old", {
+    expect(data7$ok == "cache", "Cache error")
+    expect(all(data7$data$a == data6$data$a), "good data")
+    expect(all(data7$data$b == data6$data$b), "old data")
   })
