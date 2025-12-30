@@ -1,6 +1,7 @@
-# sourcoise 1.0.0.9006
+# sourcoise 1.0.0.9007
 
-* new `sourcoise_meta()` producing the same result plus explanation of cache status
+* new coverage case and error condition when nothing is returned
+* new `sourcoise_meta()` producing the same result as `sourcoise_status()` plus explanation of cache status
 * Source not found and execution error with no cache now trigger an error 
 * performance improvment (50%) in cache data cleaning and testing existence of files (not anymore done with fs)
 * Uppercase is now correctly treated on UNIX systems
@@ -10,7 +11,7 @@
 * circulation in execution cases is safer
 * performance improvment when data is cached (30%)
 * a bug when source name contains a "-" is corrected (annoying)
-* better accumulation of tracked files or qmd files, accumulated only when they exists (clear track to do, and some cleaning to do in case of track changes)
+* accumulation of tracked files or qmd files, accumulated only when they exists (clear track to do, and some cleaning to do in case of track changes)
 
 # sourcoise 1.0.0
 

@@ -89,3 +89,13 @@ test_that(
     expect(all(data7$data$a == data6$data$a), "good data")
     expect(all(data7$data$b == data6$data$b), "old data")
   })
+
+slow <- readLines(fs::path_join(c(dir, "slow.R")))
+slow[4] <- "une erreur"
+writeLines(slow, con = fs::path_join(c(dir, "slow.R")))
+fs::file_delete(fs::dir_info(fs::path_join(c(dir, ".sourcoise"))) |> pull(path))
+
+test_that(
+  "When everything fails", {
+    expect_error(sourcoise("slow.r", metadata = TRUE))
+  })

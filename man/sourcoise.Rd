@@ -22,9 +22,9 @@ sourcoise(
 
 \item{args}{(list) list of args that can be used in the script (in the form \code{args$xxx}).}
 
-\item{track}{(list) list of files which modification triggers cache invalidation and script execution .}
+\item{track}{(list) list of files which modification triggers cache invalidation and script execution. Default to \code{NULL}wich means no change in tracking.}
 
-\item{lapse}{(character) duration over which cache is invalidated. Could be \code{never} (default) \verb{x hours}, \verb{x days}, \verb{x week}, \verb{x months}, \verb{x quarters}, \verb{x years}.}
+\item{lapse}{(character) duration over which cache is invalidated. Could be \code{NULL} (ie no change), \code{never} (default) \verb{x hours}, \verb{x days}, \verb{x week}, \verb{x months}, \verb{x quarters}, \verb{x years}.}
 
 \item{force_exec}{(boolean) execute code, disregarding cache valid or invalid.}
 
@@ -42,16 +42,20 @@ sourcoise(
 data (list ou ce que le code retourne)
 }
 \description{
-\code{sourcoise()} is used as a drop in replacement for \code{base::source()} but caches results on disk. Cache is persistant over sessions.
+\code{sourcoise()} is used as a drop in replacement for \code{base::source()} but caches results on disk. Cache is persistant over sessions and can be shared through github.
 }
 \details{
-\code{sourcoise()} looks like \code{base::source()}. However, there are some minor differences.
+\code{sourcoise()} looks like \code{base::source()}. However, there are some differences.
 
-First, the script called in \code{sourcoise()} must end by a \code{return()} or by an object returned. Assignment made in the script won't be kept as \code{sourcoise()} is executed locally. Only explicitly reruned object will be returned. So \code{soucoise()} is used by assigning its result to something (\verb{aa <- sourcoise("mon_script.r)} or \verb{sourcoise() |> ggplot() ...}). Unless specified otherwise with \code{wd} parameter, the working directory for the script execution is (temporarly) set to the dir in which is the script. That allows for simple access to companion files and permit to move the script and companion files to another dir or project.
+First, the script called in \code{sourcoise()} must end by a \code{return()} or by an object returned. Assignment made in the script won't be kept as \code{sourcoise()} is executed locally. Only explicitly returned object will be returned.
+
+So \code{soucoise()} is used by assigning its result to something (\verb{aa <- sourcoise("mon_script.r)} or \verb{sourcoise() |> ggplot() ...}).
+
+Unless specified otherwise with \code{wd} parameter, the working directory for the script execution is (temporarly) set to the dir in which is the script. That allows for simple access to companion files and permit to move the script and companion files to another dir or project.
 
 Second, an heuristic is applied to find the script, in the event the path given is incomplete. Whereas it is not advised and comes with a performance cost, this can be useful when there is a change in the structure of the project. The heuristic is simple, the script is searched inside the porject dir and among all hits the closest to the caller is returned.
 
-Third, if an error is triggered by the script, \code{sourcoise()} does not fail and return the error and a NULL return. However, if there is a (invalid or valid) cache, the cached data is returned allowing for the script to continue. In that case the error is logged.
+Third, if an error is triggered by the script, \code{sourcoise()} does not fail and return the error and attempts to retrun a cache, even invalid. However, if there is no (invalid or valid) cache, then an error is trigerred.
 
 Cache is invalidated when :
 1 -   a cache is not found
@@ -60,13 +64,16 @@ Cache is invalidated when :
 4 -   last execution occurred a certain time ago and is considered as expired
 5 -   execution is forced
 
-Whatever values takes \code{src_in}, if the file path starts with a \code{/}, then the source file will be interpreted from project root (if any). This is coherent whith naming convention in \code{quarto}. Otherwise, the document path wil be used firstly (if any, that is to say executed from quarto, rendering). Finally, working directory will be used. If everything fails, it will try to search in the project directory a corresponding file and will keep the closest from the calling point.
+Whatever values takes the option \code{sourcoise.src_in}, if the file path starts with a \code{/}, then the source file will be interpreted from project root (if any). This is coherent whith naming convention in \code{quarto}. Otherwise, the document path wil be used firstly (if any, that is to say executed from quarto, rendering). Finally, working directory will be used. If everything fails, it will try to search in the project directory a corresponding file and will keep the closest from the calling point.
 
-Usually the fisrt call return and cache the results. Results can be aby R object and are serialized and saved using \code{qs2}. Subsequent calls, supposing none of cache invalidation are true, are then very quick. No logging is used, data is fecteched from the cache and that's it. For standard size data, used in a table or a graph (< 1Mb roughly), return timing is under 10ms on a modern computer.
+Usually the fisrt call returns and caches the results. Results can be any R object and are serialized and saved using \code{qs2}. Subsequent calls, supposing none of cache invalidation conditions are true, are then very quick. No logging is used, data is fecteched from the cache and that's it. For standard size data, used in a table or a graph (< 1Mb roughly), return timing is under 10ms on a decent computer.
 
-\code{lapse} parameter is used for invalidation trigger 4. \code{lapse = "1 day"} ou \code{lapse="day"} for instance will trigger once a day the execution. \code{lapse = "3 days"} will do it every 72h. \code{hours}, \code{weeks}, \code{months}, \code{quarters} or \code{years} are understood time units. MOre complex calendar instructions could be added, but \code{sourcoise_refesh()} provides a solution more general and easy to adapt to any use case, as to my knowledge, there is no general mechanism to be warned of data updates.
+\code{lapse} parameter is used for invalidation trigger 4. \code{lapse = "1 day"} ou \code{lapse="day"} for instance will trigger once a day the execution. \code{lapse = "3 days"} will do it every 72h. \code{hours}, \code{weeks}, \code{months}, \code{quarters} or \code{years} are understood time units. When \code{lapse} is defined for a script it will be used as long as a new lapse parameter is provided (such as "never" if you whish to stop expiration control)
+More complex calendar instructions could be added, but \code{sourcoise_refesh()} provides a solution more general and easy to adapt to any use case, as to my knowledge, there is no general mechanism to be warned of data updates from websites.
 
-\code{track} is the trigger #3. It is simply a list of files (following path convention defined by \code{scr_in}, so either script dir of project dir as reference). If the files in the list are changed then the execution is triggered. It is done with a hash and it is difficult to have a croo plateform hash for excel files. Nevertheless, hash is done on text files with same results of different platforms.
+\code{track} is the trigger #3. It is simply a list of files (following path convention defined by \code{scr_in}, so either script dir of project dir as reference). If the files in the list are changed then the execution is triggered.
+As for lapse, tracked files are accumulated over execution and a null track will not change the list of tracked files. To untrack use the \code{sourcoise_untrack()} function.
+Track is done with a hash and it is impossible to have a cross plateform hash for excel files. Nevertheless, hash is done on text files with same results of different platforms.
 }
 \section{Global options}{
 
@@ -78,7 +85,7 @@ In order to simplify usage and to avoid complex bugs, some parameters can be set
 \item \code{sourcoise.nocache} (boolean) no caching, so makes sourcoise less useful, can be used for testing purpose
 \item \code{sourcoise.log} (default "OFF") log threshold (see \code{logger::log_treshold()}).
 \item \code{sourcoise.grow_cache} (integer) (default 5 par défaut) cache limit in number of data file kept.
-\item \code{sourcoise.limit_mb} (integer) (default 50) individual cache data files size on disk limit. If above \strong{no caching} occurs.
+\item \code{sourcoise.limit_mb} (integer) (default 50) individual cache data files size on disk limit. If file size is above the limit \strong{no caching} occurs.
 }
 }
 
@@ -126,6 +133,8 @@ bench::mark(
 \dontshow{\}) # examplesIf}
 }
 \seealso{
+\code{\link[=sourcoise_untrack]{sourcoise_untrack()}} \code{\link[=sourcoise_lapse]{sourcoise_lapse()}} \code{\link[=sourcoise_status]{sourcoise_status()}} \code{\link[=sourcoise_refresh]{sourcoise_refresh()}}
+
 Other sourcoise: 
 \code{\link{sourcoise_clear}()},
 \code{\link{sourcoise_clear_all}()},
