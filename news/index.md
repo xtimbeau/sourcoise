@@ -1,6 +1,6 @@
 # Changelog
 
-## sourcoise 1.0.0.9007
+## sourcoise 1.1.0
 
 - new coverage case and error condition when nothing is returned
 - new
