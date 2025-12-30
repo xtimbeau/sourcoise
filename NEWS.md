@@ -1,4 +1,4 @@
-# sourcoise 1.0.0.9007
+# sourcoise 1.1.0
 
 * new coverage case and error condition when nothing is returned
 * new `sourcoise_meta()` producing the same result as `sourcoise_status()` plus explanation of cache status
