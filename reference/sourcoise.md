@@ -2,7 +2,8 @@
 
 `sourcoise()` is used as a drop in replacement for
 [`base::source()`](https://rdrr.io/r/base/source.html) but caches
-results on disk. Cache is persistant over sessions.
+results on disk. Cache is persistant over sessions and can be shared
+through github.
 
 ## Usage
 
@@ -35,13 +36,14 @@ sourcoise(
 - track:
 
   (list) list of files which modification triggers cache invalidation
-  and script execution .
+  and script execution. Default to `NULL`wich means no change in
+  tracking.
 
 - lapse:
 
-  (character) duration over which cache is invalidated. Could be `never`
-  (default) `x hours`, `x days`, `x week`, `x months`, `x quarters`,
-  `x years`.
+  (character) duration over which cache is invalidated. Could be `NULL`
+  (ie no change), `never` (default) `x hours`, `x days`, `x week`,
+  `x months`, `x quarters`, `x years`.
 
 - force_exec:
 
@@ -82,14 +84,16 @@ data (list ou ce que le code retourne)
 
 `sourcoise()` looks like
 [`base::source()`](https://rdrr.io/r/base/source.html). However, there
-are some minor differences.
+are some differences.
 
 First, the script called in `sourcoise()` must end by a
 [`return()`](https://rdrr.io/r/base/function.html) or by an object
 returned. Assignment made in the script won't be kept as `sourcoise()`
-is executed locally. Only explicitly reruned object will be returned. So
-`soucoise()` is used by assigning its result to something
+is executed locally. Only explicitly returned object will be returned.
+
+So `soucoise()` is used by assigning its result to something
 (`aa <- sourcoise("mon_script.r)` or `sourcoise() |> ggplot() ...`).
+
 Unless specified otherwise with `wd` parameter, the working directory
 for the script execution is (temporarly) set to the dir in which is the
 script. That allows for simple access to companion files and permit to
@@ -103,42 +107,50 @@ searched inside the porject dir and among all hits the closest to the
 caller is returned.
 
 Third, if an error is triggered by the script, `sourcoise()` does not
-fail and return the error and a NULL return. However, if there is a
-(invalid or valid) cache, the cached data is returned allowing for the
-script to continue. In that case the error is logged.
+fail and return the error and attempts to retrun a cache, even invalid.
+However, if there is no (invalid or valid) cache, then an error is
+trigerred.
 
 Cache is invalidated when : 1 - a cache is not found 2 - the script has
 been modified 3 - tracked files have been modified 4 - last execution
 occurred a certain time ago and is considered as expired 5 - execution
 is forced
 
-Whatever values takes `src_in`, if the file path starts with a `/`, then
-the source file will be interpreted from project root (if any). This is
-coherent whith naming convention in `quarto`. Otherwise, the document
-path wil be used firstly (if any, that is to say executed from quarto,
-rendering). Finally, working directory will be used. If everything
-fails, it will try to search in the project directory a corresponding
-file and will keep the closest from the calling point.
+Whatever values takes the option `sourcoise.src_in`, if the file path
+starts with a `/`, then the source file will be interpreted from project
+root (if any). This is coherent whith naming convention in `quarto`.
+Otherwise, the document path wil be used firstly (if any, that is to say
+executed from quarto, rendering). Finally, working directory will be
+used. If everything fails, it will try to search in the project
+directory a corresponding file and will keep the closest from the
+calling point.
 
-Usually the fisrt call return and cache the results. Results can be aby
-R object and are serialized and saved using `qs2`. Subsequent calls,
-supposing none of cache invalidation are true, are then very quick. No
-logging is used, data is fecteched from the cache and that's it. For
-standard size data, used in a table or a graph (\< 1Mb roughly), return
-timing is under 10ms on a modern computer.
+Usually the fisrt call returns and caches the results. Results can be
+any R object and are serialized and saved using `qs2`. Subsequent calls,
+supposing none of cache invalidation conditions are true, are then very
+quick. No logging is used, data is fecteched from the cache and that's
+it. For standard size data, used in a table or a graph (\< 1Mb roughly),
+return timing is under 10ms on a decent computer.
 
 `lapse` parameter is used for invalidation trigger 4. `lapse = "1 day"`
 ou `lapse="day"` for instance will trigger once a day the execution.
 `lapse = "3 days"` will do it every 72h. `hours`, `weeks`, `months`,
-`quarters` or `years` are understood time units. MOre complex calendar
-instructions could be added, but `sourcoise_refesh()` provides a
-solution more general and easy to adapt to any use case, as to my
-knowledge, there is no general mechanism to be warned of data updates.
+`quarters` or `years` are understood time units. When `lapse` is defined
+for a script it will be used as long as a new lapse parameter is
+provided (such as "never" if you whish to stop expiration control) More
+complex calendar instructions could be added, but `sourcoise_refesh()`
+provides a solution more general and easy to adapt to any use case, as
+to my knowledge, there is no general mechanism to be warned of data
+updates from websites.
 
 `track` is the trigger \#3. It is simply a list of files (following path
 convention defined by `scr_in`, so either script dir of project dir as
 reference). If the files in the list are changed then the execution is
-triggered. It is done with a hash and it is difficult to have a croo
+triggered. As for lapse, tracked files are accumulated over execution
+and a null track will not change the list of tracked files. To untrack
+use the
+[`sourcoise_untrack()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_untrack.md)
+function. Track is done with a hash and it is impossible to have a cross
 plateform hash for excel files. Nevertheless, hash is done on text files
 with same results of different platforms.
 
@@ -163,7 +175,8 @@ can be set only globally, through options().
   number of data file kept.
 
 - `sourcoise.limit_mb` (integer) (default 50) individual cache data
-  files size on disk limit. If above **no caching** occurs.
+  files size on disk limit. If file size is above the limit **no
+  caching** occurs.
 
 ## Metadata
 
@@ -196,6 +209,11 @@ executed on different machines and that this script return each time a
 different result (such as a random generator).
 
 ## See also
+
+[`sourcoise_untrack()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_untrack.md)
+[`sourcoise_lapse()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_lapse.md)
+[`sourcoise_status()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_status.md)
+[`sourcoise_refresh()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_refresh.md)
 
 Other sourcoise:
 [`sourcoise_clear()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_clear.md),
@@ -231,7 +249,7 @@ bench::mark(
 #> # A tibble: 2 × 13
 #>   expression      min median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time
 #>   <bch:expr> <bch:tm> <bch:>     <dbl> <bch:byt>    <dbl> <int> <dbl>   <bch:tm>
-#> 1 forced       53.6ms 53.6ms      18.6    5.01MB        0     1     0     53.6ms
-#> 2 cached         12ms   12ms      83.5  202.66KB        0     1     0       12ms
+#> 1 forced       53.7ms 53.7ms      18.6    5.01MB        0     1     0     53.7ms
+#> 2 cached       12.2ms 12.2ms      82.1  202.66KB        0     1     0     12.2ms
 #> # ℹ 4 more variables: result <list>, memory <list>, time <list>, gc <list>
 ```

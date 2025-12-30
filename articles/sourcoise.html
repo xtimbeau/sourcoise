@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">sourcoise</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9006</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9007</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -132,7 +132,7 @@
 <p>Une dernière chose : <code><a href="../reference/sourcoise.html">sourcoise()</a></code> est doté d’une heuristique maline trouve le fichier source même si il est caché (i.e. que le chemin est approximatif, ce qui déclenche une erreur normalement, mais là ça passe), ce qui augmente la portabilité des fichiers sources et facilite l’orgnisation d’un projet. Bien sûr, en cas d’ambiguité, <code><a href="../reference/sourcoise.html">sourcoise()</a></code> prévient (mais choisi).</p>
 </section><section class="level2"><h2 id="performance">Performance<a class="anchor" aria-label="anchor" href="#performance"></a>
 </h2>
-<p>L’exécution “vraie” du scirpt <code>r</code> en exemple (<code>prix_insee.r</code>), sur un Macbook Air M2, prend 1s et alloue 1.25Mb Lorsque les données sont en cache, l’exécution est effectuée en 7ms. Le temps d’exécution des données cachées ne dépend que de leur taille alors que le temsp d’exécution “vraie” dépend de la complexité des calculs et des volumes téléchargés par le script (et de la machine employée). L’acces direct est bien sûr (infiniment) plus rapide, mais sans invalidation de cache !</p>
+<p>L’exécution “vraie” du scirpt <code>r</code> en exemple (<code>prix_insee.r</code>), sur un Macbook Air M2, prend 1s et alloue 1Mb Lorsque les données sont en cache, l’exécution est effectuée en 5ms et l’allocation de mémoire est de 5Mb. Le temps d’exécution des données cachées ne dépend que de leur taille alors que le temps d’exécution “vraie” dépend de la complexité des calculs et des volumes téléchargés par le script (et de la machine employée). L’acces direct est bien sûr (infiniment) plus rapide, mais sans invalidation de cache !</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bench.r-lib.org/" class="external-link">bench</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fs.r-lib.org" class="external-link">fs</a></span><span class="op">)</span></span>
@@ -152,12 +152,12 @@
 <span><span class="co">#&gt; Warning: Some expressions had a GC in every iteration; so filtering is</span></span>
 <span><span class="co">#&gt; disabled.</span></span>
 <span><span class="co">#&gt; # A tibble: 3 × 6</span></span>
-<span><span class="co">#&gt;   expression      min   median     `itr/sec` mem_alloc `gc/sec`</span></span>
-<span><span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;         &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 cache        7.13ms   7.43ms       123.       1.65MB   31.8  </span></span>
-<span><span class="co">#&gt; 2 no_cache      1.03s    1.03s         0.970    1.25MB    0.970</span></span>
-<span><span class="co">#&gt; 3 direct            0      1ns 390368176.           0B    0</span></span></code></pre></div>
-<p><sup>Created on 2025-12-15 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.1</a></sup></p>
+<span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
+<span><span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 cache         4.6ms   5.05ms   1.81e+2       1MB   27.8  </span></span>
+<span><span class="co">#&gt; 2 no_cache      1.03s    1.03s   9.72e-1    5.58MB    0.972</span></span>
+<span><span class="co">#&gt; 3 direct            0      1ns   1.17e+9        0B    0</span></span></code></pre></div>
+<p><sup>Created on 2025-12-30 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.1</a></sup></p>
 </section><section class="level2"><h2 id="le-workflow-avec-sourcoise">Le <em>workflow</em> avec sourcoise<a class="anchor" aria-label="anchor" href="#le-workflow-avec-sourcoise"></a>
 </h2>
 <p>Le cas central d’utilisation de sourcoise est dans un projet <code>quarto</code>. On acquiert des données de diférentes sources, plus ou moins complexes, nécessitant plus ou moins de traitements.</p>

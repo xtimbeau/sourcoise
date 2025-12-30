@@ -152,12 +152,13 @@ prévient (mais choisi).
 ## Performance
 
 L’exécution “vraie” du scirpt `r` en exemple (`prix_insee.r`), sur un
-Macbook Air M2, prend 1s et alloue 1.25Mb Lorsque les données sont en
-cache, l’exécution est effectuée en 7ms. Le temps d’exécution des
-données cachées ne dépend que de leur taille alors que le temsp
-d’exécution “vraie” dépend de la complexité des calculs et des volumes
-téléchargés par le script (et de la machine employée). L’acces direct
-est bien sûr (infiniment) plus rapide, mais sans invalidation de cache !
+Macbook Air M2, prend 1s et alloue 1Mb Lorsque les données sont en
+cache, l’exécution est effectuée en 5ms et l’allocation de mémoire est
+de 5Mb. Le temps d’exécution des données cachées ne dépend que de leur
+taille alors que le temps d’exécution “vraie” dépend de la complexité
+des calculs et des volumes téléchargés par le script (et de la machine
+employée). L’acces direct est bien sûr (infiniment) plus rapide, mais
+sans invalidation de cache !
 
 ``` r
 library(bench)
@@ -178,14 +179,14 @@ mark(cache = sourcoise("prix_insee.r",),
 #> Warning: Some expressions had a GC in every iteration; so filtering is
 #> disabled.
 #> # A tibble: 3 × 6
-#>   expression      min   median     `itr/sec` mem_alloc `gc/sec`
-#>   <bch:expr> <bch:tm> <bch:tm>         <dbl> <bch:byt>    <dbl>
-#> 1 cache        7.13ms   7.43ms       123.       1.65MB   31.8  
-#> 2 no_cache      1.03s    1.03s         0.970    1.25MB    0.970
-#> 3 direct            0      1ns 390368176.           0B    0
+#>   expression      min   median `itr/sec` mem_alloc `gc/sec`
+#>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
+#> 1 cache         4.6ms   5.05ms   1.81e+2       1MB   27.8  
+#> 2 no_cache      1.03s    1.03s   9.72e-1    5.58MB    0.972
+#> 3 direct            0      1ns   1.17e+9        0B    0
 ```
 
-^(Created on 2025-12-15 with [reprex v2.1.1](https://reprex.tidyverse.org))
+^(Created on 2025-12-30 with [reprex v2.1.1](https://reprex.tidyverse.org))
 
 ## Le *workflow* avec sourcoise
 
