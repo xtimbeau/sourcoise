@@ -42,11 +42,11 @@ fs::file_copy(
 data <- sourcoise("some_data.R", force_exec = TRUE)
 # we then clear all caches
 sourcoise_clear_all()
-#> [1] "/tmp/RtmpEydcQQ/.sourcoise/some_data-4262323b_d39d20c7-1.json"
-#> [2] "/tmp/RtmpEydcQQ/.sourcoise/some_data-4262323b_d39d20c7-2.json"
-#> [3] "/tmp/RtmpEydcQQ/.sourcoise/some_data-4262323b_d39d20c7-3.json"
-#> [4] "/tmp/RtmpEydcQQ/.sourcoise/some_data-4262323b_d39d20c7-4.json"
-#> [5] "/tmp/RtmpEydcQQ/.sourcoise/some_data-4262323b_d39d20c7-5.json"
+#> [1] "/tmp/RtmpdyTaMk/.sourcoise/some_data-4262323b_ccb95e74-1.json"
+#> [2] "/tmp/RtmpdyTaMk/.sourcoise/some_data-4262323b_ccb95e74-2.json"
+#> [3] "/tmp/RtmpdyTaMk/.sourcoise/some_data-4262323b_ccb95e74-3.json"
+#> [4] "/tmp/RtmpdyTaMk/.sourcoise/some_data-4262323b_ccb95e74-4.json"
+#> [5] "/tmp/RtmpdyTaMk/.sourcoise/some_data-4262323b_ccb95e74-5.json"
 sourcoise_status()
 #> # A tibble: 0 × 0
 ```
