@@ -107,7 +107,7 @@ data <- sourcoise("some_data.R", force_exec = TRUE)
 meta <- sourcoise_meta("some_data.R")
 #> ℹ cache ok&valid
 print(meta$timing)  # View execution time
-#> [1] 8e-04
+#> [1] 6e-04
 print(meta$ok)      # Check cache status
 #> [1] "cache ok&valid"
 ```
