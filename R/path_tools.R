@@ -8,7 +8,7 @@ find_src <- function(root, name, paths=NULL) {
   if(!stringr::str_detect(name, "^/(?!/)"))
     if(!is.null(paths))
       if(paths$in_quarto)
-        path <- fs::path_join(c(paths$project_path, paths$doc_path, name)) |>
+        path <- fs::path_join(c(paths$doc_path, name)) |>
           fs::path_norm()
   fn <- stringr::str_c(path, ".r")
   if(file.exists(fn)) return(fn)
