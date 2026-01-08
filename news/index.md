@@ -2,6 +2,8 @@
 
 ## sourcoise 1.1.0
 
+CRAN release: 2026-01-07
+
 - new coverage case and error condition when nothing is returned
 - new
   [`sourcoise_meta()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_meta.md)
