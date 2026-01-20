@@ -1,5 +1,9 @@
 # Changelog
 
+## sourcoise 1.1.0.900
+
+- reports error more systemecally
+
 ## sourcoise 1.1.0
 
 CRAN release: 2026-01-07
