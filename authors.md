@@ -7,7 +7,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/xtimbeau/sourcoise/blob/v1.1.0/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/xtimbeau/sourcoise/blob/main/DESCRIPTION)
 
 Timbeau X (2026). *sourcoise: Source a Script and Cache*. R package
 version 1.1.0, <https://xtimbeau.github.io/sourcoise/>.

@@ -247,9 +247,9 @@ bench::mark(
  cached = data <- sourcoise("some_data.R"),
  max_iterations = 1)
 #> # A tibble: 2 × 13
-#>   expression     min  median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time
-#>   <bch:expr> <bch:t> <bch:t>     <dbl> <bch:byt>    <dbl> <int> <dbl>   <bch:tm>
-#> 1 forced     51.51ms 51.51ms      19.4       5MB        0     1     0    51.51ms
-#> 2 cached      9.25ms  9.25ms     108.      186KB        0     1     0     9.25ms
+#>   expression      min median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time
+#>   <bch:expr> <bch:tm> <bch:>     <dbl> <bch:byt>    <dbl> <int> <dbl>   <bch:tm>
+#> 1 forced       53.2ms 53.2ms      18.8       5MB        0     1     0     53.2ms
+#> 2 cached       10.2ms 10.2ms      98.2     185KB        0     1     0     10.2ms
 #> # ℹ 4 more variables: result <list>, memory <list>, time <list>, gc <list>
 ```

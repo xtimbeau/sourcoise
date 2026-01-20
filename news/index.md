@@ -167,9 +167,8 @@ CRAN release: 2025-03-15
   est plus prudent et plus efficace.
 - [`sourcoise_status()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_status.md)
   est plus robuste et nettoie les data_file orphelins.
-- [qs](https://github.com/qsbase/qs) est remplacé par
-  [qs2](https://github.com/qsbase/qs2), ce qui corrige le bug de
-  [gt](https://gt.rstudio.com) (-;)
+- `{qs}` est remplacé par [qs2](https://github.com/qsbase/qs2), ce qui
+  corrige le bug de [gt](https://gt.rstudio.com) (-;)
 - le cache est enregistré dans .sourcoise (ainsi que le log)
 
 ## sourcoise 0.2.0
