@@ -189,6 +189,11 @@ sourcoise_ <- function(
       mark_as_done(ctxt$src)
       return(data_returned(our_data, ctxt))
     }
+    if(!ctxt$quiet) {
+      src <- ctxt$src |> fs::path_rel(getwd())
+      cli::cli_alert_danger("Script error in {.file {src}}")
+      cli::cli_verbatim(our_data$error)
+    }
   }
   # check si le json le plus récent est valide
   ctxt <- valid_meta1(ctxt)
@@ -198,10 +203,6 @@ sourcoise_ <- function(
     logger::log_success("{ctxt$relname} cache valid ({fs::as_fs_bytes(return_data$size)})")
     if(length(our_data)!=0 && our_data$ok == FALSE ) {
       our_data$error <- our_data$error %||% "Cascade error"
-      logger::log_error("  but {ctxt$relname} failed")
-      logger::log_error(our_data$error |> cli::ansi_strip() |> logger::skip_formatter())
-      if(!ctxt$quiet)
-        cli::cli_verbatim(our_data$error)
     }
     mark_as_done(ctxt$src)
     return(data_returned(return_data, ctxt))
@@ -239,6 +240,12 @@ sourcoise_ <- function(
       logger::log_success(
         "{ctxt$relname} (exec. no cache) in {round(our_data$timing, 2)} sec. ({fs::as_fs_bytes(our_data$size)})")
       return(data_returned(our_data, ctxt))
+    }
+    logger::log_error(our_data$error |> cli::ansi_strip() |> logger::skip_formatter())
+    if(!ctxt$quiet) {
+      src <- ctxt$src |> fs::path_rel(getwd())
+      cli::cli_alert_danger("Script error in {.file {src}}")
+      cli::cli_verbatim(our_data$error)
     }
   }
 

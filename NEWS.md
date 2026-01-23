@@ -1,3 +1,7 @@
+# sourcoise 1.1.0.900
+
+* reports error more systemecally
+
 # sourcoise 1.1.0
 
 * new coverage case and error condition when nothing is returned
