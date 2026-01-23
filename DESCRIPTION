@@ -1,7 +1,7 @@
 Type: Package
 Package: sourcoise
 Title: Source a Script and Cache
-Version: 1.1.0
+Version: 1.1.0.900
 Authors@R: 
     person("Xavier", "Timbeau", , "xavier.timbeau@sciencespo.fr", role = c("aut", "cre", "cph"))
 Description: Provides a function that behaves nearly as base::source() but
