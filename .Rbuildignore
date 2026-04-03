@@ -19,3 +19,5 @@ rinit.r
 ^dev$
 ^doc$
 ^Meta$
+^\.positai$
+^\.claude$
