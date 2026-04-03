@@ -43,6 +43,7 @@ Other sourcoise:
 ## Examples
 
 ``` r
+if (FALSE) { # rlang::is_installed("insee")
 dir <- tempdir()
 set_sourcoise_root(dir)
 fs::file_copy(
@@ -53,10 +54,6 @@ fs::file_copy(
 data <- sourcoise("some_data.R", force_exec = TRUE)
 # we then clear all caches
 sourcoise_clear()
-#> character(0)
 sourcoise_status()
-#> # A tibble: 1 × 7
-#>   valid priority src         last_exec last_update   file_size json_file        
-#>   <lgl>    <int> <chr>       <chr>     <chr>       <fs::bytes> <chr>            
-#> 1 FALSE       10 some_data.R 0s        1s                  242 .sourcoise/some_…
+}
 ```

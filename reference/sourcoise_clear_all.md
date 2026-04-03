@@ -32,6 +32,7 @@ Other sourcoise:
 ## Examples
 
 ``` r
+if (FALSE) { # rlang::is_installed("insee")
 dir <- tempdir()
 set_sourcoise_root(dir)
 fs::file_copy(
@@ -42,11 +43,6 @@ fs::file_copy(
 data <- sourcoise("some_data.R", force_exec = TRUE)
 # we then clear all caches
 sourcoise_clear_all()
-#> [1] "/tmp/RtmpA2Gph8/.sourcoise/some_data-4262323b_f1224236-1.json"
-#> [2] "/tmp/RtmpA2Gph8/.sourcoise/some_data-4262323b_f1224236-2.json"
-#> [3] "/tmp/RtmpA2Gph8/.sourcoise/some_data-4262323b_f1224236-3.json"
-#> [4] "/tmp/RtmpA2Gph8/.sourcoise/some_data-4262323b_f1224236-4.json"
-#> [5] "/tmp/RtmpA2Gph8/.sourcoise/some_data-4262323b_f1224236-5.json"
 sourcoise_status()
-#> # A tibble: 0 × 0
+}
 ```

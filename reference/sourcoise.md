@@ -225,6 +225,7 @@ Other sourcoise:
 ## Examples
 
 ``` r
+if (FALSE) { # rlang::is_installed("insee")
 dir <- tempdir()
 set_sourcoise_root(dir)
 fs::file_copy(
@@ -235,6 +236,7 @@ fs::file_copy(
 data <- sourcoise("some_data.R", force_exec = TRUE)
 # The second time cache is used
 data <- sourcoise("some_data.R")
+}
 # Performance and mem test
 dir <- tempdir()
 set_sourcoise_root(dir)
@@ -246,10 +248,11 @@ bench::mark(
  forced = data <- sourcoise("some_data.R", force_exec = TRUE),
  cached = data <- sourcoise("some_data.R"),
  max_iterations = 1)
+#> Warning: Some expressions had a GC in every iteration; so filtering is disabled.
 #> # A tibble: 2 × 13
 #>   expression     min  median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time
 #>   <bch:expr> <bch:t> <bch:t>     <dbl> <bch:byt>    <dbl> <int> <dbl>   <bch:tm>
-#> 1 forced     51.52ms 51.52ms      19.4       5MB        0     1     0    51.52ms
-#> 2 cached      9.44ms  9.44ms     106.      185KB        0     1     0     9.44ms
+#> 1 forced       129ms   129ms      7.75    8.79MB     7.75     1     1      129ms
+#> 2 cached      23.2ms  23.2ms     43.1   814.62KB     0        1     0     23.2ms
 #> # ℹ 4 more variables: result <list>, memory <list>, time <list>, gc <list>
 ```

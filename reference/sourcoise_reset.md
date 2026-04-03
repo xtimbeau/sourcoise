@@ -31,6 +31,7 @@ Other sourcoise:
 ## Examples
 
 ``` r
+if (FALSE) { # rlang::is_installed("insee")
 dir <- tempdir()
 set_sourcoise_root(dir)
 fs::file_copy(
@@ -39,4 +40,5 @@ fs::file_copy(
    overwrite = TRUE)
 data <- sourcoise("some_data.R", force_exec = TRUE)
 sourcoise_reset()
+}
 ```
