@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(R CMD config:*)",
+      "Bash(R --vanilla -e 'tools::Rcmd\\(\"config CPPFLAGS\"\\)':*)",
+      "Bash(R CMD SHLIB:*)"
+    ]
+  }
+}

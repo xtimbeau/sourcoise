@@ -20,7 +20,7 @@ find_src <- function(root, name, paths=NULL) {
 try_find_src <- function(root, name) {
   pat <- glue::glue("{name}\\.[Rr]$")
   ff <- fs::dir_ls(path = root, regexp=pat, recurse=TRUE, ignore.case = TRUE)
-  ff |> purrr::discard(~ stringr::str_detect(.x, "/_"))
+  ff |> purrr::discard(~ stringr::str_detect(.x, "/_|^_"))
 }
 
 try_find_root <- function(root=NULL, src_in = getOption("sourcoise.src_in"), quiet = TRUE) {

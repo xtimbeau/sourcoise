@@ -41,7 +41,9 @@ setup_context <- function(path, root, src_in="project", exec_wd=NULL, wd="file",
       return(NULL)
     n_src <- length(ctxt[["src"]])
     if(n_src>1) {
-      l_src <- purrr::map(ctxt[["src"]], ~stringr::str_count(.x |> fs::path_rel(getwd()), "/"))
+      l_src <- purrr::map(
+        ctxt[["src"]],
+        ~stringr::str_count(.x |> fs::path_rel(getwd()), "/|\\.\\."))
       ctxt[["src"]] <- ctxt[["src"]][[which.min(l_src)]]
       if(!quiet)
         cli::cli_alert_warning(
