@@ -170,8 +170,7 @@ sourcoise_ <- function(
   if(is.null(ctxt)) {
     logger::log_fatal("file {path} not found")
     cli::cli_alert("file {path} not found")
-    rlang::abort(
-      message = glue::glue("source file {path} not found"))
+    cli::cli_abort("source file {.file {path}} not found")
   }
   priority <- ctxt$priority
   force <- nuorf(force_exec)
@@ -270,14 +269,10 @@ sourcoise_ <- function(
 
   if(prevent) {
     logger::log_fatal("{ctxt$src} prevented and no cache to return")
-    rlang::abort(
-      message = glue::glue("Execution of {ctxt$src} prevented and no cache to return"))
+    cli::cli_abort("Execution of {.file {ctxt$src}} prevented and no cache to return")
   }
-  if(!prevent) {
-    logger::log_fatal("{ctxt$src} failed and no cache to return")
-    rlang::abort(
-      message = glue::glue("Execution of {ctxt$src} failed and no cache to return"))
-  }
+  logger::log_fatal("{ctxt$src} failed and no cache to return")
+  cli::cli_abort("Execution of {.file {ctxt$src}} failed and no cache to return")
 }
 
 # helpers

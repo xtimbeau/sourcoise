@@ -7,7 +7,7 @@
 sourcoise_clear(what2keep = "all", root = NULL)
 }
 \arguments{
-\item{what2keep}{(--) a string (such as "last", the default or "nothing" clears all or "all" removes only non sourcoise files) or a tibble such as the one obtained by \code{sourcoise_status()}, possibly filtered for the files you whish to keep}
+\item{what2keep}{(character) one of \code{"all"} (the default) keeps every cache file, so only orphan files are removed, \code{"recent"} keeps, for each script and set of arguments, only the latest cached data and its metadata, and \code{"nothing"} removes the whole cache.}
 
 \item{root}{to force root, not recommended (expert use only)}
 }
@@ -15,7 +15,7 @@ sourcoise_clear(what2keep = "all", root = NULL)
 list of cleared files, plus a side-effect as specified cache files are deleted (no undo possible)
 }
 \description{
-removes every json and qs2 files found by \code{sourcoise_status()} unless a specific tibble (filtered from \code{sourcoise_status()}) is passed as an argument.
+Always removes files in \code{.sourcoise} folders that do not belong to the cache (orphans), then removes cache files according to \code{what2keep}.
 }
 \examples{
 \dontshow{if (rlang::is_installed("insee")) withAutoprint(\{ # examplesIf}

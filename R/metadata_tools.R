@@ -92,7 +92,8 @@ hash_file <- function(path) {
         digest::digest(.x, algo = "sha1", file = TRUE)
     }
     else
-      glue::glue("no_{.x}_{round(100000000*runif(1))}")
+      # deterministic: must not draw from (and so alter) the user's RNG stream
+      glue::glue("no_file_{.x}")
   })
 }
 
@@ -258,6 +259,16 @@ valid_lapse <- function(lapse, date) {
   })
 }
 
+regex_escape <- function(x) {
+  gsub("([][{}()+*^$|\\\\?.])", "\\\\\\1", x)
+}
+
+# files whose *name* (not full path) matches `pattern`
+ls_files_matching <- function(path, pattern, recurse = FALSE) {
+  files <- fs::dir_ls(path, recurse = recurse, type = "file")
+  files[stringr::str_detect(fs::path_file(files), pattern)]
+}
+
 ls_cache_files <- function(root=NULL, uid = NULL, bn = NULL, argid = NULL, cache_reps = NULL,
                            qs2 = FALSE) {
   root <- try_find_root(root)
@@ -281,24 +292,25 @@ ls_cache_files <- function(root=NULL, uid = NULL, bn = NULL, argid = NULL, cache
   else {
     recurse <- FALSE
     subdir <- fs::path_dir(bn)
-    bn <- fs::path_file(bn)
+    bn <- fs::path_file(bn) |> regex_escape()
   }
 
   if(is.null(argid))
     argid <- "[a-f0-9]{8}"
   cache_reps <- rlang::set_names(cache_reps, cache_reps)
-  jpat <- "({bn})-({argid})_({uid})-([0-9]+)\\.json" |> glue::glue()
+  # patterns are anchored and applied to the file name only, otherwise
+  # `data` would also match `mydata` (fs::dir_ls matches on the full path)
+  jpat <- "^({bn})-({argid})_({uid})-([0-9]+)\\.json$" |> glue::glue()
   jsons <- purrr::map(cache_reps, ~{
     rep <- fs::path_join(c(.x, subdir)) |> fs::path_norm()
-      if(dir.exists(rep))
-        return(fs::dir_ls(rep,  regexp = jpat, recurse = recurse, type = "file")  )
+    if(dir.exists(rep))
+      return(ls_files_matching(rep, jpat, recurse = recurse))
     return(list())
   })
   qs2s <- list()
   if(qs2) {
-    dpat <- "({bn})-({argid})_([a-f0-9]{{32}})\\.qs2" |> glue::glue()
-    qs2 <- purrr::map(cache_reps,
-                      ~fs::dir_ls(.x, regexp = dpat, recurse = TRUE, type = "file")   )
+    dpat <- "^({bn})-({argid})_([a-f0-9]{{32}})\\.qs2$" |> glue::glue()
+    qs2s <- purrr::map(cache_reps, ~ls_files_matching(.x, dpat, recurse = TRUE))
   }
   return(list(
     jsons=jsons,
@@ -330,10 +342,10 @@ fast_metadata <- function(root=NULL, uid = NULL, bn = NULL,
                           argid = NULL, cache_reps = NULL, quiet = FALSE) {
   files <- ls_cache_files(root=root, uid = uid, bn = bn,
                           argid = argid, cache_reps = cache_reps)
-  if(length(files$json)==0)
+  json_file <- (files$jsons %||% list()) |> purrr::list_c() |> unname()
+  if(length(json_file)==0)
     return(list())
   pat <- ".+/\\.sourcoise/(.+)-([a-f0-9]{8})_([a-f0-9]{8})-([0-9]+)\\.json"
-  json_file <- files$jsons |> purrr::list_c() |> unname()
   list(
     json_file = json_file,
     root = files$root,
@@ -341,7 +353,7 @@ fast_metadata <- function(root=NULL, uid = NULL, bn = NULL,
     argid = stringr::str_extract(json_file, pat, group=2),
     uid = stringr::str_extract(json_file, pat, group=3),
     index = stringr::str_extract(json_file, pat, group=4) |> as.numeric(),
-    short_json_file = stringr::str_remove(json_file, stringr::str_c("^", root, "/")) )
+    short_json_file = fs::path_rel(json_file, files$root) |> as.character())
 
 }
 
@@ -405,11 +417,12 @@ get_metadata <- function(root=NULL, uid = NULL,
         "/",
         stringr::str_extract(qm$json_file, pattern = pat, group=2)) |>
         fs::path_rel(!!root) |>
-        fs::path_ext_set(".r")) |>
+        # not path_ext_set(): it would eat the tail of names like `my.data`
+        stringr::str_c(".r")) |>
     dplyr::mutate(
       src = ifelse(exists_file(src, root),
                    src,
-                   src |> fs::path_ext_set(".R")) ) |>
+                   stringr::str_replace(src, "\\.r$", ".R")) ) |>
     dplyr::relocate(name)
 
   if(nrow(metas) == 0) {
@@ -428,8 +441,8 @@ get_metadata <- function(root=NULL, uid = NULL,
     dplyr::left_join(sources, dplyr::join_by(src, root)) |>
     dplyr::mutate(cur_src_hash = tidyr::replace_na(cur_src_hash, 0)) |>
     dplyr::group_by(root, tolower(src), arg_hash) |>
-    dplyr::mutate(vsrc  = ifelse(any(src_hash==cur_src_hash),
-                                 src_hash == cur_src_hash, TRUE)) |>
+    # keep only versions matching the current source, unless none does
+    dplyr::mutate(vsrc = src_hash == cur_src_hash | !any(src_hash == cur_src_hash)) |>
     dplyr::ungroup() |>
     dplyr::filter(vsrc)
 

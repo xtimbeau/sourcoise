@@ -1,6 +1,13 @@
 # sourcoise 1.1.0.900
 
 * reports error more systemecally
+* bug fix: scripts whose names end alike (such as `data.R` and `mydata.R` in the same folder) no longer share a cache. Cache files were selected with an unanchored pattern matched against the full path, so `sourcoise("data.R")` could return the data cached for `mydata.R`. Script names are now matched literally (a `.` in a name is no longer a wildcard).
+* bug fix: `sourcoise_clear()` (through its internal cleaning step) deleted all cached data files, as `.qs2` files were never listed as belonging to the cache. Only orphan files are now removed.
+* bug fix: `sourcoise_clear(what2keep = "recent")` failed. It now keeps, for each script and set of arguments, only the latest cached data and metadata. An unknown value of `what2keep` now gives an explicit error and the documentation of the argument has been corrected.
+* bug fix: scripts with a `.` in their name (such as `my.data.R`) were never served from cache, as their metadata file was written under a truncated name (`my.json`) and so never found.
+* bug fix: the cache of a script that was modified and re-executed was dropped from the cache listing used by `sourcoise()` when looking for a cache after a failed execution. A script failing after an edit (for instance when `lapse` has expired and there is no network) ended with "failed and no cache to return" although a cache existed, instead of returning it as an invalid cache. `sourcoise_status()` and `sourcoise_meta()` were affected as well.
+* bug fix: hashing a missing file does not consume random numbers any more, so `set.seed()` sequences of the user are no longer altered by `sourcoise()`.
+* bug fix: internal paths of metadata files are now correctly made relative to the project root, including when the root contains characters special to regular expressions.
 
 # sourcoise 1.1.0
 

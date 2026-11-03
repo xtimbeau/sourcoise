@@ -148,10 +148,10 @@ write_meta <- function(metas, ctxt) {
     if(length(new_cc) > 0)
       new_cc <- max(new_cc, na.rm=TRUE)+1
   }
+  # not path_ext_set(): script names may contain dots (`my.data.R`)
   new_json_fn <- fs::path_join(
     c(ctxt$root_cache_rep,
-      glue::glue("{ctxt$cachename}-{ctxt$argid}_{ctxt$uid}-{new_cc}"))) |>
-    fs::path_ext_set("json")
+      glue::glue("{ctxt$cachename}-{ctxt$argid}_{ctxt$uid}-{new_cc}.json")))
   jsonlite::write_json(towrite, new_json_fn, pretty = TRUE)
   return(new_json_fn)
 }

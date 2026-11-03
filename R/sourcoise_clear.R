@@ -1,8 +1,8 @@
 #' Cleans sourcoise cache
 #'
-#' removes every json and qs2 files found by `sourcoise_status()` unless a specific tibble (filtered from `sourcoise_status()`) is passed as an argument.
+#' Always removes files in `.sourcoise` folders that do not belong to the cache (orphans), then removes cache files according to `what2keep`.
 #'
-#' @param what2keep (--) a string (such as "last", the default or "nothing" clears all or "all" removes only non sourcoise files) or a tibble such as the one obtained by `sourcoise_status()`, possibly filtered for the files you whish to keep
+#' @param what2keep (character) one of `"all"` (the default) keeps every cache file, so only orphan files are removed, `"recent"` keeps, for each script and set of arguments, only the latest cached data and its metadata, and `"nothing"` removes the whole cache.
 #' @param root to force root, not recommended (expert use only)
 #'
 #' @family sourcoise
@@ -26,27 +26,48 @@
 sourcoise_clear <- function(
     what2keep = "all",
     root = NULL) {
+  what2keep <- rlang::arg_match0(what2keep, c("all", "recent", "nothing"))
   clean_caches(root=root)
   if(what2keep=="all") {
     return(character(0))
   }
   fc <- ls_cache_files(root, qs2=TRUE)
-  if(length(fc$json)==0)
+  jsons <- fc[["jsons"]] |> unlist() |> unname() |> as.character()
+  qs2s <- fc[["qs2"]] |> unlist() |> unname() |> as.character()
+  if(length(jsons)==0)
     return(character(0))
-  if(what2keep=="nothing") {
-    ww <- list(json_file = list(), data_file = list())
-  }
-  if(what2keep=="recent") {
-    ww <- get_metadata(root, filter="recent") |>
-      dplyr::group_by(root, basename, argid, uid) |>
-      dplyr::filter(index==max(index)) |>
-      dplyr::ungroup()
-  }
-  json2del <- setdiff(fc[["jsons"]] |> unlist()  |> unname(), ww[["json_file"]])
-  qs22del <- setdiff(fc[["qs2"]] |> unlist() |> unname(), ww[["data_file"]])
+
+  keep <- list(json = character(0), data = character(0))
+  if(what2keep=="recent")
+    keep <- most_recent_cache_files(root, fc$cache_reps)
+
+  json2del <- setdiff(jsons, keep$json)
+  qs22del <- setdiff(qs2s, keep$data)
   purrr::walk(json2del, sure_delete)
   purrr::walk(qs22del, sure_delete)
   c(json2del, qs22del)
+}
+
+# json files holding the latest metadata of each script/args combination,
+# and the data files they point to (data lives next to its json)
+most_recent_cache_files <- function(root, cache_reps) {
+  fm <- fast_metadata(root = root, cache_reps = cache_reps)
+  if(length(fm$json_file)==0)
+    return(list(json = character(0), data = character(0)))
+  json_file <- as.character(fm$json_file)
+  key <- stringr::str_c(
+    fs::path_dir(json_file), fs::path_file(fm$basename), fm$argid, fm$uid,
+    sep = "|")
+  json_keep <- json_file[tapply(seq_along(key), key, \(i) i[which.max(fm$index[i])])]
+  data_keep <- purrr::map_chr(json_keep, \(j) {
+    # scalars are stored as length-1 json arrays
+    data_file <- jsonlite::read_json(j)$data_file |> unlist()
+    if(length(data_file) != 1)
+      return(NA_character_)
+    as.character(fs::path_join(c(fs::path_dir(j), data_file)))
+  })
+  data_keep <- data_keep[!is.na(data_keep)]
+  list(json = json_keep, data = data_keep)
 }
 
 
