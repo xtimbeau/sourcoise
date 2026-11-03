@@ -8,6 +8,7 @@ est d’écrire l’enregistrement des données directement dans le script et
 de charger les données dans le chunk.
 
 ``` r
+
 library(insee)
 library(tidyverse)
 

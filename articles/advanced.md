@@ -64,6 +64,7 @@ construire la note (noter que
 appliqué aux textes passés à `ofce_caption()`).
 
 ``` r
+
 transactions <- sourcoise("immo/data_transaction.r", metadata=TRUE)
 
 trsc <- ggplot(transactions$data) + 

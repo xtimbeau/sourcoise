@@ -38,6 +38,7 @@ Le script `prix_insee.r` comporte un
 [`return()`](https://rdrr.io/r/base/function.html) à la fin :
 
 ``` r
+
 library(insee)
 library(tidyverse)
 
@@ -65,6 +66,7 @@ return(list(ipcha = ipcha, ipchm = ipchm, ipch = ipch))
 2.  Dans `ipch.qmd` on met le chunk suivant :
 
 ``` r
+
 library(sourcoise)
 library(tidyverse)
 ipch_data <- sourcoise("prix_insee.R")
@@ -161,6 +163,7 @@ employée). L’acces direct est bien sûr (infiniment) plus rapide, mais
 sans invalidation de cache !
 
 ``` r
+
 library(bench)
 library(fs)
 library(sourcoise)

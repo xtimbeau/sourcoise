@@ -29,12 +29,14 @@ or at a given frequency through a parameter of
 CRAN:
 
 ``` r
+
 install.packages("sourcoise")
 ```
 
 The development version can be installed from *github*:
 
 ``` r
+
 devtools::install_gitub("xtimbeau/sourcoise")
 
 # or (if pak is installed)

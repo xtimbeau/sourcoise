@@ -1,10 +1,7 @@
 # Cleans sourcoise cache
 
-removes every json and qs2 files found by
-[`sourcoise_status()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_status.md)
-unless a specific tibble (filtered from
-[`sourcoise_status()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_status.md))
-is passed as an argument.
+Always removes files in `.sourcoise` folders that do not belong to the
+cache (orphans), then removes cache files according to `what2keep`.
 
 ## Usage
 
@@ -16,11 +13,10 @@ sourcoise_clear(what2keep = "all", root = NULL)
 
 - what2keep:
 
-  (–) a string (such as "last", the default or "nothing" clears all or
-  "all" removes only non sourcoise files) or a tibble such as the one
-  obtained by
-  [`sourcoise_status()`](https://xtimbeau.github.io/sourcoise/reference/sourcoise_status.md),
-  possibly filtered for the files you whish to keep
+  (character) one of `"all"` (the default) keeps every cache file, so
+  only orphan files are removed, `"recent"` keeps, for each script and
+  set of arguments, only the latest cached data and its metadata, and
+  `"nothing"` removes the whole cache.
 
 - root:
 
