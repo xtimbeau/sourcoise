@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">sourcoise</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0.900</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,8 +38,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.1.0.900" id="sourcoise-110900">sourcoise 1.1.0.900<a class="anchor" aria-label="anchor" href="#sourcoise-110900"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.1.1" id="sourcoise-111">sourcoise 1.1.1<a class="anchor" aria-label="anchor" href="#sourcoise-111"></a></h2>
 <ul><li>reports error more systemecally</li>
+<li>bug fix: error messages for a script that is not found, whose execution is prevented or that fails, with no cache to return, are now formatted when the error is raised. They were formatted lazily by <code><a href="https://cli.r-lib.org/reference/cli_abort.html" class="external-link">cli::cli_abort()</a></code>, and when the error was re-raised in another process (for instance by <code><a href="https://quarto-dev.github.io/quarto-r/reference/quarto_render.html" class="external-link">quarto::quarto_render()</a></code>) this hid the real error behind “Could not evaluate cli <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{}</a></code> expression: <code>ctxt$src</code>”.</li>
 <li>bug fix: scripts whose names end alike (such as <code>data.R</code> and <code>mydata.R</code> in the same folder) no longer share a cache. Cache files were selected with an unanchored pattern matched against the full path, so <code>sourcoise("data.R")</code> could return the data cached for <code>mydata.R</code>. Script names are now matched literally (a <code>.</code> in a name is no longer a wildcard).</li>
 <li>bug fix: <code><a href="../reference/sourcoise_clear.html">sourcoise_clear()</a></code> (through its internal cleaning step) deleted all cached data files, as <code>.qs2</code> files were never listed as belonging to the cache. Only orphan files are now removed.</li>
 <li>bug fix: <code>sourcoise_clear(what2keep = "recent")</code> failed. It now keeps, for each script and set of arguments, only the latest cached data and metadata. An unknown value of <code>what2keep</code> now gives an explicit error and the documentation of the argument has been corrected.</li>

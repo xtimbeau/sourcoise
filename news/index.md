@@ -1,8 +1,16 @@
 # Changelog
 
-## sourcoise 1.1.0.900
+## sourcoise 1.1.1
 
 - reports error more systemecally
+- bug fix: error messages for a script that is not found, whose
+  execution is prevented or that fails, with no cache to return, are now
+  formatted when the error is raised. They were formatted lazily by
+  [`cli::cli_abort()`](https://cli.r-lib.org/reference/cli_abort.html),
+  and when the error was re-raised in another process (for instance by
+  [`quarto::quarto_render()`](https://quarto-dev.github.io/quarto-r/reference/quarto_render.html))
+  this hid the real error behind “Could not evaluate cli
+  [`{}`](https://rdrr.io/r/base/Paren.html) expression: `ctxt$src`”.
 - bug fix: scripts whose names end alike (such as `data.R` and
   `mydata.R` in the same folder) no longer share a cache. Cache files
   were selected with an unanchored pattern matched against the full

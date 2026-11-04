@@ -250,9 +250,9 @@ bench::mark(
  max_iterations = 1)
 #> Warning: Some expressions had a GC in every iteration; so filtering is disabled.
 #> # A tibble: 2 × 13
-#>   expression      min median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time
-#>   <bch:expr> <bch:tm> <bch:>     <dbl> <bch:byt>    <dbl> <int> <dbl>   <bch:tm>
-#> 1 forced        142ms  142ms      7.05     8.8MB     14.1     1     2      142ms
-#> 2 cached         20ms   20ms     49.9    813.2KB      0       1     0       20ms
+#>   expression     min  median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time
+#>   <bch:expr> <bch:t> <bch:t>     <dbl> <bch:byt>    <dbl> <int> <dbl>   <bch:tm>
+#> 1 forced       150ms   150ms      6.67     8.8MB     13.3     1     2      150ms
+#> 2 cached      22.7ms  22.7ms     44.1    813.1KB      0       1     0     22.7ms
 #> # ℹ 4 more variables: result <list>, memory <list>, time <list>, gc <list>
 ```
