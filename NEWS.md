@@ -1,6 +1,7 @@
-# sourcoise 1.1.0.900
+# sourcoise 1.1.1
 
 * reports error more systemecally
+* bug fix: error messages for a script that is not found, whose execution is prevented or that fails, with no cache to return, are now formatted when the error is raised. They were formatted lazily by `cli::cli_abort()`, and when the error was re-raised in another process (for instance by `quarto::quarto_render()`) this hid the real error behind "Could not evaluate cli `{}` expression: `ctxt$src`".
 * bug fix: scripts whose names end alike (such as `data.R` and `mydata.R` in the same folder) no longer share a cache. Cache files were selected with an unanchored pattern matched against the full path, so `sourcoise("data.R")` could return the data cached for `mydata.R`. Script names are now matched literally (a `.` in a name is no longer a wildcard).
 * bug fix: `sourcoise_clear()` (through its internal cleaning step) deleted all cached data files, as `.qs2` files were never listed as belonging to the cache. Only orphan files are now removed.
 * bug fix: `sourcoise_clear(what2keep = "recent")` failed. It now keeps, for each script and set of arguments, only the latest cached data and metadata. An unknown value of `what2keep` now gives an explicit error and the documentation of the argument has been corrected.
