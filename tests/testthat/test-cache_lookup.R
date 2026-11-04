@@ -213,6 +213,18 @@ test_that("error messages keep braces found in paths as they are", {
   expect_match(conditionMessage(err), "{proj}", fixed = TRUE)
 })
 
+test_that("error messages are formatted when raised, not lazily when displayed", {
+  dir <- local_project()
+  write_script(dir, "alpha.R", failing_code(1))
+  writeLines("", file.path(dir, "fail"))
+
+  err <- expect_error(sourcoise("alpha.R", quiet = TRUE), class = "rlang_error")
+  # a lazily formatted condition would still hold the raw `{ctxt$src}` template
+  expect_false(isTRUE(err$use_cli_format))
+  expect_no_match(err$message, "ctxt", fixed = TRUE)
+  expect_match(err$message, "alpha[.][rR]")
+})
+
 # sourcoise_clear() ----------------------------------------------------------
 
 # runs `script` successively with each code snippet, producing one cache version each

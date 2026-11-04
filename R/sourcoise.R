@@ -170,7 +170,7 @@ sourcoise_ <- function(
   if(is.null(ctxt)) {
     logger::log_fatal("file {path} not found")
     cli::cli_alert("file {path} not found")
-    cli::cli_abort("source file {.file {path}} not found")
+    abort_now("source file {.file {path}} not found")
   }
   priority <- ctxt$priority
   force <- nuorf(force_exec)
@@ -269,10 +269,10 @@ sourcoise_ <- function(
 
   if(prevent) {
     logger::log_fatal("{ctxt$src} prevented and no cache to return")
-    cli::cli_abort("Execution of {.file {ctxt$src}} prevented and no cache to return")
+    abort_now("Execution of {.file {ctxt$src}} prevented and no cache to return")
   }
   logger::log_fatal("{ctxt$src} failed and no cache to return")
-  cli::cli_abort("Execution of {.file {ctxt$src}} failed and no cache to return")
+  abort_now("Execution of {.file {ctxt$src}} failed and no cache to return")
 }
 
 # helpers
@@ -308,4 +308,10 @@ mark_as_done <- function(src) {
   done <- c(done, src) |> unique()
   options(sourcoise.refreshing.done =  done)
   return(done)
+}
+
+# Format eagerly: cli_abort() may evaluate `{}` lazily in the (gone) frame when
+# the condition is rethrown or formatted in another process (callr, quarto).
+abort_now <- function(message, .envir = parent.frame(), call = .envir) {
+  rlang::abort(cli::format_inline(message, .envir = .envir), call = call)
 }
