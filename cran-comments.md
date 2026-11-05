@@ -1,6 +1,6 @@
-## Update of the package, version 1.1.0
+## Update of the package, version 1.1.1
 
-Various bugs have been corrected and are documented in news.
+Patch release correcting several bugs in the cache lookup and cleaning, and in the reporting of errors. They are documented in NEWS.md.
 
 ## revdepcheck results 
 
@@ -8,6 +8,6 @@ No revdep to signal.
 
 ## R CMD check results
 
-0 errors | 0 warnings | 0 note
+0 errors | 0 warnings | 0 notes
 
-* This is a new release.
+Checked locally on Windows (R 4.6.1), vignettes excluded.

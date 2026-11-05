@@ -1,6 +1,6 @@
 # sourcoise 1.1.1
 
-* reports error more systemecally
+* reports error more systematically
 * bug fix: error messages for a script that is not found, whose execution is prevented or that fails, with no cache to return, are now formatted when the error is raised. They were formatted lazily by `cli::cli_abort()`, and when the error was re-raised in another process (for instance by `quarto::quarto_render()`) this hid the real error behind "Could not evaluate cli `{}` expression: `ctxt$src`".
 * bug fix: scripts whose names end alike (such as `data.R` and `mydata.R` in the same folder) no longer share a cache. Cache files were selected with an unanchored pattern matched against the full path, so `sourcoise("data.R")` could return the data cached for `mydata.R`. Script names are now matched literally (a `.` in a name is no longer a wildcard).
 * bug fix: `sourcoise_clear()` (through its internal cleaning step) deleted all cached data files, as `.qs2` files were never listed as belonging to the cache. Only orphan files are now removed.
@@ -15,13 +15,13 @@
 * new coverage case and error condition when nothing is returned
 * new `sourcoise_meta()` producing the same result as `sourcoise_status()` plus explanation of cache status
 * Source not found and execution error with no cache now trigger an error 
-* performance improvment (50%) in cache data cleaning and testing existence of files (not anymore done with fs)
+* performance improvement (50%) in cache data cleaning and testing existence of files (not anymore done with fs)
 * Uppercase is now correctly treated on UNIX systems
 * refactor context mechanic, normally safer, plus more test
 * tracking is smarter (accumulation)
 * errors messages are safer and better and logged systematically when refreshing
 * circulation in execution cases is safer
-* performance improvment when data is cached (30%)
+* performance improvement when data is cached (30%)
 * a bug when source name contains a "-" is corrected (annoying)
 * accumulation of tracked files or qmd files, accumulated only when they exists (clear track to do, and some cleaning to do in case of track changes)
 
