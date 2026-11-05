@@ -74,11 +74,11 @@ data <- sourcoise("some_data.R", force_exec = TRUE)
 sourcoise_refresh()
 }
 \seealso{
-Other sourcoise: 
-\code{\link{sourcoise}()},
-\code{\link{sourcoise_clear}()},
-\code{\link{sourcoise_clear_all}()},
-\code{\link{sourcoise_reset}()},
-\code{\link{sourcoise_status}()}
+Other sourcoise:
+\code{\link[=sourcoise]{sourcoise()}},
+\code{\link[=sourcoise_clear]{sourcoise_clear()}},
+\code{\link[=sourcoise_clear_all]{sourcoise_clear_all()}},
+\code{\link[=sourcoise_reset]{sourcoise_reset()}},
+\code{\link[=sourcoise_status]{sourcoise_status()}}
 }
 \concept{sourcoise}

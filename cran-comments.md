@@ -10,4 +10,7 @@ No revdep to signal.
 
 0 errors | 0 warnings | 0 notes
 
-Checked locally on Windows (R 4.6.1), vignettes excluded.
+* local Windows (R 4.6.1), vignettes excluded
+* R-hub (GitHub Actions): linux (R-devel), ubuntu-release, windows (R-devel)
+* win-builder (R-devel)
+* macos

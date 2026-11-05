@@ -33,11 +33,11 @@ sourcoise_status()
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-Other sourcoise: 
-\code{\link{sourcoise}()},
-\code{\link{sourcoise_clear_all}()},
-\code{\link{sourcoise_refresh}()},
-\code{\link{sourcoise_reset}()},
-\code{\link{sourcoise_status}()}
+Other sourcoise:
+\code{\link[=sourcoise]{sourcoise()}},
+\code{\link[=sourcoise_clear_all]{sourcoise_clear_all()}},
+\code{\link[=sourcoise_refresh]{sourcoise_refresh()}},
+\code{\link[=sourcoise_reset]{sourcoise_reset()}},
+\code{\link[=sourcoise_status]{sourcoise_status()}}
 }
 \concept{sourcoise}

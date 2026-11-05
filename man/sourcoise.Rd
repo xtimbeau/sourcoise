@@ -135,11 +135,11 @@ bench::mark(
 \seealso{
 \code{\link[=sourcoise_untrack]{sourcoise_untrack()}} \code{\link[=sourcoise_lapse]{sourcoise_lapse()}} \code{\link[=sourcoise_status]{sourcoise_status()}} \code{\link[=sourcoise_refresh]{sourcoise_refresh()}}
 
-Other sourcoise: 
-\code{\link{sourcoise_clear}()},
-\code{\link{sourcoise_clear_all}()},
-\code{\link{sourcoise_refresh}()},
-\code{\link{sourcoise_reset}()},
-\code{\link{sourcoise_status}()}
+Other sourcoise:
+\code{\link[=sourcoise_clear]{sourcoise_clear()}},
+\code{\link[=sourcoise_clear_all]{sourcoise_clear_all()}},
+\code{\link[=sourcoise_refresh]{sourcoise_refresh()}},
+\code{\link[=sourcoise_reset]{sourcoise_reset()}},
+\code{\link[=sourcoise_status]{sourcoise_status()}}
 }
 \concept{sourcoise}
