@@ -56,7 +56,15 @@ jobs:
 
     steps:
       - uses: r-hub/actions/checkout@v1
-      - uses: quarto-dev/quarto-actions/setup@v2
+      # The container has no sudo, so the setup action cannot be used here
+      - name: Install Quarto
+        shell: bash
+        run: |
+          mkdir -p /opt/quarto
+          curl -fsSL https://github.com/quarto-dev/quarto-cli/releases/download/v1.11.9/quarto-1.11.9-linux-amd64.tar.gz \
+            | tar -xz -C /opt/quarto --strip-components=1
+          echo /opt/quarto/bin >> "$GITHUB_PATH"
+          /opt/quarto/bin/quarto --version
       - uses: r-hub/actions/platform-info@v1
         with:
           token: ${{ secrets.RHUB_TOKEN }}
