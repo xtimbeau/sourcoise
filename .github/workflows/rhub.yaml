@@ -56,6 +56,7 @@ jobs:
 
     steps:
       - uses: r-hub/actions/checkout@v1
+      - uses: quarto-dev/quarto-actions/setup@v2
       - uses: r-hub/actions/platform-info@v1
         with:
           token: ${{ secrets.RHUB_TOKEN }}
@@ -81,6 +82,7 @@ jobs:
 
     steps:
       - uses: r-hub/actions/checkout@v1
+      - uses: quarto-dev/quarto-actions/setup@v2
       - uses: r-hub/actions/setup-r@v1
         with:
           job-config: ${{ matrix.config.job-config }}
