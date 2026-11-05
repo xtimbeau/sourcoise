@@ -2,7 +2,7 @@
 
 ## sourcoise 1.1.1
 
-- reports error more systemecally
+- reports error more systematically
 - bug fix: error messages for a script that is not found, whose
   execution is prevented or that fails, with no cache to return, are now
   formatted when the error is raised. They were formatted lazily by
@@ -60,7 +60,7 @@ CRAN release: 2026-01-07
   plus explanation of cache status
 - Source not found and execution error with no cache now trigger an
   error
-- performance improvment (50%) in cache data cleaning and testing
+- performance improvement (50%) in cache data cleaning and testing
   existence of files (not anymore done with fs)
 - Uppercase is now correctly treated on UNIX systems
 - refactor context mechanic, normally safer, plus more test
@@ -68,7 +68,7 @@ CRAN release: 2026-01-07
 - errors messages are safer and better and logged systematically when
   refreshing
 - circulation in execution cases is safer
-- performance improvment when data is cached (30%)
+- performance improvement when data is cached (30%)
 - a bug when source name contains a “-” is corrected (annoying)
 - accumulation of tracked files or qmd files, accumulated only when they
   exists (clear track to do, and some cleaning to do in case of track
