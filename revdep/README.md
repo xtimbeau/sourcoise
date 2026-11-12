@@ -1,88 +1,68 @@
 # Platform
 
-|field    |value                                                                                                                                                             |
-|:--------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|version  |R version 4.5.2 (2025-10-31 ucrt)                                                                                                                                 |
-|os       |Windows 11 x64 (build 26200)                                                                                                                                      |
-|system   |x86_64, mingw32                                                                                                                                                   |
-|ui       |RStudio                                                                                                                                                           |
-|language |(EN)                                                                                                                                                              |
-|collate  |French_France.utf8                                                                                                                                                |
-|ctype    |French_France.utf8                                                                                                                                                |
-|tz       |Europe/Paris                                                                                                                                                      |
-|date     |2025-12-09                                                                                                                                                        |
-|rstudio  |2025.09.3+423 Cucumberleaf Sunflower (desktop)                                                                                                                    |
-|pandoc   |NA                                                                                                                                                                |
-|quarto   |ERROR: Unknown command "TMPDIR=C:/Users/timbe/AppData/Local/Temp/RtmpKsmnP1/file7678523f7f67". Did you mean command "create"? @ C:\PROGRA~1\Quarto\bin\quarto.exe |
+|field    |value                                      |
+|:--------|:------------------------------------------|
+|version  |R version 4.6.1 (2026-06-24 ucrt)          |
+|os       |Windows 11 x64 (build 26300)               |
+|system   |x86_64, mingw32                            |
+|ui       |RStudio                                    |
+|language |(EN)                                       |
+|collate  |French_France.utf8                         |
+|ctype    |French_France.utf8                         |
+|tz       |Europe/Paris                               |
+|date     |2026-11-05                                 |
+|rstudio  |2026.11.0+202 Montauk Daisy (desktop)      |
+|pandoc   |NA                                         |
+|quarto   |1.11.9 @ C:\PROGRA~1\Quarto\bin\quarto.exe |
 
 # Dependencies
 
-|package      |old      |new      |Δ  |
-|:------------|:--------|:--------|:--|
-|sourcoise    |0.6.2    |1.0.0    |*  |
-|base64enc    |NA       |0.1-3    |*  |
-|bslib        |NA       |0.9.0    |*  |
-|cachem       |NA       |1.1.0    |*  |
-|cli          |3.6.5    |3.6.5    |   |
-|cpp11        |0.5.2    |0.5.2    |   |
-|crayon       |1.5.3    |1.5.3    |   |
-|digest       |0.6.39   |0.6.39   |   |
-|dplyr        |1.1.4    |1.1.4    |   |
-|evaluate     |NA       |1.0.5    |*  |
-|farver       |2.1.2    |2.1.2    |   |
-|fastmap      |NA       |1.2.0    |*  |
-|fontawesome  |NA       |0.5.3    |*  |
-|fs           |1.6.6    |1.6.6    |   |
-|generics     |0.1.4    |0.1.4    |   |
-|glue         |1.8.0    |1.8.0    |   |
-|highr        |NA       |0.11     |*  |
-|htmltools    |NA       |0.5.9    |*  |
-|jquerylib    |NA       |0.1.4    |*  |
-|jsonlite     |2.0.0    |2.0.0    |   |
-|knitr        |NA       |1.50     |*  |
-|labeling     |0.4.3    |0.4.3    |   |
-|later        |NA       |1.4.4    |*  |
-|lifecycle    |1.0.4    |1.0.4    |   |
-|lobstr       |1.1.3    |1.1.3    |   |
-|logger       |0.4.1    |0.4.1    |   |
-|lubridate    |1.9.4    |1.9.4    |   |
-|magrittr     |2.0.4    |2.0.4    |   |
-|memoise      |NA       |2.0.1    |*  |
-|mime         |NA       |0.13     |*  |
-|pillar       |1.11.1   |1.11.1   |   |
-|pkgconfig    |2.0.3    |2.0.3    |   |
-|prettyunits  |1.2.0    |1.2.0    |   |
-|processx     |NA       |3.8.6    |*  |
-|ps           |NA       |1.9.1    |*  |
-|purrr        |1.2.0    |1.2.0    |   |
-|qs2          |0.1.6    |0.1.6    |   |
-|quarto       |NA       |1.5.1    |*  |
-|R6           |2.6.1    |2.6.1    |   |
-|rappdirs     |NA       |0.3.3    |*  |
-|RColorBrewer |1.1-3    |1.1-3    |   |
-|Rcpp         |1.1.0    |1.1.0    |   |
-|RcppParallel |5.1.11-1 |5.1.11-1 |   |
-|RcppSimdJson |NA       |0.1.14   |*  |
-|rlang        |1.1.6    |1.1.6    |   |
-|rmarkdown    |NA       |2.30     |*  |
-|rprojroot    |2.1.1    |2.1.1    |   |
-|rstudioapi   |NA       |0.17.1   |*  |
-|sass         |NA       |0.4.10   |*  |
-|scales       |1.4.0    |1.4.0    |   |
-|stringfish   |0.17.0   |0.17.0   |   |
-|stringi      |1.8.7    |1.8.7    |   |
-|stringr      |1.6.0    |1.6.0    |   |
-|tibble       |3.3.0    |3.3.0    |   |
-|tidyr        |NA       |1.3.1    |*  |
-|tidyselect   |1.2.1    |1.2.1    |   |
-|timechange   |0.3.0    |0.3.0    |   |
-|tinytex      |NA       |0.58     |*  |
-|utf8         |1.2.6    |1.2.6    |   |
-|vctrs        |0.6.5    |0.6.5    |   |
-|viridisLite  |0.4.2    |0.4.2    |   |
-|withr        |3.0.2    |3.0.2    |   |
-|xfun         |NA       |0.54     |*  |
-|yaml         |NA       |2.3.11   |*  |
+|package      |old    |new    |Δ  |
+|:------------|:------|:------|:--|
+|sourcoise    |1.1.1  |1.1.1  |NA |
+|cachem       |1.1.0  |1.1.0  |NA |
+|charport     |0.1.1  |0.1.1  |NA |
+|cli          |3.6.6  |3.6.6  |NA |
+|cpp11        |0.5.5  |0.5.5  |NA |
+|crayon       |1.5.3  |1.5.3  |NA |
+|digest       |0.6.39 |0.6.39 |NA |
+|dplyr        |1.2.1  |1.2.1  |NA |
+|evaluate     |1.0.5  |1.0.5  |NA |
+|fastmap      |1.2.0  |1.2.0  |NA |
+|fs           |2.1.0  |2.1.0  |NA |
+|generics     |0.1.4  |0.1.4  |NA |
+|glue         |1.8.1  |1.8.1  |NA |
+|highr        |0.12   |0.12   |NA |
+|jsonlite     |2.0.0  |2.0.0  |NA |
+|knitr        |1.52   |1.52   |NA |
+|lifecycle    |1.0.5  |1.0.5  |NA |
+|lobstr       |1.2.2  |1.2.2  |NA |
+|logger       |0.4.3  |0.4.3  |NA |
+|lubridate    |1.9.5  |1.9.5  |NA |
+|magrittr     |2.0.5  |2.0.5  |NA |
+|memoise      |2.0.1  |2.0.1  |NA |
+|pillar       |1.11.1 |1.11.1 |NA |
+|pkgconfig    |2.0.3  |2.0.3  |NA |
+|prettyunits  |1.2.0  |1.2.0  |NA |
+|purrr        |1.2.2  |1.2.2  |NA |
+|qs2          |0.4.0  |0.4.0  |NA |
+|R6           |2.6.1  |2.6.1  |NA |
+|Rcpp         |1.1.2  |1.1.2  |NA |
+|RcppParallel |6.2.1  |6.2.1  |NA |
+|RcppSimdJson |0.1.17 |0.1.17 |NA |
+|rlang        |1.3.0  |1.3.0  |NA |
+|rprojroot    |2.1.1  |2.1.1  |NA |
+|stringi      |1.8.9  |1.8.9  |NA |
+|stringr      |1.6.0  |1.6.0  |NA |
+|tibble       |3.3.1  |3.3.1  |NA |
+|tidyr        |1.3.2  |1.3.2  |NA |
+|tidyselect   |1.2.1  |1.2.1  |NA |
+|timechange   |0.4.0  |0.4.0  |NA |
+|utf8         |1.2.6  |1.2.6  |NA |
+|vctrs        |0.7.3  |0.7.3  |NA |
+|withr        |3.0.3  |3.0.3  |NA |
+|xfun         |0.62   |0.62   |NA |
+|yaml         |2.3.12 |2.3.12 |NA |
 
 # Revdeps
 
