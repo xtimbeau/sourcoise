@@ -2,6 +2,8 @@
 
 ## sourcoise 1.1.1
 
+CRAN release: 2026-11-05
+
 - reports error more systematically
 - bug fix: error messages for a script that is not found, whose
   execution is prevented or that fails, with no cache to return, are now
